@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/02/24 23:36:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/02/25 00:22:10 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,21 +31,29 @@
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
 #define INPUT2 "\033[1;96;40m ✔ \033[0m"
 
+typedef struct s_tokenize
+{
+	int					type;
+	struct s_tokenize	*next;
+	
+} t_tokenize;
+
 typedef struct s_minishell
 {
-    char *input;
+	char *input;
 }               t_minishell;
 
 typedef struct s_commandline
 {
-    int type;
-    char *content;
-    struct s_commandline *left;
-    struct s_commandline *right;
-    struct s_commandline *root;
+	int type;
+	char *content;
+	struct s_commandline *left;
+	struct s_commandline *right;
+	struct s_commandline *root;
 }           t_commandline;
 
 char    **ft_split(char const *s, char *delims);
+char    **split(char const *s, char *delims);
 void readinput(t_minishell *mini);
 
 #endif

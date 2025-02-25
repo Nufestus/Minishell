@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+         #
+#    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/02/24 23:35:52 by aammisse         ###   ########.fr        #
+#    Updated: 2025/02/25 00:24:03 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -16,7 +16,7 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror
 
-SRCS = minishell.c parsing/readinput.c
+SRCS = minishell.c parsing/readinput.c parsing/ft_split.c
 
 OBJS = $(SRCS:.c=.o)
 

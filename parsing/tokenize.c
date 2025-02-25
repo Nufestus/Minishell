@@ -3,27 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   tokenize.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/02/24 23:34:57 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/02/25 00:13:29 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int counttokens(char *str)
-{
-    
-}
-
-void tokenize(t_minishell *mini)
+void tokenize(t_tokenize *mini, t_minishell *input)
 {
     int i;
+    t_tokenize *temp;
 
     i = 0;
-    while(mini->input[i])
+    temp = mini;
+    while(input->input[i])
     {
-           
+        
+        i++;
     }
 }

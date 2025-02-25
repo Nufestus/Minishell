@@ -1,16 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   split.c                                            :+:      :+:    :+:   */
+/*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/20 20:44:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 00:22:03 by rammisse         ###   ########.fr       */
+/*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
+/*   Updated: 2025/02/25 00:52:01 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
+{
+	size_t	i;
+	size_t	len;
+
+	i = 0;
+	len = 0;
+	while (src[len] != '\0')
+		len++;
+	if (dstsize == 0)
+		return (len);
+	while (src[i] != '\0' && i < dstsize - 1)
+	{
+		dst[i] = src[i];
+		i++;
+	}
+	if (dstsize > 0)
+		dst[i] = '\0';
+	return (len);
+}
 
 static int    is_delim(char c, char *delims)
 {
@@ -32,7 +53,23 @@ static size_t    count_str(char *s, char *delims)
     word = 0;
     while (s[i] != '\0')
     {
-        if (!is_delim(s[i], delims) && (is_delim(s[i + 1], delims)
+        if (s[i] == '"' || s[i] == '\'')
+        {
+            word++;
+            if (s[i] == '"')
+            {
+                i++;
+                while(s[i] && s[i] != '"')
+                    i++;
+            }
+            else if (s[i] == '\'')
+            {
+                i++;
+                while(s[i] && s[i] != '\'')
+                    i++;
+            }
+        }
+        else if (!is_delim(s[i], delims) && (is_delim(s[i + 1], delims)
                 || s[i + 1] == '\0'))
             word++;
         i++;
@@ -45,8 +82,27 @@ static size_t    str_length(char const *s, char *delims)
     size_t    i;
 
     i = 0;
-    while (s[i] && !is_delim(s[i], delims))
+    if (s[i] && (s[i] == '"' || s[i] == '\''))
+    {
+        if (s[i] == '"')
+        {
+            i++;
+            while(s[i] && s[i] != '"')
+                i++;
+        }
+        else if (s[i] == '\'')
+        {
+            i++;
+            while(s[i] && s[i] != '\'')
+                i++;
+        }
         i++;
+    }
+    else
+    {
+        while (s[i] && !is_delim(s[i], delims))
+            i++;
+    }
     return (i);
 }
 
@@ -64,7 +120,7 @@ static char    **free_mem(char **s, int i)
     return (NULL);
 }
 
-char    **split(char const *s, char *delims)
+char    **ft_split(char const *s, char *delims)
 {
     size_t        k;
     size_t        index;
