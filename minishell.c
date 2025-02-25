@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 00:23:48 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/02/25 16:18:29 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,5 @@ int	main(int ac, char **av, char **env)
 	(void)av;
 	(void)env;
 	readinput(&mini);
-	// tokenize(&mini);
 	// parse(&mini);
 }
