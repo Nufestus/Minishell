@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 00:52:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/02/25 19:30:18 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ static char    **free_mem(char **s, int i)
     return (NULL);
 }
 
-char    **ft_split(char const *s, char *delims)
+char    **ft_split(char *s, char *delims)
 {
     size_t        k;
     size_t        index;
