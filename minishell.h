@@ -3,10 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2025/02/25 16:38:53 by rammisse         ###   ########.fr       */
+=======
+/*   Updated: 2025/02/25 14:55:51 by aammisse         ###   ########.fr       */
+>>>>>>> refs/remotes/origin/main
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,16 +52,16 @@ typedef struct s_tokenize
 
 typedef struct s_minishell
 {
+	char **env;
 	char *input;
+	char **commandline;
 }               t_minishell;
 
 typedef struct s_commandline
 {
 	int type;
 	char *content;
-	struct s_commandline *left;
-	struct s_commandline *right;
-	struct s_commandline *root;
+	struct s_commandline *next;
 }           t_commandline;
 
 char    **ft_split(char const *s, char *delims);
@@ -67,9 +71,13 @@ char    **split(char const *s, char *delims);
 int	ft_isalpha(int c);
 int iswhitespace(int c);
 void readinput(t_minishell *mini);
+<<<<<<< HEAD
 t_tokenize	*ft_lstnew(int cntnt);
 char *ft_strdup(char *str);
 void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new);
 t_tokenize	*ft_lstlast(t_tokenize *lst);
+=======
+size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
+>>>>>>> refs/remotes/origin/main
 
 #endif
