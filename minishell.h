@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/03/03 00:46:00 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/03/03 19:25:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,5 +80,8 @@ t_tokenize	*ft_lstlast(t_tokenize *lst);
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
 void	freedoublearray(char **str);
 void freelisttokens(t_tokenize *list);
+char	*ft_strjoin(const char *s1, const char *s2);
+size_t	ft_strlen(const char *s);
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 
 #endif

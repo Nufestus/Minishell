@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/03/03 00:46:20 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/03/03 19:38:15 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,25 +18,22 @@ void    setupnode(int index, int type, char *str, t_tokenize **tokens)
 
     newnode = ft_lstnew(ft_lstlast(*tokens), type);
     newnode->index = index;
-    newnode->str = str;
+    newnode->str = ft_strdup(str);
     ft_lstadd_back(tokens, newnode);
 }
 
-void syntax(int flag, t_minishell *mini)
+void syntax(char *flag, t_minishell *mini)
 {
     (void)mini;
-    if (flag == 1)
-        printf("syntax error: start with pipe '|'\n");
-    else if (flag == 2)
-        printf("syntax error: in pipe '|'\n");
-    else if (flag == 3)
-        printf("syntax error: in redirection '>'\n");
-    else if (flag == 4)
-        printf("syntax error: in redirection '<'\n");
-    exit(0);
+    if (flag)
+    {
+        flag = ft_strjoin("syntax error near unexpected token ", flag);
+        printf("%s\n", flag);
+        free(flag);
+    }
 }
 
-int parsecmd(t_tokenize *list)
+int parsepipe(t_tokenize *list)
 {
     if (list->prev && list->prev->type != WORD)
         return (0);
@@ -49,12 +46,16 @@ int parseinput(t_tokenize *list)
 {
     if (list->next && list->next->type != WORD)
         return (0);
+    else if (!list->next)
+        return (0);
     return (1);
 }
 
 int parseoutput(t_tokenize *list)
 {
-    if (list->prev && (list->prev->type != WORD || list->prev->type != PIPE))
+    if (list->prev && list->prev->type != WORD && list->prev->type != PIPE)
+        return (0);
+    else if (!list->next)
         return (0);
     return (1);
 }
@@ -67,21 +68,21 @@ void tokenizewords(t_minishell *mini)
     while (list)
     {
         if (list->type == PIPE && list->index == 0)
-            syntax(1, mini);
+            syntax("\'|\'", mini);
         else if (list->type == PIPE && list->index != 0)
         {
-            if (!parsecmd(list))
-                syntax(2, mini);
+            if (!parsepipe(list))
+                syntax("\'|\'", mini);
         }
         else if (list->type == APPEND || list->type == REDOUT)
         {
-            if (!parseinput(list))
-                syntax(3, mini);
+            if (!parseoutput(list))
+                syntax("\'newline\'", mini);
         }
         else if (list->type == HEDOC || list->type == REDIN)
         {
-            if (!parseoutput(list))
-                syntax(4, mini);
+            if (!parseinput(list))
+                syntax("\'newline\'", mini);
         }
         list = list->next;
     }
@@ -95,19 +96,19 @@ void tokenizesymbols(char **str, t_minishell *mini)
     while (str[i])
     {
         if (!ft_strcmp(str[i], "|"))
-            setupnode(i, PIPE, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, PIPE, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], ">>"))
-            setupnode(i, APPEND, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, APPEND, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], "<<"))
-            setupnode(i, HEDOC, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, HEDOC, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], ">"))
-            setupnode(i, REDOUT, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, REDOUT, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], "<"))
-            setupnode(i, REDIN, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, REDIN, str[i], &mini->tokens);
         else if (str[i][0] == '-')
-            setupnode(i, OPTION, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, OPTION, str[i], &mini->tokens);
         else
-            setupnode(i, WORD, ft_strdup(str[i]), &mini->tokens);
+            setupnode(i, WORD, str[i], &mini->tokens);
         i++;
     }
 }
