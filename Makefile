@@ -6,7 +6,7 @@
 #    By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/03/03 19:25:52 by aammisse         ###   ########.fr        #
+#    Updated: 2025/03/03 19:48:54 by aammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,7 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
-SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c parsing/tokenize.c utils/strjoin.c
+SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c parsing/tokenize.c utils/strjoin.c utils/split.c
 
 OBJS = $(SRCS:.c=.o)
 
