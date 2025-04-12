@@ -6,13 +6,10 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/02/25 16:38:53 by rammisse         ###   ########.fr       */
-=======
-/*   Updated: 2025/02/25 14:55:51 by aammisse         ###   ########.fr       */
->>>>>>> refs/remotes/origin/main
+/*   Updated: 2025/03/03 19:25:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
@@ -25,6 +22,7 @@
 #include <curses.h>
 #include <termios.h>
 #include <readline/readline.h>
+#include <readline/history.h>
 #include <signal.h>
 #include <unistd.h>
 #include <stdio.h>
@@ -38,12 +36,18 @@
 #define WORD 2
 #define REDOUT 3
 #define REDIN 4
-#define REDOUTAPP 5
+#define APPEND 5
 #define HEDOC 6
+#define OPTION 7
+
+struct s_minishell;
+struct s_commandline;
+struct s_tokenize;
 
 typedef struct s_tokenize
 {
 	int					type;
+	int					index;
 	char				*str;
 	struct s_tokenize	*next;
 	struct s_tokenize	*prev;
@@ -54,7 +58,7 @@ typedef struct s_minishell
 {
 	char **env;
 	char *input;
-	char **commandline;
+	t_tokenize *tokens;
 }               t_minishell;
 
 typedef struct s_commandline
@@ -69,15 +73,16 @@ int ft_strcmp(char *str, char *str1);
 void tokenize(t_minishell *mini);
 char    **split(char const *s, char *delims);
 int	ft_isalpha(int c);
-int iswhitespace(int c);
 void readinput(t_minishell *mini);
-<<<<<<< HEAD
-t_tokenize	*ft_lstnew(int cntnt);
+t_tokenize	*ft_lstnew(t_tokenize *prev, int cntnt);
 char *ft_strdup(char *str);
 void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new);
 t_tokenize	*ft_lstlast(t_tokenize *lst);
-=======
 size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize);
->>>>>>> refs/remotes/origin/main
+void	freedoublearray(char **str);
+void freelisttokens(t_tokenize *list);
+char	*ft_strjoin(const char *s1, const char *s2);
+size_t	ft_strlen(const char *s);
+size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 
 #endif

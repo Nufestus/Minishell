@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 16:36:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/03/02 22:23:12 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ t_tokenize	*ft_lstlast(t_tokenize *lst)
 	return (lst);
 }
 
-t_tokenize	*ft_lstnew(int cntnt)
+t_tokenize	*ft_lstnew(t_tokenize *prev, int cntnt)
 {
 	t_tokenize	*new;
 
@@ -66,6 +66,7 @@ t_tokenize	*ft_lstnew(int cntnt)
 		return (NULL);
 	new->type = cntnt;
 	new->next = NULL;
+	new->prev = prev;
 	return (new);
 }
 
@@ -97,4 +98,30 @@ char	*ft_strdup(char *s1)
 	}
 	copy[i] = '\0';
 	return (copy);
+}
+
+void	freedoublearray(char **str)
+{
+	int i;
+
+	i = 0;
+	while(str[i])
+	{
+		free(str[i]);
+		i++;
+	}
+	free(str);
+}
+
+void freelisttokens(t_tokenize *list)
+{
+	t_tokenize *copy;
+
+	while (list)
+	{
+		copy = list->next;
+		free(list->str);
+		free(list);
+		list = copy;
+	}
 }
