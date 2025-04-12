@@ -23,6 +23,7 @@ void readinput(t_minishell *mini)
 			free(mini->input);
 			break ;
 		}
+		add_history(mini->input);
 		tokenize(mini);
 	}
 }

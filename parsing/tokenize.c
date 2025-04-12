@@ -27,10 +27,12 @@ void syntax(char *flag, t_minishell *mini)
     (void)mini;
     if (flag)
     {
-        flag = ft_strjoin("syntax error near unexpected token ", flag);
+        flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
         printf("%s\n", flag);
         free(flag);
     }
+    freelisttokens(mini->tokens);
+    exit(0);
 }
 
 int parsepipe(t_tokenize *list)
@@ -101,7 +103,7 @@ void tokenizesymbols(char **str, t_minishell *mini)
             setupnode(i, APPEND, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], "<<"))
             setupnode(i, HEDOC, str[i], &mini->tokens);
-        else if (!ft_strcmp(str[i], ">"))
+        else if (!ft_strcmp(str[i], ">") || !ft_strcmp(str[i], ">|"))
             setupnode(i, REDOUT, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], "<"))
             setupnode(i, REDIN, str[i], &mini->tokens);
@@ -116,6 +118,7 @@ void tokenizesymbols(char **str, t_minishell *mini)
 void tokenize(t_minishell *mini)
 {
     int i;
+    t_tokenize *copy;
     char **str;
 
     i = 0;
@@ -123,10 +126,12 @@ void tokenize(t_minishell *mini)
     str = ft_split(mini->input, " \t\n\r\v\f");
     tokenizesymbols(str, mini);
     tokenizewords(mini);
+    copy = mini->tokens;
     while(mini->tokens)
     {
         printf("%s / %d\n", mini->tokens->str, mini->tokens->type);
         mini->tokens = mini->tokens->next;
     }
+    freelisttokens(copy);
     freedoublearray(str);
 }
