@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/03/03 19:25:18 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 17:30:34 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,14 +39,25 @@
 #define APPEND 5
 #define HEDOC 6
 #define OPTION 7
+#define FILE 8
+#define CMD 9
+#define ARG 10
 
 struct s_minishell;
 struct s_commandline;
 struct s_tokenize;
 
+typedef struct s_files
+{
+	int		type;
+	char	*file;
+	struct s_files *next;
+}	t_files;
+
 typedef struct s_tokenize
 {
 	int					type;
+	int					category;
 	int					index;
 	char				*str;
 	struct s_tokenize	*next;
@@ -63,8 +74,11 @@ typedef struct s_minishell
 
 typedef struct s_commandline
 {
-	int type;
-	char *content;
+	t_files *outfile;
+	t_files *infile;
+	int numcmds;
+	char *cmd;
+	char **args;
 	struct s_commandline *next;
 }           t_commandline;
 
@@ -84,5 +98,6 @@ void freelisttokens(t_tokenize *list);
 char	*ft_strjoin(const char *s1, const char *s2);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
+int	ft_strncmp(const char *s1, const char *s2, size_t n);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/03/02 22:23:12 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 16:50:58 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,14 +14,12 @@
 
 int ft_strcmp(char *str, char *str1)
 {
-    if (!str || !str1)
-        return (0);
-    int i;
-
-    i = 0;
-    while (str[i] && str[1] && str[i] == str1[i])
-        i++;
-    return (str[i] - str1[i]);
+    while (*str && *str1 && *str == *str1)
+	{
+		str++;
+		str1++;
+	}
+	return (*str - *str1);
 }
 
 int	ft_isalpha(int c)
@@ -125,3 +123,31 @@ void freelisttokens(t_tokenize *list)
 		list = copy;
 	}
 }
+
+static int	handle(unsigned char c, unsigned char b)
+{
+	if (c - b > 0)
+		return (1);
+	else if (c - b < 0)
+		return (-1);
+	return (0);
+}
+
+int	ft_strncmp(const char *s1, const char *s2, size_t n)
+{
+	size_t			i;
+	unsigned char	*str1;
+	unsigned char	*str2;
+
+	i = 0;
+	str1 = (unsigned char *)s1;
+	str2 = (unsigned char *)s2;
+	while ((str1[i] != '\0' || str2[i] != '\0') && i < n)
+	{
+		if (str1[i] != str2[i])
+			return (handle(str1[i], str2[i]));
+		i++;
+	}
+	return (0);
+}
+
