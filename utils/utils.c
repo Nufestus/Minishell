@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:45:28 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:18:06 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,22 @@ void	freedoublearray(char **str)
 	free(str);
 }
 
+void freelistcommandline(t_commandline *list)
+{
+	t_commandline *copy;
+
+	if (!list)
+		return ;
+	while (list)
+	{
+		copy = list->next;
+		freedoublearray(list->args);
+		free(list->cmd);
+		free(list);
+		list = copy;
+	}
+}
+
 void freelisttokens(t_tokenize *list)
 {
 	t_tokenize *copy;
@@ -155,8 +171,6 @@ t_commandline	*ft_commandlast(t_commandline *lst)
 {
 	if (!lst)
 		return (NULL);
-	if (!lst->next)
-		return (lst);
 	while (lst->next)
 		lst = lst->next;
 	return (lst);

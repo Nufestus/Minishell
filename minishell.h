@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:46:23 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:18:21 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ typedef struct s_minishell
 	char **env;
 	char *input;
 	t_tokenize *tokens;
-	t_commandline **commandline;
+	t_commandline *commandline;
 }               t_minishell;
 
 char    **ft_split(char const *s, char *delims);
@@ -108,5 +108,6 @@ char *handletypes(int i);
 void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
 t_commandline	*ft_commandlast(t_commandline *lst);
 t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args);
+void freelistcommandline(t_commandline *list);
 
 #endif

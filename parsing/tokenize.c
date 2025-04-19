@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 21:05:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 23:19:47 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ void tokenizewords(t_minishell *mini)
             list->type = ARG;
         else if (list->prev && list->prev->type == HEDOC && list->type == WORD)
             list->type = DEL;
+        else if (list->prev && list->prev->type == OPTION)
+            list->type = ARG;
         list = list->next;
     }
 }
