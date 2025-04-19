@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 16:50:58 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:33:37 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,3 +151,47 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	return (0);
 }
 
+t_commandline	*ft_commandlast(t_commandline *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args)
+{
+	char *str;
+	char *copy;
+	t_commandline	*new;
+
+	new = (t_commandline *)malloc(sizeof(t_commandline));
+	if (!new)
+		return (NULL);
+	str = ft_strjoin(cmd, " ");
+	copy = str;
+	str = ft_strjoin(str, option);
+	free(copy);
+	copy = str;
+	str = ft_strjoin(str, " ");
+	free(copy);
+	copy = str;
+	str = ft_strjoin(str, arg);
+	free(copy);
+	new->args = ft_split(str, " ");
+	new->numargs = args;
+	new->cmd = ft_strdup(cmd);
+	new->next = NULL;
+	return (new);
+}
+
+void	ft_commandadd_back(t_commandline **lst, t_commandline *new)
+{
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		ft_commandlast(*lst)->next = new;
+	else
+		*lst = new;
+}

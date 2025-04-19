@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 17:30:34 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:02:27 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@
 #define FILE 8
 #define CMD 9
 #define ARG 10
+#define DEL 11
 
 struct s_minishell;
 struct s_commandline;
@@ -51,6 +52,7 @@ typedef struct s_files
 {
 	int		type;
 	char	*file;
+	char	*delimiter;
 	struct s_files *next;
 }	t_files;
 
@@ -65,22 +67,23 @@ typedef struct s_tokenize
 	
 } t_tokenize;
 
+typedef struct s_commandline
+{
+	t_files *outfile;
+	t_files *infile;
+	int numargs;
+	char *cmd;
+	char **args;
+	struct s_commandline *next;
+}           t_commandline;
+
 typedef struct s_minishell
 {
 	char **env;
 	char *input;
 	t_tokenize *tokens;
+	t_commandline *commandline;
 }               t_minishell;
-
-typedef struct s_commandline
-{
-	t_files *outfile;
-	t_files *infile;
-	int numcmds;
-	char *cmd;
-	char **args;
-	struct s_commandline *next;
-}           t_commandline;
 
 char    **ft_split(char const *s, char *delims);
 int ft_strcmp(char *str, char *str1);
@@ -99,5 +102,11 @@ char	*ft_strjoin(const char *s1, const char *s2);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
+void syntax(char *flag, t_minishell *mini);
+void	parse(t_minishell *mini);
+char *handletypes(int i);
+void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
+t_commandline	*ft_commandlast(t_commandline *lst);
+t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args);
 
 #endif

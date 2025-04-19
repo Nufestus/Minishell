@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 17:26:43 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 21:05:02 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,21 +21,6 @@ void    setupnode(int index, int category, int type, char *str, t_tokenize **tok
     newnode->str = ft_strdup(str);
     newnode->category = category;
     ft_lstadd_back(tokens, newnode);
-}
-
-void	insert_between(t_tokenize *before, t_tokenize *after, int type, char *str, int index)
-{
-	t_tokenize	*new;
-
-	new = ft_lstnew(before, type);
-	new->index = index + 1;
-    new->str = ft_strdup(str);
-    new->category = 0;
-	new->next = after;
-	if (before)
-		before->next = new;
-	if (after)
-		after->prev = new;
 }
 
 void syntax(char *flag, t_minishell *mini)
@@ -85,13 +70,15 @@ void tokenizewords(t_minishell *mini)
     list = mini->tokens;
     while (list)
     {
-        if (list->prev && list->prev->category && list->type == WORD)
+        if (list->prev && list->prev->category && list->type == WORD && list->prev->type != HEDOC)
             list->type = FILE;
-        else if (((!list->prev || list->prev->type == PIPE)
+        else if (((!list->prev || list->prev->type == PIPE || list->prev->type == DEL)
             || (list->prev && list->prev->type == FILE)) && list->type == WORD)
             list->type = CMD;
         else if (list->prev && list->prev->type == CMD && list->type == WORD)
             list->type = ARG;
+        else if (list->prev && list->prev->type == HEDOC && list->type == WORD)
+            list->type = DEL;
         list = list->next;
     }
 }
@@ -143,19 +130,25 @@ char *handletypes(int i)
         return ("FILE");
     else if (i == ARG)
         return ("ARG");
+    else if (i == DEL)
+        return ("DEL");
     return ("NULL");
 }
 
-bool	is_token(char c) {
+bool	is_token(char c)
+{
 	return (c == '<' || c == '>' || c == '|');
 }
 
-char	*add_spaces_around_tokens(const char *input)
+char	*fillspace(const char *input)
 {
-	int		i = 0;
-	int		j = 0;
-	char	*out = malloc(strlen(input) * 3 + 1);
+	int		i;
+	int		j;
+	char	*out;
 
+    j = 0;
+    i = 0;
+    out = malloc(strlen(input) * 3 + 1);
 	if (!out)
 		return NULL;
 	while (input[i])
@@ -178,9 +171,7 @@ char	*add_spaces_around_tokens(const char *input)
 				out[j++] = ' ';
 		}
 		else
-			out[j] = input[i];
-        i++;
-        j++;
+			out[j++] = input[i++];
 	}
 	out[j] = '\0';
 	return out;
@@ -189,22 +180,17 @@ char	*add_spaces_around_tokens(const char *input)
 void tokenize(t_minishell *mini)
 {
     int i;
-    t_tokenize *copy;
     char **str;
     char *addspaces;
 
     i = 0;
     mini->tokens = NULL;
-    addspaces = add_spaces_around_tokens(mini->input);
+    addspaces = fillspace(mini->input);
     str = ft_split(addspaces, " \t\n\r\v\f");
+    if (str == NULL)
+        syntax("'quotes'", mini);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
-    copy = mini->tokens;
-    while(mini->tokens)
-    {
-        printf("%s / %s\n", mini->tokens->str, handletypes(mini->tokens->type));
-        mini->tokens = mini->tokens->next;
-    }
-    freelisttokens(copy);
     freedoublearray(str);
+    free(addspaces);
 }
