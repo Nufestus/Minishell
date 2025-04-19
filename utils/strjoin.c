@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/03/03 19:25:06 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:31:16 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ static char	*handle(char *str, char *str1)
 		string = malloc(ft_strlen(str1) + 1);
 		if (!string)
 			return (NULL);
-		ft_strlcat(string, str1, ft_strlen(str1) + 1);
+		ft_strlcpy(string, str1, ft_strlen(str1) + 1);
 		return (string);
 	}
 	else if (str != NULL && str1 == NULL)
@@ -29,7 +29,7 @@ static char	*handle(char *str, char *str1)
 		string = malloc(ft_strlen(str) + 1);
 		if (!string)
 			return (NULL);
-		ft_strlcat(string, str, ft_strlen(str) + 1);
+		ft_strlcpy(string, str, ft_strlen(str) + 1);
 		return (string);
 	}
 	else

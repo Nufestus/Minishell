@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_split.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 00:52:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 20:21:08 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,21 @@ static int    is_delim(char c, char *delims)
     return (0);
 }
 
+int countquotes(char *s)
+{
+    int i;
+    int res;
+    
+    i = -1;
+    res = 0;
+    while(s[++i])
+        if (s[i] == '"' || s[i] == '\'')
+            res++;
+    if (res % 2 == 0)
+        return (1);
+    return (0);
+}
+
 static size_t    count_str(char *s, char *delims)
 {
     unsigned int    i;
@@ -51,6 +66,8 @@ static size_t    count_str(char *s, char *delims)
 
     i = 0;
     word = 0;
+    if (!countquotes(s))
+        return (0);
     while (s[i] != '\0')
     {
         if (s[i] == '"' || s[i] == '\'')
@@ -129,6 +146,8 @@ char    **ft_split(char const *s, char *delims)
     if (!s || !delims)
         return (NULL);
     k = count_str((char *)s, delims);
+    if (k == 0)
+        return (NULL);
     index = 0;
     p = (char **) malloc((sizeof(char *)) * (k + 1));
     if (!p)
