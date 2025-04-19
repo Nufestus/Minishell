@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:35:37 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:47:51 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,16 +61,19 @@ void	setupcommandline(t_minishell *mini)
 	char *arg;
 	char *option;
 	t_commandline *command;
-	t_commandline *coptt;
+	t_commandline *copy;
 	t_tokenize *token;
 
 	token = mini->tokens;
 	command = NULL;
-	coptt = NULL;
+	copy = NULL;
 	while(token)
 	{
 		if (token->type == PIPE)
 		{
+			cmd = NULL;
+			arg = NULL;
+			option = NULL;
 			token = token->next;
 			while (token && token->type != PIPE)
 			{
@@ -85,19 +88,20 @@ void	setupcommandline(t_minishell *mini)
 			}
 			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
 			command->numargs = countargs(arg, option) + 1;
-			ft_commandadd_back(&mini->commandline, command);
+			ft_commandadd_back(mini->commandline, command);
 		}
-		token = token->next;
+		if (token)
+			token = token->next;
 	}
-	coptt = mini->commandline;
-	while(coptt)
+	copy = mini->commandline;
+	while(copy)
 	{
 		i = 0;
-		printf("Cmd: %s\nArgs: ", coptt->cmd);
-		while(coptt->args[i])
-			printf("%s , ", coptt->args[i++]);
-		printf("\n Num of Args: %d\n", coptt->numargs);
-		coptt = coptt->next;
+		printf("Cmd: %s\nArgs: ", copy->cmd);
+		while(copy->args[i])
+			printf("%s , ", copy->args[i++]);
+		printf("\n Num of Args: %d\n", copy->numargs);
+		copy = copy->next;
 	}
 }
 

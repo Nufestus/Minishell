@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:33:37 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/19 22:45:28 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -155,6 +155,8 @@ t_commandline	*ft_commandlast(t_commandline *lst)
 {
 	if (!lst)
 		return (NULL);
+	if (!lst->next)
+		return (lst);
 	while (lst->next)
 		lst = lst->next;
 	return (lst);
