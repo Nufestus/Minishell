@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 20:21:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/20 11:50:42 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ int countquotes(char *s)
     while(s[++i])
         if (s[i] == '"' || s[i] == '\'')
             res++;
-    if (res % 2 == 0)
+    if (res == 0 || res % 2 == 0)
         return (1);
     return (0);
 }

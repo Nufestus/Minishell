@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 23:18:06 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/20 19:39:55 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,22 @@ void freelistcommandline(t_commandline *list)
 	}
 }
 
+void freelistfiles(t_files *list)
+{
+	t_files *copy;
+
+	while (list)
+	{
+		copy = list->next;
+		if (list->file)
+			free(list->file);
+		if (list->delimiter)
+			free(list->delimiter);
+		free(list);
+		list = copy;
+	}
+}
+
 void freelisttokens(t_tokenize *list)
 {
 	t_tokenize *copy;
@@ -196,8 +212,12 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args)
 	str = ft_strjoin(str, arg);
 	free(copy);
 	new->args = ft_split(str, " ");
+	free(str);
 	new->numargs = args;
-	new->cmd = ft_strdup(cmd);
+	if (cmd)
+		new->cmd = ft_strdup(cmd);
+	new->infile = NULL;
+	new->outfile = NULL;
 	new->next = NULL;
 	return (new);
 }
@@ -210,4 +230,43 @@ void	ft_commandadd_back(t_commandline **lst, t_commandline *new)
 		ft_commandlast(*lst)->next = new;
 	else
 		*lst = new;
+}
+
+t_files	*ft_filelast(t_files *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+t_files	*ft_filenew(char *file, char *del, int type)
+{
+	t_files	*new;
+
+	new = (t_files *)malloc(sizeof(t_files));
+	if (!new)
+		return (NULL);
+	new->type = type;
+	if (file)
+		new->file = ft_strdup(file);
+	else
+		new->file = ft_strdup("NONE");
+	if (del)
+		new->delimiter = ft_strdup(del);
+	else
+		new->delimiter = ft_strdup("NONE");
+	new->next = NULL;
+	return (new);
+}
+
+void	ft_fileadd_back(t_files **lst, t_files *new)
+{
+	if (!lst || !new)
+		return ;
+	if (!*lst)
+		*lst = new;
+	else
+		ft_filelast(*lst)->next = new;
 }

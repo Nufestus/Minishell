@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:15:41 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/20 19:35:10 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	parse(t_minishell *mini)
     {
         if ((list->index == 0 && list->type == PIPE)
             || (list->next && list->next->type == PIPE 
-                && list->type == PIPE))
+            && list->type == PIPE) || (!list->next && list->type == PIPE))
             syntax("'|'", mini);
         else if (list->next && list->next->category && list->category)
             syntax(list->next->str, mini);

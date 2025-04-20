@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 23:19:47 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/20 18:01:56 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,16 +70,27 @@ void tokenizewords(t_minishell *mini)
     list = mini->tokens;
     while (list)
     {
+        if (list->type != WORD)
+        {
+            list = list->next;
+            continue;
+        }
         if (list->prev && list->prev->category && list->type == WORD && list->prev->type != HEDOC)
             list->type = FILE;
-        else if (((!list->prev || list->prev->type == PIPE || list->prev->type == DEL)
-            || (list->prev && list->prev->type == FILE)) && list->type == WORD)
+        else if ((!list->prev || list->prev->type == PIPE || list->prev->type == DEL)
+            && list->type == WORD)
             list->type = CMD;
         else if (list->prev && list->prev->type == CMD && list->type == WORD)
             list->type = ARG;
         else if (list->prev && list->prev->type == HEDOC && list->type == WORD)
             list->type = DEL;
         else if (list->prev && list->prev->type == OPTION)
+            list->type = ARG;
+        else if (list->prev && list->prev->type == ARG && list->next && list->next->category)
+            list->type = ARG;
+        else if (list->prev && list->prev->type == FILE && list->next && list->next->type == REDOUT)
+            list->type = CMD;
+        else
             list->type = ARG;
         list = list->next;
     }

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 23:18:21 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/20 19:31:24 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,5 +109,10 @@ void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
 t_commandline	*ft_commandlast(t_commandline *lst);
 t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args);
 void freelistcommandline(t_commandline *list);
+void	ft_fileadd_back(t_files **lst, t_files *new);
+t_files	*ft_filelast(t_files *lst);
+t_files	*ft_filenew(char *file, char *del, int type);
+void freelistfiles(t_files *list);
+char *handletypes(int i);
 
 #endif
