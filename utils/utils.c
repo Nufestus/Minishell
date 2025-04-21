@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/20 19:39:55 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/21 15:43:08 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -269,4 +269,32 @@ void	ft_fileadd_back(t_files **lst, t_files *new)
 		*lst = new;
 	else
 		ft_filelast(*lst)->next = new;
+}
+
+char	*ft_substr(char const *s, unsigned int start, size_t len)
+{
+	size_t	i;
+	char	*str;
+	char	*substr;
+
+	if (!s)
+		return (NULL);
+	i = ft_strlen(s);
+	str = (char *)s;
+	if (start > i)
+		return (ft_strdup(""));
+	if (len > i - start)
+		len = i - start;
+	substr = (char *) malloc(len + 1);
+	if (!substr)
+		return (NULL);
+	i = 0;
+	while (i < len)
+	{
+		substr[i] = str[start];
+		start++;
+		i++;
+	}
+	substr[i] = '\0';
+	return (substr);
 }

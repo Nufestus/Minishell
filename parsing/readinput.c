@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/20 22:51:14 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/21 13:43:01 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -205,6 +205,7 @@ void	setupcommandline(t_minishell *mini)
 		}
 	}
 	addfile(file, mini->commandline);
+	printf("\n\nCommandlines :\n\n");
 	if (mini->commandline)
 	{
 		copy = mini->commandline;
@@ -213,6 +214,7 @@ void	setupcommandline(t_minishell *mini)
 			idk = copy->infile;
 			wtf = copy->outfile;
 			i = 0;
+			printf("----------------------------------------------------\n");
 			if (copy->cmd)
 				printf("Cmd: %s\nArgs: ", copy->cmd);
 			else
@@ -224,7 +226,9 @@ void	setupcommandline(t_minishell *mini)
 				while(copy->args[i])
 					printf("%s , ", copy->args[i++]);
 			}
-			printf("\n\t\t--------------Infiles:--------------\n");
+			printf("\nInfiles:\n");
+			if (!idk)
+				printf("NONE");
 			while(idk)
 			{
 				if (idk->file)
@@ -233,13 +237,16 @@ void	setupcommandline(t_minishell *mini)
 					printf(" | Del : %s  | ", idk->delimiter);
 				idk = idk->next;
 			}
-			printf("\n\t\t--------------Outfiles:--------------\n");
+			printf("\nOutfiles:\n");
+			if (!wtf)
+				printf("NONE");
 			while(wtf)
 			{
 				if (wtf->file)
 					printf(" | file : %s --> type : %s |", wtf->file, handletypes(wtf->type));
 				wtf = wtf->next;
 			}
+			printf("\n----------------------------------------------------\n\n");
 			printf("\n\n");
 			copy = copy->next;
 		}

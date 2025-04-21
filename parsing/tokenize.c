@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/20 18:01:56 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/21 17:44:23 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,6 +190,169 @@ char	*fillspace(const char *input)
 	return out;
 }
 
+int	ft_isalnum(int c)
+{
+	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
+		|| (c >= '0' && c <= '9'))
+		return (1);
+	else
+		return (0);
+}
+
+static int	count_len(int n)
+{
+	int	len;
+
+	len = 0;
+	if (n <= 0)
+		len = 1;
+	while (n != 0)
+	{
+		len++;
+		n /= 10;
+	}
+	return (len);
+}
+
+static char	*rtrn(int n, char *num, size_t len)
+{
+	unsigned int	abs;
+	char			*index;
+
+	index = "0123456789";
+	num[len--] = '\0';
+	if (n == 0)
+	{
+		num[0] = '0';
+		return (num);
+	}
+	if (n < 0)
+	{
+		num[0] = '-';
+		abs = -n;
+	}
+	else
+		abs = n;
+	while (abs > 0)
+	{
+		num[len--] = index[abs % 10];
+		abs /= 10;
+	}
+	return (num);
+}
+
+char	*ft_itoa(int n)
+{
+	char	*num;
+	size_t	len;
+
+	len = count_len(n);
+	if (n == -2147483648)
+		return (ft_strdup("-2147483648"));
+	num = (char *) malloc (len + 1);
+	if (num == NULL)
+		return (NULL);
+	num = rtrn(n, num, len);
+	return (num);
+}
+
+char *replace_var(const char *str, int start, int var_len, const char *replacement)
+{
+    int new_len = strlen(str) - var_len + strlen(replacement) + 1;
+    char *res = malloc(new_len);
+    int i = 0, j = 0;
+
+    if (!res) return NULL;
+
+    while (i < start)
+        res[j++] = str[i++];
+
+    for (int k = 0; replacement[k]; k++)
+        res[j++] = replacement[k];
+
+    i = start + var_len + 1;
+
+    while (str[i])
+        res[j++] = str[i++];
+
+    res[j] = '\0';
+    return res;
+}
+char *get_var_name(const char *str, int start, int *len)
+{
+    int i = start + 1;
+
+    if (str[i] == '?')
+    {
+        *len = 1;
+        return ft_strdup("?");
+    }
+    else if (str[i] == '$')
+    {
+        *len = 1;
+        return ft_strdup("$$");
+    }
+    while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
+        i++;
+    *len = i - (start + 1);
+    return ft_substr(str, start + 1, *len);
+}
+char *expand_once(char *str, int pos)
+{
+    int len = 0;
+    char *var_name = get_var_name(str, pos, &len);
+    const char *env_val = "";
+
+    if (var_name)
+    {
+        env_val = getenv(var_name) ? getenv(var_name) : "";
+        if (!env_val)
+            env_val = "[empty]";
+        char *new_str = replace_var(str, pos, len, env_val);
+        free(var_name);
+        return new_str;
+    }
+    return ft_strdup(str);
+}
+
+char *checkforvars(char *str)
+{
+    char *res = ft_strdup(str);
+    int i = 0;
+    bool single = false;
+    bool dbl = false;
+
+    while (res && res[i])
+    {
+        if (res[i] == '\'' && !dbl)
+            single = !single;
+        else if (res[i] == '"' && !single)
+            dbl = !dbl;
+        else if (res[i] == '$' && !single && res[i + 1])
+        {
+            char *tmp = res;
+            res = expand_once(res, i);
+            free(tmp);
+            i = -1;
+        }
+        i++;
+    }
+    return res;
+}
+
+char **expanding(char **strs)
+{
+    int i = 0;
+    while (strs[i])
+    {
+        char *tmp = strs[i];
+        strs[i] = checkforvars(strs[i]);
+        free(tmp);
+        i++;
+    }
+    return strs;
+}
+
 void tokenize(t_minishell *mini)
 {
     int i;
@@ -202,6 +365,7 @@ void tokenize(t_minishell *mini)
     str = ft_split(addspaces, " \t\n\r\v\f");
     if (str == NULL)
         syntax("'quotes'", mini);
+    str = expanding(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
     freedoublearray(str);

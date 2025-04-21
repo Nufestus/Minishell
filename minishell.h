@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/20 19:31:24 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/21 15:43:16 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,5 +114,6 @@ t_files	*ft_filelast(t_files *lst);
 t_files	*ft_filenew(char *file, char *del, int type);
 void freelistfiles(t_files *list);
 char *handletypes(int i);
+char	*ft_substr(char const *s, unsigned int start, size_t len);
 
 #endif
