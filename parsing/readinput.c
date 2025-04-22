@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/21 13:43:01 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:38:02 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,16 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	if (token->type == REDOUT || token->type == APPEND)
 		ft_fileadd_back(&command->outfile, new);
 	free(file);
+	free(del);
 }
 
-void addfile(t_tokenize *token, t_commandline *command)
+void addfile(t_tokenize *token, t_commandline *commandline)
 {
 	t_tokenize *copy;
+	t_commandline *command;
 
 	copy = token;
+	command = commandline;
 	while(copy)
 	{
 		if (copy->index == 0)
@@ -143,6 +146,7 @@ void	setupcommandline(t_minishell *mini)
 	t_files *wtf;
 	t_tokenize *file;
 	t_tokenize *token;
+	t_env *nodes;
 
 	token = mini->tokens;
 	file = mini->tokens;
@@ -173,9 +177,12 @@ void	setupcommandline(t_minishell *mini)
 					option = token->str;
 				token = token->next;
 			}
+			if (!cmd)
+				cmd = ft_strdup("NONE");
 			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
 			ft_commandadd_back(&mini->commandline, command);  
 			free(arg);
+			free(cmd);
 		}
 		else if (token->type == PIPE)
 		{
@@ -199,9 +206,12 @@ void	setupcommandline(t_minishell *mini)
 					option = token->str;
 				token = token->next;
 			}
+			if (!cmd)
+				cmd = ft_strdup("NONE");
 			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
 			ft_commandadd_back(&mini->commandline, command);
 			free(arg);
+			free(cmd);
 		}
 	}
 	addfile(file, mini->commandline);
@@ -217,8 +227,6 @@ void	setupcommandline(t_minishell *mini)
 			printf("----------------------------------------------------\n");
 			if (copy->cmd)
 				printf("Cmd: %s\nArgs: ", copy->cmd);
-			else
-				printf("Cmd: %s\nArgs: ", "NONE");
 			if (!copy->args)
 				printf("(null)\n");
 			else
@@ -251,6 +259,13 @@ void	setupcommandline(t_minishell *mini)
 			copy = copy->next;
 		}
 	}
+	nodes = mini->env;
+	while (nodes)
+	{
+		printf("Env name: %s\nEnv Value: %s\nEnv String: %s\n", nodes->variable, nodes->value, nodes->string);
+		printf("\n\n");
+		nodes = nodes->next;
+	}
 }
 
 void readinput(t_minishell *mini)
@@ -268,8 +283,6 @@ void readinput(t_minishell *mini)
 		parse(mini);
 		setupcommandline(mini);
 		freelisttokens(mini->tokens);
-		freelistfiles(mini->commandline->infile);
-		freelistfiles(mini->commandline->outfile);
 		freelistcommandline(mini->commandline);
 	}
 }

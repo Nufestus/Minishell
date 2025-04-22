@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/21 15:43:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/22 17:01:41 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,8 @@ void freelistcommandline(t_commandline *list)
 	{
 		copy = list->next;
 		freedoublearray(list->args);
+		freelistfiles(list->infile);
+		freelistfiles(list->outfile);
 		free(list->cmd);
 		free(list);
 		list = copy;
@@ -297,4 +299,55 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 	}
 	substr[i] = '\0';
 	return (substr);
+}
+
+t_env	*ft_envlast(t_env *lst)
+{
+	if (!lst)
+		return (NULL);
+	while (lst->next)
+		lst = lst->next;
+	return (lst);
+}
+
+t_env	*ft_envnew(char *value, char *var, char *string)
+{
+	t_env	*new;
+
+	new = (t_env *)malloc(sizeof(t_env));
+	if (!new)
+		return (NULL);
+	new->variable = ft_strdup(var);
+	new->value = ft_strdup(value);
+	new->string = ft_strdup(string);
+	new->next = NULL;
+	return (new);
+}
+
+void	ft_envadd_back(t_env **lst, t_env *new)
+{
+	if (!lst || !new)
+		return ;
+	if (!*lst)
+		*lst = new;
+	else
+		ft_envlast(*lst)->next = new;
+}
+
+void freelistenv(t_env *list)
+{
+	t_env *copy;
+
+	while (list)
+	{
+		copy = list->next;
+		if (list->string)
+			free(list->string);
+		if (list->value)
+			free(list->value);
+		if (list->variable)
+			free(list->variable);
+		free(list);
+		list = copy;
+	}
 }

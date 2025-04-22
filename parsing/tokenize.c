@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/21 17:44:23 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/22 12:57:42 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -256,102 +256,18 @@ char	*ft_itoa(int n)
 	return (num);
 }
 
-char *replace_var(const char *str, int start, int var_len, const char *replacement)
-{
-    int new_len = strlen(str) - var_len + strlen(replacement) + 1;
-    char *res = malloc(new_len);
-    int i = 0, j = 0;
-
-    if (!res) return NULL;
-
-    while (i < start)
-        res[j++] = str[i++];
-
-    for (int k = 0; replacement[k]; k++)
-        res[j++] = replacement[k];
-
-    i = start + var_len + 1;
-
-    while (str[i])
-        res[j++] = str[i++];
-
-    res[j] = '\0';
-    return res;
-}
-char *get_var_name(const char *str, int start, int *len)
-{
-    int i = start + 1;
-
-    if (str[i] == '?')
-    {
-        *len = 1;
-        return ft_strdup("?");
-    }
-    else if (str[i] == '$')
-    {
-        *len = 1;
-        return ft_strdup("$$");
-    }
-    while (str[i] && (ft_isalnum(str[i]) || str[i] == '_'))
-        i++;
-    *len = i - (start + 1);
-    return ft_substr(str, start + 1, *len);
-}
-char *expand_once(char *str, int pos)
-{
-    int len = 0;
-    char *var_name = get_var_name(str, pos, &len);
-    const char *env_val = "";
-
-    if (var_name)
-    {
-        env_val = getenv(var_name) ? getenv(var_name) : "";
-        if (!env_val)
-            env_val = "[empty]";
-        char *new_str = replace_var(str, pos, len, env_val);
-        free(var_name);
-        return new_str;
-    }
-    return ft_strdup(str);
-}
-
-char *checkforvars(char *str)
-{
-    char *res = ft_strdup(str);
-    int i = 0;
-    bool single = false;
-    bool dbl = false;
-
-    while (res && res[i])
-    {
-        if (res[i] == '\'' && !dbl)
-            single = !single;
-        else if (res[i] == '"' && !single)
-            dbl = !dbl;
-        else if (res[i] == '$' && !single && res[i + 1])
-        {
-            char *tmp = res;
-            res = expand_once(res, i);
-            free(tmp);
-            i = -1;
-        }
-        i++;
-    }
-    return res;
-}
-
-char **expanding(char **strs)
-{
-    int i = 0;
-    while (strs[i])
-    {
-        char *tmp = strs[i];
-        strs[i] = checkforvars(strs[i]);
-        free(tmp);
-        i++;
-    }
-    return strs;
-}
+// char **expanding(char **strs)
+// {
+//     int i = 0;
+//     while (strs[i])
+//     {
+//         char *tmp = strs[i];
+//         strs[i] = checkforvars(strs[i]); // make this function
+//         free(tmp);
+//         i++;
+//     }
+//     return strs;
+// }
 
 void tokenize(t_minishell *mini)
 {
@@ -365,7 +281,7 @@ void tokenize(t_minishell *mini)
     str = ft_split(addspaces, " \t\n\r\v\f");
     if (str == NULL)
         syntax("'quotes'", mini);
-    str = expanding(str);
+    // str = expanding(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
     freedoublearray(str);

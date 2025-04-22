@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/21 15:43:16 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/22 16:58:50 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,9 +77,17 @@ typedef struct s_commandline
 	struct s_commandline *next;
 }           t_commandline;
 
+typedef struct s_env
+{
+	char *variable;
+	char *value;
+	char *string;
+	struct s_env *next;
+}				t_env;
+
 typedef struct s_minishell
 {
-	char **env;
+	t_env *env;
 	char *input;
 	t_tokenize *tokens;
 	t_commandline *commandline;
@@ -115,5 +123,9 @@ t_files	*ft_filenew(char *file, char *del, int type);
 void freelistfiles(t_files *list);
 char *handletypes(int i);
 char	*ft_substr(char const *s, unsigned int start, size_t len);
+t_env	*ft_envlast(t_env *lst);
+t_env	*ft_envnew(char *value, char *var, char *string);
+void	ft_envadd_back(t_env **lst, t_env *new);
+void freelistenv(t_env *list);
 
 #endif
