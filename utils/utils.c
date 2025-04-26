@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/22 17:01:41 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/26 01:44:35 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -194,7 +194,7 @@ t_commandline	*ft_commandlast(t_commandline *lst)
 	return (lst);
 }
 
-t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args)
+t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
 {
 	char *str;
 	char *copy;
@@ -215,11 +215,12 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args)
 	free(copy);
 	new->args = ft_split(str, " ");
 	free(str);
-	new->numargs = args;
 	if (cmd)
 		new->cmd = ft_strdup(cmd);
 	new->infile = NULL;
 	new->outfile = NULL;
+	new->incheck = 0;
+	new->outcheck = 0;
 	new->next = NULL;
 	return (new);
 }
@@ -350,4 +351,34 @@ void freelistenv(t_env *list)
 		free(list);
 		list = copy;
 	}
+}
+
+int	ft_commandsize(t_commandline *lst)
+{
+	int	i;
+
+	if (!lst)
+		return (0);
+	i = 0;
+	while (lst != NULL)
+	{
+		lst = lst->next;
+		i++;
+	}
+	return (i);
+}
+
+int	ft_envsize(t_env *lst)
+{
+	int	i;
+
+	if (!lst)
+		return (0);
+	i = 0;
+	while (lst != NULL)
+	{
+		lst = lst->next;
+		i++;
+	}
+	return (i);
 }

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/20 11:50:42 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:32:26 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,29 +44,44 @@ static int    is_delim(char c, char *delims)
     return (0);
 }
 
-int countquotes(char *s)
+int countquotes(char *s, bool *doublequotes, bool *singlequotes)
 {
-    int i;
+    int twoquotes;
+    int onequotes;
     int res;
+    int i;
     
     i = -1;
     res = 0;
+    twoquotes = 0;
+    onequotes = 0;
     while(s[++i])
-        if (s[i] == '"' || s[i] == '\'')
-            res++;
-    if (res == 0 || res % 2 == 0)
-        return (1);
+        if (s[i] == '"')
+            twoquotes++;
+    i = -1;
+    while(s[++i])
+        if (s[i] == '\'')
+            onequotes++;
+    if (twoquotes % 2 != 0)
+        *doublequotes = true;
+    if (onequotes % 2 != 0)
+        *singlequotes = true;
     return (0);
 }
 
 static size_t    count_str(char *s, char *delims)
 {
     unsigned int    i;
+    bool doublequotes;
+    bool singlequotes;
     size_t            word;
 
     i = 0;
     word = 0;
-    if (!countquotes(s))
+    doublequotes = false;
+    singlequotes = false;
+    countquotes(s, &doublequotes, &singlequotes);
+    if (doublequotes || singlequotes)
         return (0);
     while (s[i] != '\0')
     {

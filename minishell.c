@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/22 17:15:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/26 16:35:14 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void setupenv(char **env, t_minishell *mini)
 		j = 0;
 		while(env[i][j] && env[i][j] != '=')
 			j++;
-		var = ft_substr(env[i], 0, j);
+		var = ft_substr(env[i], 0, j + 1);
 		start = j;
 		while(env[i][j])
 			j++;

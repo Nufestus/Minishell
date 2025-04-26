@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/22 17:38:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/26 16:35:07 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,8 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	del = NULL;
 	new = NULL;
 	list = NULL;
-	if (token->type == REDIN)
-	{
-		type = token->type;
-		file = ft_strdup(token->next->str);
-	}
-	else if (token->type == REDOUT)
-	{
-		type = token->type;
-		file = ft_strdup(token->next->str);
-	}
-	else if (token->type == APPEND)
+	if (token->type == REDIN || token->type == APPEND
+			|| token->type == REDOUT)
 	{
 		type = token->type;
 		file = ft_strdup(token->next->str);
@@ -136,6 +127,7 @@ void addfile(t_tokenize *token, t_commandline *commandline)
 void	setupcommandline(t_minishell *mini)
 {
 	char *cmd;
+	int index;
 	int i;
 	char *arg;
 	char *option;
@@ -146,13 +138,13 @@ void	setupcommandline(t_minishell *mini)
 	t_files *wtf;
 	t_tokenize *file;
 	t_tokenize *token;
-	t_env *nodes;
 
 	token = mini->tokens;
 	file = mini->tokens;
 	command = NULL;
 	copy = NULL;
 	mini->commandline = NULL;
+	index = 0;
 	while(token)
 	{
 		cmd = NULL;
@@ -179,10 +171,14 @@ void	setupcommandline(t_minishell *mini)
 			}
 			if (!cmd)
 				cmd = ft_strdup("NONE");
-			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
+			command = ft_commandnew(cmd, option, arg);
+			command->index = index;
+			command->mini = mini;
 			ft_commandadd_back(&mini->commandline, command);  
 			free(arg);
-			free(cmd);
+			if (!ft_strcmp(cmd, "NONE"))
+				free(cmd);
+			index++;
 		}
 		else if (token->type == PIPE)
 		{
@@ -208,25 +204,30 @@ void	setupcommandline(t_minishell *mini)
 			}
 			if (!cmd)
 				cmd = ft_strdup("NONE");
-			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
+			command = ft_commandnew(cmd, option, arg);
+			command->index = index;
+			command->mini = mini;
 			ft_commandadd_back(&mini->commandline, command);
 			free(arg);
-			free(cmd);
+			if (!ft_strcmp(cmd, "NONE"))
+				free(cmd);
+			index++;
 		}
 	}
 	addfile(file, mini->commandline);
-	printf("\n\nCommandlines :\n\n");
+	printf("\n\n\n");
 	if (mini->commandline)
 	{
 		copy = mini->commandline;
 		while(copy)
 		{
+			printf("Commandline %d:\n", copy->index);
 			idk = copy->infile;
 			wtf = copy->outfile;
-			i = 0;
 			printf("----------------------------------------------------\n");
 			if (copy->cmd)
-				printf("Cmd: %s\nArgs: ", copy->cmd);
+			printf("Cmd: %s\nArgs: ", copy->cmd);
+			i = 0;
 			if (!copy->args)
 				printf("(null)\n");
 			else
@@ -259,13 +260,6 @@ void	setupcommandline(t_minishell *mini)
 			copy = copy->next;
 		}
 	}
-	nodes = mini->env;
-	while (nodes)
-	{
-		printf("Env name: %s\nEnv Value: %s\nEnv String: %s\n", nodes->variable, nodes->value, nodes->string);
-		printf("\n\n");
-		nodes = nodes->next;
-	}
 }
 
 void readinput(t_minishell *mini)
@@ -282,6 +276,7 @@ void readinput(t_minishell *mini)
 		tokenize(mini);
 		parse(mini);
 		setupcommandline(mini);
+		execute(mini);
 		freelisttokens(mini->tokens);
 		freelistcommandline(mini->commandline);
 	}

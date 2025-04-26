@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/22 16:58:50 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/26 02:07:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <dirent.h>
 #include <curses.h>
 #include <termios.h>
@@ -29,6 +30,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <fcntl.h>
 
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
 #define INPUT2 "\033[1;96;40m ✔ \033[0m"
@@ -71,9 +73,16 @@ typedef struct s_commandline
 {
 	t_files *outfile;
 	t_files *infile;
-	int numargs;
+	int		lastinfd;
+	int		lastoutfd;
+	int		outcheck;
+	int		incheck;
+	int		lastpipe;
+	int index;
 	char *cmd;
 	char **args;
+	char **env;
+	struct s_minishell *mini;
 	struct s_commandline *next;
 }           t_commandline;
 
@@ -110,12 +119,12 @@ char	*ft_strjoin(const char *s1, const char *s2);
 size_t	ft_strlen(const char *s);
 size_t	ft_strlcat(char *dst, const char *src, size_t dstsize);
 int	ft_strncmp(const char *s1, const char *s2, size_t n);
-void syntax(char *flag, t_minishell *mini);
+void syntax(int *check, char *flag, t_minishell *mini);
 void	parse(t_minishell *mini);
 char *handletypes(int i);
 void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
 t_commandline	*ft_commandlast(t_commandline *lst);
-t_commandline	*ft_commandnew(char *cmd, char *option, char *arg, int args);
+t_commandline	*ft_commandnew(char *cmd, char *option, char *arg);
 void freelistcommandline(t_commandline *list);
 void	ft_fileadd_back(t_files **lst, t_files *new);
 t_files	*ft_filelast(t_files *lst);
@@ -127,5 +136,8 @@ t_env	*ft_envlast(t_env *lst);
 t_env	*ft_envnew(char *value, char *var, char *string);
 void	ft_envadd_back(t_env **lst, t_env *new);
 void freelistenv(t_env *list);
+int	ft_commandsize(t_commandline *lst);
+int	ft_envsize(t_env *lst);
+void execute(t_minishell *mini);
 
 #endif

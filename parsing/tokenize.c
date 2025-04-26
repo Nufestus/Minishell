@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/22 12:57:42 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/24 16:33:46 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void    setupnode(int index, int category, int type, char *str, t_tokenize **tok
     ft_lstadd_back(tokens, newnode);
 }
 
-void syntax(char *flag, t_minishell *mini)
+void syntax(int *check, char *flag, t_minishell *mini)
 {
     (void)mini;
     if (flag)
@@ -32,8 +32,7 @@ void syntax(char *flag, t_minishell *mini)
         printf("%s\n", flag);
         free(flag);
     }
-    freelisttokens(mini->tokens);
-    exit(0);
+    *check = 1;
 }
 
 int parsepipe(t_tokenize *list)
@@ -272,15 +271,22 @@ char	*ft_itoa(int n)
 void tokenize(t_minishell *mini)
 {
     int i;
+    int check;
     char **str;
     char *addspaces;
 
     i = 0;
+    check = 0;
     mini->tokens = NULL;
     addspaces = fillspace(mini->input);
     str = ft_split(addspaces, " \t\n\r\v\f");
     if (str == NULL)
-        syntax("'quotes'", mini);
+    {
+        syntax(&check, "'quotes'", mini);
+        free(addspaces);
+        if (check == 1)
+            return ;
+    }
     // str = expanding(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
