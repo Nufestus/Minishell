@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+         #
+#    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/04/27 04:37:10 by aammisse         ###   ########.fr        #
+#    Updated: 2025/04/27 21:51:23 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -17,7 +17,9 @@ CC = cc
 
 CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
-SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c execution/execution.c
+SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c \
+		parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c \
+		execution/execution.c parsing/expanding.c
 
 OBJS = $(SRCS:.c=.o)
 
