@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/26 02:07:18 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 04:20:08 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,17 +71,14 @@ typedef struct s_tokenize
 
 typedef struct s_commandline
 {
-	t_files *outfile;
-	t_files *infile;
-	int		lastinfd;
-	int		lastoutfd;
-	int		outcheck;
-	int		incheck;
-	int		lastpipe;
+	int		infd;
+	int		outfd;
 	int index;
 	char *cmd;
 	char **args;
 	char **env;
+	t_files *outfile;
+	t_files *infile;
 	struct s_minishell *mini;
 	struct s_commandline *next;
 }           t_commandline;
@@ -97,6 +94,7 @@ typedef struct s_env
 typedef struct s_minishell
 {
 	t_env *env;
+	int	**pipes;
 	char *input;
 	t_tokenize *tokens;
 	t_commandline *commandline;
@@ -104,7 +102,7 @@ typedef struct s_minishell
 
 char    **ft_split(char const *s, char *delims);
 int ft_strcmp(char *str, char *str1);
-void tokenize(t_minishell *mini);
+int	tokenize(t_minishell *mini);
 char    **split(char const *s, char *delims);
 int	ft_isalpha(int c);
 void readinput(t_minishell *mini);

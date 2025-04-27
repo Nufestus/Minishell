@@ -6,7 +6,7 @@
 #    By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/04/26 16:45:11 by aammisse         ###   ########.fr        #
+#    Updated: 2025/04/27 04:37:10 by aammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
 SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c execution/execution.c
 

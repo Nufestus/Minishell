@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/24 16:33:46 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 04:34:16 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,8 @@ void tokenizewords(t_minishell *mini)
             list->type = ARG;
         else if (list->prev && list->prev->type == ARG && list->next && list->next->category)
             list->type = ARG;
-        else if (list->prev && list->prev->type == FILE && list->next && list->next->type == REDOUT)
+        else if (list->prev && list->prev->type == FILE
+            && ((list->next && list->next->type == REDOUT) || !list->next || list->next->type == PIPE))
             list->type = CMD;
         else
             list->type = ARG;
@@ -268,7 +269,7 @@ char	*ft_itoa(int n)
 //     return strs;
 // }
 
-void tokenize(t_minishell *mini)
+int tokenize(t_minishell *mini)
 {
     int i;
     int check;
@@ -285,11 +286,12 @@ void tokenize(t_minishell *mini)
         syntax(&check, "'quotes'", mini);
         free(addspaces);
         if (check == 1)
-            return ;
+            return (-1);
     }
     // str = expanding(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
     freedoublearray(str);
     free(addspaces);
+    return (0);
 }

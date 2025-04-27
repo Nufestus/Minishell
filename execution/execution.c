@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/26 17:18:47 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 04:32:13 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ void openfiles(t_commandline *command)
     t_commandline *copy;
     
     copy = command;
+    outfd = -1;
+    infd = -1;
     infiles = copy->infile;
     while(infiles)
     {
@@ -28,7 +30,7 @@ void openfiles(t_commandline *command)
             infd = open(infiles->file, O_RDONLY);
         infiles = infiles->next;
     }
-    copy->lastinfd = infd;
+    copy->infd = infd;
     outfiles = copy->outfile;
     while(outfiles)
     {
@@ -38,7 +40,7 @@ void openfiles(t_commandline *command)
             outfd = open(outfiles->file, O_RDWR | O_CREAT | O_APPEND, 0644);
         outfiles = outfiles->next;
     }
-    copy->lastoutfd = outfd;
+    copy->outfd = outfd;
 }
 
 
@@ -113,24 +115,6 @@ char	*checkfile(t_commandline *command)
 	return (freestr(path), NULL);
 }
 
-void	commandparse(t_commandline *command)
-{
-    if (command->lastinfd != STDIN_FILENO)
-    {
-        dup2(command->lastinfd, 0);
-        close(command->lastinfd);
-    }
-    if (command->lastoutfd != STDOUT_FILENO)
-    {
-        dup2(command->lastoutfd, 1);
-        close(command->lastoutfd);
-    }
-	if (!ft_find(command->args[0], "./"))
-        command->cmd = checkfile(command);
-	else
-        command->cmd = ft_strdup(command->args[0]);
-}
-
 char **constructenv(t_env *env)
 {
     int i; 
@@ -156,65 +140,188 @@ char **constructenv(t_env *env)
     return (res);
 }
 
-void getfds(t_commandline *command, int outfd)
+void initializepipes(t_minishell *mini)
 {
-    if (!command->index && !command->incheck)
-        command->lastinfd = STDIN_FILENO;
-    else if (!command->incheck && command->index)
-        command->lastinfd = command->lastpipe;
-    if (!command->index && !command->outcheck && command->next)
-        command->lastoutfd = outfd;
-    else if (command->index && !command->next && !command->outcheck)
-        command->lastoutfd = STDOUT_FILENO;
+    int size;
+    int i;
+
+    i = 0;
+    size = ft_commandsize(mini->commandline);
+    mini->pipes = malloc(size * sizeof(int *));
+    while(i < size)
+    {
+        mini->pipes[i] = malloc(sizeof(int) * 2);
+        pipe(mini->pipes[i]);
+        i++;
+    }
 }
 
-void	childlabor(t_commandline *commandline)
+
+void handleiolast(t_commandline *command)
 {
-    int		fd[2];
-    pid_t   pid;
+    t_minishell *mini;
     
-    pipe(fd);
-    getfds(commandline, fd[1]);
-    commandline->env = constructenv(commandline->mini->env);
-	pid = fork();
+    mini = command->mini;
+    if (command->infd == -1)
+        command->infd = mini->pipes[command->index - 1][0];
+    if (command->outfd == -1)
+        command->outfd = 1;
+}
+
+void setuplastcommand(t_commandline *command)
+{
+    pid_t pid;
+    int size;
+    t_minishell *mini;
+    
+    mini = command->mini;
+    size = ft_commandsize(mini->commandline);
+    command->env = constructenv(mini->env);
+    handleiolast(command);
+    pid = fork();
     if (!pid)
     {
-        openfiles(commandline);
-        commandparse(commandline);
-        // dup2(commandline->lastinfd, STDIN_FILENO);
-        // close(commandline->lastinfd);
-        // dup2(commandline->lastoutfd, STDOUT_FILENO);
-        // close(commandline->lastoutfd);
-        if (!ft_find(commandline->args[0], "./"))
-            commandline->cmd = checkfile(commandline);
-	    else
-            commandline->cmd = ft_strdup(commandline->args[0]);
-        execve(commandline->cmd, commandline->args, commandline->env);
-        perror("execve");
+        if (command->infd != STDIN_FILENO)
+        {
+            dup2(command->infd, 0);
+            close(command->infd);
+        }
+        if (command->outfd != STDOUT_FILENO)
+        {
+            dup2(command->outfd, 1);
+            close(command->outfd);
+        }
+        if (!ft_find(command->args[0], "./"))
+            command->cmd = checkfile(command);
+        else
+            command->cmd = ft_strdup(command->args[0]);
+        execve(command->cmd, command->args, command->env);
+        perror(command->cmd);
         exit(0);
     }
-    close(fd[1]);
-    close(commandline->lastpipe);
-    if (commandline->next)
-        commandline->next->lastpipe = fd[0];
+    close(mini->pipes[command->index][1]);
+    close(mini->pipes[command->index - 1][0]);
 }
 
-void	startpipex(t_commandline *commandline)
+void handleiomiddle(t_commandline *command)
+{
+    t_minishell *mini;
+    
+    mini = command->mini;
+    if (command->infd == -1)
+        command->infd = mini->pipes[command->index - 1][0];
+    if (command->outfd == -1)
+        command->outfd = mini->pipes[command->index][1];
+}
+
+void setupmiddlecommand(t_commandline *command)
+{
+    pid_t pid;
+    int size;
+    t_minishell *mini;
+
+    mini = command->mini;
+    size = ft_commandsize(mini->commandline);
+    handleiomiddle(command);
+    command->env = constructenv(mini->env);
+    pid = fork();
+    if (!pid)
+    {
+        close(mini->pipes[command->index][0]);
+        if (command->infd != STDIN_FILENO)
+        {
+            dup2(command->infd, 0);
+            close(command->infd);
+        }
+        if (command->outfd != STDOUT_FILENO)
+        {
+            dup2(command->outfd, 1);
+            close(command->outfd);
+        }
+        if (!ft_find(command->args[0], "./"))
+            command->cmd = checkfile(command);
+        else
+            command->cmd = ft_strdup(command->args[0]);
+        execve(command->cmd, command->args, command->env);
+        perror(command->cmd);
+        exit(0);
+    }
+    close(mini->pipes[command->index][1]);
+    close(mini->pipes[command->index - 1][0]);
+}
+
+void handleiosingle(t_commandline *command)
+{
+    t_minishell *mini;
+
+    mini = command->mini;
+    if (command->infd == -1)
+        command->infd = 0;
+    if (command->outfd == -1 && command->next)
+        command->outfd = mini->pipes[command->index][1];
+    else if (command->outfd == -1 && !command->next)
+        command->outfd = 1;
+}
+
+void setupfirstcommand(t_commandline *command)
+{
+    pid_t pid;
+    int size;
+    t_minishell *mini;
+    
+    mini = command->mini;
+    size = ft_commandsize(mini->commandline);
+    handleiosingle(command);
+    command->env = constructenv(mini->env);
+    pid = fork();
+    if (!pid)
+    {
+        close(mini->pipes[command->index][0]);
+        if (command->infd != STDIN_FILENO)
+        {
+            dup2(command->infd, 0);
+            close(command->infd);
+        }
+        if (command->outfd != STDOUT_FILENO)
+        {
+            dup2(command->outfd, 1);
+            close(command->outfd);
+        }
+        if (!ft_find(command->args[0], "./"))
+            command->cmd = checkfile(command);
+        else
+            command->cmd = ft_strdup(command->args[0]);
+        execve(command->cmd, command->args, command->env);
+        perror(command->cmd);
+        exit(0);
+    }
+    close(mini->pipes[command->index][1]);
+}
+
+void	childlabor(t_commandline *command)
+{
+    if (!command->index)
+        setupfirstcommand(command);
+    else if (!command->next)
+        setuplastcommand(command);
+    else
+        setupmiddlecommand(command);
+}
+
+void	startpipex(t_commandline *command)
 {
 	int	i;
     int size;
     t_commandline *copy;
 
 	i = -1;
-    copy = commandline;
+    copy = command;
+    initializepipes(command->mini);
     size = ft_commandsize(copy);
 	while (++i < size)
     {
-        if (copy->lastinfd)
-            copy->incheck = 1;
-        if (copy->lastoutfd)
-            copy->outcheck = 1;
-		childlabor(copy);
+        openfiles(copy);
+        childlabor(copy);
         copy = copy->next;
     }
 	waitpid(-1, NULL, 0);
