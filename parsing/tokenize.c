@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 04:34:16 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 17:32:12 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,21 @@ int parseoutput(t_tokenize *list)
     else if (!list->next)
         return (0);
     return (1);
+}
+
+void retokenize(t_minishell *mini)
+{
+    t_tokenize *list;
+
+    list = mini->tokens;
+    while(list)
+    {
+        if (list->type == ARG && list->prev && 
+            (list->prev->type == FILE || list->prev->type == PIPE) 
+                && list->next && list->next->type == ARG)
+            list->type = CMD;
+        list = list->next;
+    }
 }
 
 void tokenizewords(t_minishell *mini)
@@ -291,6 +306,7 @@ int tokenize(t_minishell *mini)
     // str = expanding(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
+    retokenize(mini);
     freedoublearray(str);
     free(addspaces);
     return (0);

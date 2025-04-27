@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 04:35:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 14:03:22 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	parse(t_minishell *mini)
 {
 	int check;
 	t_tokenize *list;
-	// t_tokenize *copy;
+	t_tokenize *copy;
 
 	list = mini->tokens;
 	check = 0;
@@ -40,10 +40,10 @@ void	parse(t_minishell *mini)
 			break ;
 		list = list->next;
 	}
-	// copy = mini->tokens;
-	// while(copy)
-	// {
-	// 	printf("%s / %s\n", copy->str, handletypes(copy->type));
-	// 	copy = copy->next;
-	// }
+	copy = mini->tokens;
+	while(copy)
+	{
+		printf("%s / %s\n", copy->str, handletypes(copy->type));
+		copy = copy->next;
+	}
 }

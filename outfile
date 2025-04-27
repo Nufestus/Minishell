@@ -1,0 +1,10 @@
+execution
+Makefile
+minishell
+minishell.c
+minishell.h
+minishell.o
+out
+outfile
+parsing
+utils

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 04:32:13 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 15:20:56 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,6 +156,21 @@ void initializepipes(t_minishell *mini)
     }
 }
 
+void	printerror(char *str)
+{
+	write(2, str, ft_strlen(str));
+	write(2, ": Permission denied\n", 21);
+	exit(EXIT_FAILURE);
+}
+
+void	error(char *str)
+{
+	char	*tmp;
+
+	tmp = ft_strjoin(str, ": command not found\n");
+	write(2, tmp, ft_strlen(tmp) + 1);
+	free(tmp);
+}
 
 void handleiolast(t_commandline *command)
 {
@@ -195,9 +210,14 @@ void setuplastcommand(t_commandline *command)
             command->cmd = checkfile(command);
         else
             command->cmd = ft_strdup(command->args[0]);
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
+			printerror(command->cmd);
         execve(command->cmd, command->args, command->env);
-        perror(command->cmd);
-        exit(0);
+        if (!ft_find(command->args[0], "./"))
+			error(command->args[0]);
+		else
+			perror(command->args[0]);
+        exit(EXIT_FAILURE);
     }
     close(mini->pipes[command->index][1]);
     close(mini->pipes[command->index - 1][0]);
@@ -242,9 +262,14 @@ void setupmiddlecommand(t_commandline *command)
             command->cmd = checkfile(command);
         else
             command->cmd = ft_strdup(command->args[0]);
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
+			printerror(command->cmd);
         execve(command->cmd, command->args, command->env);
-        perror(command->cmd);
-        exit(0);
+        if (!ft_find(command->args[0], "./"))
+			error(command->args[0]);
+		else
+			perror(command->args[0]);
+        exit(EXIT_FAILURE);
     }
     close(mini->pipes[command->index][1]);
     close(mini->pipes[command->index - 1][0]);
@@ -287,13 +312,19 @@ void setupfirstcommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
+        free(command->cmd);
         if (!ft_find(command->args[0], "./"))
             command->cmd = checkfile(command);
         else
             command->cmd = ft_strdup(command->args[0]);
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
+			printerror(command->cmd);
         execve(command->cmd, command->args, command->env);
-        perror(command->cmd);
-        exit(0);
+        if (!ft_find(command->args[0], "./"))
+			error(command->args[0]);
+		else
+			perror(command->args[0]);
+        exit(EXIT_FAILURE);
     }
     close(mini->pipes[command->index][1]);
 }
