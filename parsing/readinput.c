@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 04:37:00 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 23:16:32 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -278,7 +278,7 @@ void readinput(t_minishell *mini)
 {
     while(1)
 	{
-		mini->input = readline("minishell$ ");
+		mini->input = readline(INPUT1 INPUT2);
 		if (!mini->input)
 		{
 			free(mini->input);

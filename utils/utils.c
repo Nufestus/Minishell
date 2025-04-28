@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/26 23:54:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/27 20:22:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -319,6 +319,7 @@ t_env	*ft_envnew(char *value, char *var, char *string)
 	new = (t_env *)malloc(sizeof(t_env));
 	if (!new)
 		return (NULL);
+	new->isexported = true;
 	new->variable = ft_strdup(var);
 	new->value = ft_strdup(value);
 	new->string = ft_strdup(string);

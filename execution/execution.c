@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 15:20:56 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:21:37 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,20 +18,23 @@ void openfiles(t_commandline *command)
     int infd;
     t_files *infiles;
     t_files *outfiles;
-    t_commandline *copy;
     
-    copy = command;
-    outfd = -1;
-    infd = -1;
-    infiles = copy->infile;
+    outfd = -2;
+    infd = -2;
+    infiles = command->infile;
     while(infiles)
     {
         if (infiles->type != HEDOC)
             infd = open(infiles->file, O_RDONLY);
+        if (infd == -1)
+        {
+            perror(infiles->file);
+            exit(0);
+        }
         infiles = infiles->next;
     }
-    copy->infd = infd;
-    outfiles = copy->outfile;
+    command->infd = infd;
+    outfiles = command->outfile;
     while(outfiles)
     {
         if (outfiles->type == REDOUT)
@@ -40,7 +43,7 @@ void openfiles(t_commandline *command)
             outfd = open(outfiles->file, O_RDWR | O_CREAT | O_APPEND, 0644);
         outfiles = outfiles->next;
     }
-    copy->outfd = outfd;
+    command->outfd = outfd;
 }
 
 
@@ -99,7 +102,7 @@ char	*checkfile(t_commandline *command)
 	char	**path;
     
 	i = 0;
-	tmp = my_getenv(command->mini, "PATH=");
+	tmp = my_getenv(command->mini, "PATH");
 	path = split(tmp, ":");
 	i = -1;
 	while (path[++i])
@@ -112,7 +115,7 @@ char	*checkfile(t_commandline *command)
             return (freestr(path), ft_strdup(str));
 		free(str);
 	}
-	return (freestr(path), NULL);
+	return (freestr(path), ft_strdup(command->args[0]));
 }
 
 char **constructenv(t_env *env)
@@ -172,14 +175,24 @@ void	error(char *str)
 	free(tmp);
 }
 
+void handlebuiltins(t_commandline *command)
+{
+    if (!ft_strcmp(command->cmd, "env"))
+        ft_env(command->mini, command->args);
+    else if (!ft_strcmp(command->cmd, "pwd"))
+        ft_pwd();
+    else if (!ft_strcmp(command->cmd, "cd"))
+        ft_cd(command);
+}
+
 void handleiolast(t_commandline *command)
 {
     t_minishell *mini;
     
     mini = command->mini;
-    if (command->infd == -1)
+    if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
-    if (command->outfd == -1)
+    if (command->outfd == -2)
         command->outfd = 1;
 }
 
@@ -192,10 +205,11 @@ void setuplastcommand(t_commandline *command)
     mini = command->mini;
     size = ft_commandsize(mini->commandline);
     command->env = constructenv(mini->env);
-    handleiolast(command);
     pid = fork();
     if (!pid)
     {
+        openfiles(command);
+        handleiolast(command);
         if (command->infd != STDIN_FILENO)
         {
             dup2(command->infd, 0);
@@ -206,12 +220,19 @@ void setuplastcommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        if (!ft_find(command->args[0], "./"))
+        if (!ft_find(command->args[0], "./") && !checkcommand(command))
+        {
+            free(command->cmd);
             command->cmd = checkfile(command);
+        }
         else
+        {
+            free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
+        }
         if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
-			printerror(command->cmd);
+            printerror(command->cmd);
+        handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
         if (!ft_find(command->args[0], "./"))
 			error(command->args[0]);
@@ -228,9 +249,9 @@ void handleiomiddle(t_commandline *command)
     t_minishell *mini;
     
     mini = command->mini;
-    if (command->infd == -1)
+    if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
-    if (command->outfd == -1)
+    if (command->outfd == -2)
         command->outfd = mini->pipes[command->index][1];
 }
 
@@ -242,11 +263,12 @@ void setupmiddlecommand(t_commandline *command)
 
     mini = command->mini;
     size = ft_commandsize(mini->commandline);
-    handleiomiddle(command);
     command->env = constructenv(mini->env);
     pid = fork();
     if (!pid)
     {
+        openfiles(command);
+        handleiomiddle(command);
         close(mini->pipes[command->index][0]);
         if (command->infd != STDIN_FILENO)
         {
@@ -258,12 +280,19 @@ void setupmiddlecommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        if (!ft_find(command->args[0], "./"))
+        if (!ft_find(command->args[0], "./") && !checkcommand(command))
+        {
+            free(command->cmd);
             command->cmd = checkfile(command);
+        }
         else
+        {
+            free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
+        }
         if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
 			printerror(command->cmd);
+        handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
         if (!ft_find(command->args[0], "./"))
 			error(command->args[0]);
@@ -280,12 +309,25 @@ void handleiosingle(t_commandline *command)
     t_minishell *mini;
 
     mini = command->mini;
-    if (command->infd == -1)
+    if (command->infd == -2)
         command->infd = 0;
-    if (command->outfd == -1 && command->next)
+    if (command->outfd == -2 && command->next)
         command->outfd = mini->pipes[command->index][1];
-    else if (command->outfd == -1 && !command->next)
+    else if (command->outfd == -2 && !command->next)
         command->outfd = 1;
+}
+
+int checkcommand(t_commandline *command)
+{
+    if (!ft_strcmp(command->cmd, "cd") 
+        || !ft_strcmp(command->cmd, "env") 
+        || !ft_strcmp(command->cmd, "pwd")
+        || !ft_strcmp(command->cmd, "echo")
+        || !ft_strcmp(command->cmd, "export")
+        || !ft_strcmp(command->cmd, "unset")
+        || !ft_strcmp(command->cmd, "exit"))
+        return (1);
+    return (0);
 }
 
 void setupfirstcommand(t_commandline *command)
@@ -296,11 +338,12 @@ void setupfirstcommand(t_commandline *command)
     
     mini = command->mini;
     size = ft_commandsize(mini->commandline);
-    handleiosingle(command);
     command->env = constructenv(mini->env);
     pid = fork();
     if (!pid)
     {
+        openfiles(command);
+        handleiosingle(command);
         close(mini->pipes[command->index][0]);
         if (command->infd != STDIN_FILENO)
         {
@@ -312,13 +355,19 @@ void setupfirstcommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        free(command->cmd);
-        if (!ft_find(command->args[0], "./"))
+        if (!ft_find(command->args[0], "./") && !checkcommand(command))
+        {
+            free(command->cmd);
             command->cmd = checkfile(command);
+        }
         else
+        {
+            free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
+        }
         if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
 			printerror(command->cmd);
+        handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
         if (!ft_find(command->args[0], "./"))
 			error(command->args[0]);
@@ -343,6 +392,7 @@ void	startpipex(t_commandline *command)
 {
 	int	i;
     int size;
+    int status;
     t_commandline *copy;
 
 	i = -1;
@@ -351,11 +401,12 @@ void	startpipex(t_commandline *command)
     size = ft_commandsize(copy);
 	while (++i < size)
     {
-        openfiles(copy);
         childlabor(copy);
         copy = copy->next;
     }
-	waitpid(-1, NULL, 0);
+	while (waitpid(-1, &status, 0) != -1)
+        {}
+    command->mini->exitstatus = status >> 8;
 }
 
 void execute(t_minishell *mini)
