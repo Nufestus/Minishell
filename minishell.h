@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 04:20:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 15:01:04 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
-#define INPUT2 "\033[1;96;40m ✔ \033[0m"
+#define INPUT2 "\033[1;96;40m ✗ \033[0m"
 #define PIPE 1
 #define WORD 2
 #define REDOUT 3
@@ -85,6 +86,7 @@ typedef struct s_commandline
 
 typedef struct s_env
 {
+	bool	isexported;
 	char *variable;
 	char *value;
 	char *string;
@@ -93,9 +95,10 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
-	t_env *env;
 	int	**pipes;
+	int exitstatus;
 	char *input;
+	t_env *env;
 	t_tokenize *tokens;
 	t_commandline *commandline;
 }               t_minishell;
@@ -137,5 +140,10 @@ void freelistenv(t_env *list);
 int	ft_commandsize(t_commandline *lst);
 int	ft_envsize(t_env *lst);
 void execute(t_minishell *mini);
+void ft_env(t_minishell *mini, char **args);
+void ft_pwd(void);
+void	ft_putstr_fd(char *s, int fd);
+void ft_cd(t_commandline *commandline);
+int checkcommand(t_commandline *command);
 
 #endif
