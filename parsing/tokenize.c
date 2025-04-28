@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 20:23:54 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:18:04 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -271,19 +271,6 @@ char	*ft_itoa(int n)
 	return (num);
 }
 
-// char **expanding(char **strs)
-// {
-//     int i = 0;
-//     while (strs[i])
-//     {
-//         char *tmp = strs[i];
-//         strs[i] = checkforvars(strs[i]); // make this function
-//         free(tmp);
-//         i++;
-//     }
-//     return strs;
-// }
-
 int tokenize(t_minishell *mini)
 {
     int i;
@@ -309,6 +296,5 @@ int tokenize(t_minishell *mini)
     retokenize(mini);
     freedoublearray(str);
     free(addspaces);
-    printf("-------------------IMHERE-------------------\n");
     return (0);
 }

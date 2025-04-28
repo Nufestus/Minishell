@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 23:09:41 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:13:06 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -313,16 +313,16 @@ void setupfirstcommand(t_commandline *command)
             close(command->outfd);
         }
         free(command->cmd);
-        if (!ft_find(command->args[0], "./"))
+        if (command->args && !ft_find(command->args[0], "./"))
             command->cmd = checkfile(command);
-        else
+        else if (command->args)
             command->cmd = ft_strdup(command->args[0]);
         if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
 			printerror(command->cmd);
         execve(command->cmd, command->args, command->env);
-        if (!ft_find(command->args[0], "./"))
+        if (command->args && !ft_find(command->args[0], "./"))
 			error(command->args[0]);
-		else
+		else if (command->args)
 			perror(command->args[0]);
         exit(EXIT_FAILURE);
     }

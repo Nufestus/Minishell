@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 18:06:32 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:23:57 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,5 +138,6 @@ int	ft_commandsize(t_commandline *lst);
 int	ft_envsize(t_env *lst);
 char **expanding(char **strs, t_minishell *mini);
 void execute(t_minishell *mini);
+char	*ft_itoa(int n);
 
 #endif

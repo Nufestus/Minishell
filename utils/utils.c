@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/26 23:54:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 14:13:35 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ void	freedoublearray(char **str)
 	int i;
 
 	i = 0;
+	if (!str || !*str)
+		return ;
 	while(str[i])
 	{
 		free(str[i]);
@@ -214,7 +216,8 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
 	copy = str;
 	str = ft_strjoin(str, arg);
 	free(copy);
-	new->args = ft_split(str, " ");
+	if (new->args)
+		new->args = ft_split(str, " ");
 	free(str);
 	if (cmd)
 		new->cmd = ft_strdup(cmd);
