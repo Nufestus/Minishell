@@ -1,25 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env.c                                              :+:      :+:    :+:   */
+/*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 23:16:10 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 17:02:50 by rammisse         ###   ########.fr       */
+/*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
+/*   Updated: 2025/04/28 17:04:23 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void env(t_minishell *mini)
+void export()
 {
-    t_env *tmp;
-
-    tmp = mini->env;
-    while (tmp)
-    {
-        printf("%s\n", tmp->variable);
-        tmp = tmp->next;
-    }
+    
 }
