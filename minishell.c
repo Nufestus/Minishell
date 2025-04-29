@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 21:11:35 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 09:48:56 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void setupenv(char **env, t_minishell *mini)
 		j = 0;
 		while(env[i][j] && env[i][j] != '=')
 			j++;
-		var = ft_substr(env[i], 0, j + 1);
+		var = ft_substr(env[i], 0, j);
 		start = j;
 		while(env[i][j])
 			j++;
@@ -54,6 +54,8 @@ int	main(int ac, char **av, char **env)
 	mini.commandline = NULL;
 	mini.input = NULL;
 	mini.tokens = NULL;
+	mini.exitstatus = 0;
+	mini.check = 0;
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);

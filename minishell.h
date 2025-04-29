@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 14:23:57 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 09:49:02 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,10 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <limits.h>
 
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
-#define INPUT2 "\033[1;96;40m ✔ \033[0m"
+#define INPUT2 "\033[1;96;40m ✗ \033[0m"
 #define PIPE 1
 #define WORD 2
 #define REDOUT 3
@@ -85,6 +86,7 @@ typedef struct s_commandline
 
 typedef struct s_env
 {
+	bool	isexported;
 	char *variable;
 	char *value;
 	char *string;
@@ -93,14 +95,16 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
-	t_env *env;
 	int	**pipes;
+	int exitstatus;
+	int check;
 	char *input;
+	t_env *env;
 	t_tokenize *tokens;
 	t_commandline *commandline;
 }               t_minishell;
 
-char    **ft_split(char const *s, char *delims);
+char    **ft_split(int *check, char *s, char *delims);
 int ft_strcmp(char *str, char *str1);
 int	tokenize(t_minishell *mini);
 char    **split(char const *s, char *delims);
@@ -138,6 +142,15 @@ int	ft_commandsize(t_commandline *lst);
 int	ft_envsize(t_env *lst);
 char **expanding(char **strs, t_minishell *mini);
 void execute(t_minishell *mini);
+void ft_env(t_minishell *mini, char **args);
+void ft_pwd(t_minishell *mini);
+void	ft_putstr_fd(char *s, int fd);
+void ft_cd(t_commandline *commandline);
+int checkcommand(char *cmd);
+char **constructenv(t_env *env);
+void handleiosingle(t_commandline *command);
+void openfiles(t_commandline *command);
+char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
 
 #endif

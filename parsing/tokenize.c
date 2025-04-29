@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 14:18:04 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 09:48:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,22 @@ void tokenizewords(t_minishell *mini)
     }
 }
 
+int isanoption(char *str)
+{
+    int i;
+
+    i = 0;
+    if (str[i] == '-')
+    {
+        i++;
+        while(str[i] == 'n')
+            i++;
+    }
+    if (str[i] == '\0')
+        return (1);
+    return (0);
+}
+
 void tokenizesymbols(char **str, t_minishell *mini)
 {
     int i;
@@ -128,7 +144,7 @@ void tokenizesymbols(char **str, t_minishell *mini)
             setupnode(i, 1, REDOUT, str[i], &mini->tokens);
         else if (!ft_strcmp(str[i], "<"))
             setupnode(i, 1, REDIN, str[i], &mini->tokens);
-        else if (!ft_strncmp(str[i], "-n", 2))
+        else if (isanoption(str[i]))
             setupnode(i, 0, OPTION, str[i], &mini->tokens);
         else
             setupnode(i, 0, WORD, str[i], &mini->tokens);
@@ -271,6 +287,88 @@ char	*ft_itoa(int n)
 	return (num);
 }
 
+static char	*alloc(char *str)
+{
+	int		i;
+	char	*string;
+
+	i = 0;
+	string = (char *)malloc(ft_strlen(str) + 1);
+	if (!string)
+		return (NULL);
+	while (str[i] != '\0')
+	{
+		string[i] = str[i];
+		i++;
+	}
+	string[i] = '\0';
+	return (string);
+}
+
+static int	in_set(char c, char *set)
+{
+	int	i;
+
+	i = 0;
+	while (set[i] != '\0')
+	{
+		if (set[i] == c)
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+char	*ft_strtrim(char *s1, char *set)
+{
+	size_t	startind;
+	size_t	lastind;
+	char	*trim;
+
+	if (s1 != NULL && set == NULL)
+		return (alloc((char *)s1));
+	else if ((s1 == NULL && set == NULL) || (s1 == NULL && set != NULL))
+		return (NULL);
+	startind = 0;
+	lastind = ft_strlen((char *)s1) - 1;
+	while (in_set(s1[startind], (char *)set) && s1[startind] != '\0')
+		startind++;
+	if (s1[startind] == '\0')
+		return (ft_strdup(""));
+	while (in_set(s1[lastind], (char *)set) && lastind > startind)
+		lastind--;
+	trim = (char *)malloc(lastind - startind + 2);
+	if (trim == NULL)
+		return (NULL);
+	ft_strlcpy(trim, s1 + startind, lastind - startind + 2);
+	return (trim);
+}
+
+char **removequotes(char **str)
+{
+    int i;
+    char *tmp;
+
+    i = 0;
+    while(str[i])
+    {
+        if (str[i][0] == '"')
+        {
+            tmp = str[i];
+            str[i] = ft_strtrim(str[i], "\"");
+            free(tmp);
+        }
+        else if (str[i][0] == '\'')
+        {
+            tmp = str[i];
+            str[i] = ft_strtrim(str[i], "'");
+            free(tmp);
+        }
+        i++;
+    }
+    return (str);
+}
+
 int tokenize(t_minishell *mini)
 {
     int i;
@@ -282,15 +380,15 @@ int tokenize(t_minishell *mini)
     check = 0;
     mini->tokens = NULL;
     addspaces = fillspace(mini->input);
-    str = ft_split(addspaces, " \t\n\r\v\f");
+    str = ft_split(&check, addspaces, " \t\n\r\v\f");
     if (str == NULL)
     {
-        syntax(&check, "'quotes'", mini);
         free(addspaces);
         if (check == 1)
             return (-1);
     }
     str = expanding(str, mini);
+    str = removequotes(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
     retokenize(mini);

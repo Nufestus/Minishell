@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 17:43:08 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 20:42:01 by rammisse         ###   ########.fr       */
+/*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
+/*   Updated: 2025/04/29 09:47:51 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,7 @@ int    lenwithoutvar(char *str)
 			i++;
 		}
 	}
-	return (j);
+	return (j + 4);
 }
 
 int varlen(char *str, t_minishell *mini)
@@ -78,7 +78,6 @@ int varlen(char *str, t_minishell *mini)
 	int start;
 	int len;
 	char *var;
-	char *joined;
 	char *expandedvar;
 
 	i = 0;
@@ -97,12 +96,10 @@ int varlen(char *str, t_minishell *mini)
 					i++;
 				len = i - start;
 				var = ft_substr(str, start, len);
-				joined = ft_strjoin(var, "=");
-				expandedvar = ft_getenv(joined, mini);
+				expandedvar = ft_getenv(var, mini);
 				if (expandedvar)
 					finallen += ft_strlen(expandedvar);
 				free(var);
-				free(joined);
 			}
 			else if (str[i] == '$' && str[i + 1] == '?')
 			{
@@ -129,7 +126,6 @@ char *expand(char *str, t_minishell *mini)
     int j;
 	char *expandedvar;
     char *expanded;
-	char *joined;
 	size_t	k;
 	char *var;
 
@@ -147,17 +143,9 @@ char *expand(char *str, t_minishell *mini)
     while (str[i])
     {
         if (str[i] == '\'' && !indouble)
-        {
             insingle = !insingle;
-            i++;
-			continue;
-        }
         else if (str[i] == '"' && !insingle)
-        {
             indouble = !indouble;
-            i++;
-			continue;
-        }
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
@@ -173,8 +161,7 @@ char *expand(char *str, t_minishell *mini)
 					free(expanded);
 					return("");
 				}
-				joined = ft_strjoin(var, "=");
-				expandedvar = ft_getenv(joined, mini);
+				expandedvar = ft_getenv(var, mini);
 				if (expandedvar)
 				{
 					k = 0;
@@ -185,24 +172,23 @@ char *expand(char *str, t_minishell *mini)
 						k++;
 					}
 				}
-				free(joined);
 				free(var);
 			}
-			// else if (str[i + 1] == '?')
-			// {
-			// 	i++;
-			// 	if (str[i] == '?')
-			// 		expandedvar = ft_itoa(mini->exitstatus);
-			// 	i++;
-			// 	k = 0;
-			// 	while (expandedvar[k])
-			// 	{
-			// 		expanded[j] = expandedvar[k];
-			// 		j++;
-			// 		k++;
-			// 	}
-			// 	free(expandedvar);
-			// }
+			else if (str[i + 1] == '?')
+			{
+				i++;
+				if (str[i] == '?')
+					expandedvar = ft_itoa(mini->exitstatus);
+				i++;
+				k = 0;
+				while (expandedvar[k])
+				{
+					expanded[j] = expandedvar[k];
+					j++;
+					k++;
+				}
+				free(expandedvar);
+			}
 			else
 				expanded[j++] = str[i++];
 		}
@@ -212,7 +198,6 @@ char *expand(char *str, t_minishell *mini)
 	expanded[j] = '\0';
 	return (expanded);
 }
-
 
 char **expanding(char **strs, t_minishell *mini)
 {

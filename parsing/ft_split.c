@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/24 16:32:26 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:10:33 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,7 +152,7 @@ static char    **free_mem(char **s, int i)
     return (NULL);
 }
 
-char    **ft_split(char const *s, char *delims)
+char    **ft_split(int *check, char *s, char *delims)
 {
     size_t        k;
     size_t        index;
@@ -162,7 +162,10 @@ char    **ft_split(char const *s, char *delims)
         return (NULL);
     k = count_str((char *)s, delims);
     if (k == 0)
+    {
+        *check = 1;
         return (NULL);
+    }
     index = 0;
     p = (char **) malloc((sizeof(char *)) * (k + 1));
     if (!p)
