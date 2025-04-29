@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 19:37:07 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 09:35:17 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,8 @@ void	parse(t_minishell *mini)
 			break ;
 		list = list->next;
 	}
+	if (check == 1)
+		mini->check = 1;
 	// copy = mini->tokens;
 	// while(copy)
 	// {

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 15:05:44 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:18:56 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,13 +97,14 @@ typedef struct s_minishell
 {
 	int	**pipes;
 	int exitstatus;
+	int check;
 	char *input;
 	t_env *env;
 	t_tokenize *tokens;
 	t_commandline *commandline;
 }               t_minishell;
 
-char    **ft_split(char const *s, char *delims);
+char    **ft_split(int *check, char *s, char *delims);
 int ft_strcmp(char *str, char *str1);
 int	tokenize(t_minishell *mini);
 char    **split(char const *s, char *delims);
@@ -141,9 +142,14 @@ int	ft_commandsize(t_commandline *lst);
 int	ft_envsize(t_env *lst);
 void execute(t_minishell *mini);
 void ft_env(t_minishell *mini, char **args);
-void ft_pwd(void);
+void ft_pwd(t_minishell *mini);
 void	ft_putstr_fd(char *s, int fd);
 void ft_cd(t_commandline *commandline);
-int checkcommand(t_commandline *command);
+int checkcommand(char *cmd);
+char **constructenv(t_env *env);
+void handleiosingle(t_commandline *command);
+void openfiles(t_commandline *command);
+char **expanding(char **strs, t_minishell *mini);
+char	*ft_itoa(int n);
 
 #endif

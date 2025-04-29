@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 14:48:28 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 16:35:16 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ int	main(int ac, char **av, char **env)
 	mini.input = NULL;
 	mini.tokens = NULL;
 	mini.exitstatus = 0;
+	mini.check = 0;
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);

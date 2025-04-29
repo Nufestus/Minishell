@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/27 23:16:32 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/28 21:23:07 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -290,14 +290,17 @@ void readinput(t_minishell *mini)
 			freelisttokens(mini->tokens);
 			continue ;
 		}
-		else
+		parse(mini);
+		if (mini->check == 1)
 		{
-			parse(mini);
-			setupcommandline(mini);
-			execute(mini);
-			freedoubleint(mini);
+			mini->check = 0;
 			freelisttokens(mini->tokens);
-			freelistcommandline(mini->commandline);
+			continue;
 		}
+		setupcommandline(mini);
+		execute(mini);
+		freedoubleint(mini);
+		freelisttokens(mini->tokens);
+		freelistcommandline(mini->commandline);
 	}
 }
