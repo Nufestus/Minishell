@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:48:21 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:57:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,10 +131,14 @@ void	setupcommandline(t_minishell *mini)
 	char *arg;
 	char *option;
 	char *cool;
+	int argcount;
+	// int i;
 	t_commandline *command;
 	t_commandline *copy;
 	t_tokenize *file;
 	t_tokenize *token;
+	// t_files *wtf;
+	// t_files *idk;
 
 	token = mini->tokens;
 	file = mini->tokens;
@@ -147,6 +151,7 @@ void	setupcommandline(t_minishell *mini)
 		cmd = NULL;
 		arg = NULL;
 		option = NULL;
+		argcount = 0;
 		if (token->index == 0)
 		{
 			while (token && token->type != PIPE)
@@ -161,20 +166,18 @@ void	setupcommandline(t_minishell *mini)
 					cool = arg;
 					arg = ft_strjoin(arg, token->str);
 					free(cool);
+					argcount++;
 				}
 				else if (token->type == OPTION)
 					option = token->str;
 				token = token->next;
 			}
-			if (!cmd)
-				cmd = ft_strdup("NONE");
 			command = ft_commandnew(cmd, option, arg);
 			command->index = index;
 			command->mini = mini;
+			command->argcount = argcount;
 			ft_commandadd_back(&mini->commandline, command);  
 			free(arg);
-			if (!ft_strcmp(cmd, "NONE"))
-				free(cmd);
 			index++;
 		}
 		else if (token->type == PIPE)
@@ -194,20 +197,18 @@ void	setupcommandline(t_minishell *mini)
 					cool = arg;
 					arg = ft_strjoin(arg, token->str);
 					free(cool);
+					argcount++;
 				}
 				else if (token->type == OPTION)
 					option = token->str;
 				token = token->next;
 			}
-			if (!cmd)
-				cmd = ft_strdup("NONE");
 			command = ft_commandnew(cmd, option, arg);
 			command->index = index;
 			command->mini = mini;
+			command->argcount = argcount;
 			ft_commandadd_back(&mini->commandline, command);
 			free(arg);
-			if (!ft_strcmp(cmd, "NONE"))
-				free(cmd);
 			index++;
 		}
 	}
@@ -223,7 +224,9 @@ void	setupcommandline(t_minishell *mini)
 	// 		wtf = copy->outfile;
 	// 		printf("----------------------------------------------------\n");
 	// 		if (copy->cmd)
-	// 		printf("Cmd: %s\nArgs: ", copy->cmd);
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", copy->cmd, copy->argcount);
+	// 		else
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", "no cmd", copy->argcount);
 	// 		i = 0;
 	// 		if (!copy->args)
 	// 			printf("(null)\n");

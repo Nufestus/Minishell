@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 11:10:14 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:57:40 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ void retokenize(t_minishell *mini)
     {
         if (list->type == ARG && list->prev && 
             (list->prev->type == FILE || list->prev->type == PIPE) 
-                && list->next && list->next->type == ARG)
+                && list->next && (list->next->type == ARG || list->next->category))
             list->type = CMD;
         list = list->next;
     }
@@ -103,9 +103,9 @@ void tokenizewords(t_minishell *mini)
             list->type = ARG;
         else if (list->prev && list->prev->type == ARG && list->next && list->next->category)
             list->type = ARG;
-        else if (list->prev && list->prev->type == FILE
-            && ((list->next && list->next->type == REDOUT) || !list->next || list->next->type == PIPE))
-            list->type = CMD;
+        // else if (list->prev && list->prev->type == FILE
+        //     && ((list->next && list->next->type == REDOUT) || !list->next || list->next->type == PIPE))
+        //     list->type = CMD;
         else
             list->type = ARG;
         list = list->next;
@@ -343,31 +343,6 @@ char	*ft_strtrim(char *s1, char *set)
 		return (NULL);
 	ft_strlcpy(trim, s1 + startind, lastind - startind + 2);
 	return (trim);
-}
-
-char **removequotes(char **str)
-{
-    int i;
-    char *tmp;
-
-    i = 0;
-    while(str[i])
-    {
-        if (str[i][0] == '"')
-        {
-            tmp = str[i];
-            str[i] = ft_strtrim(str[i], "\"");
-            free(tmp);
-        }
-        else if (str[i][0] == '\'')
-        {
-            tmp = str[i];
-            str[i] = ft_strtrim(str[i], "'");
-            free(tmp);
-        }
-        i++;
-    }
-    return (str);
 }
 
 int tokenize(t_minishell *mini)

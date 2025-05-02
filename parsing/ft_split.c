@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 11:10:59 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:57:08 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,12 +171,6 @@ char    **ft_split(int *check, char *s, char *delims)
     {
         if (check)
             *check = 1;
-        return (NULL);
-    }
-    else if (k == -1)
-    {
-        if (check)
-            *check = 2;
         return (NULL);
     }
     index = 0;

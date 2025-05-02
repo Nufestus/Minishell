@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 11:10:46 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:57:34 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	freedoublearray(char **str)
 	int i;
 
 	i = 0;
-	if (!str || !*str)
+	if (!str)
 		return ;
 	while(str[i])
 	{
@@ -124,7 +124,8 @@ void freelistcommandline(t_commandline *list)
 		copy = list->next;
 		if (list->args)
 			freedoublearray(list->args);
-		freedoublearray(list->env);
+		if (list->env)
+			freedoublearray(list->env);
 		freelistfiles(list->infile);
 		freelistfiles(list->outfile);
 		free(list->cmd);
@@ -204,13 +205,19 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
 	char *copy;
 	t_commandline	*new;
 
+	copy = NULL;
+	str = NULL;
 	new = (t_commandline *)malloc(sizeof(t_commandline));
 	if (!new)
 		return (NULL);
-	str = ft_strjoin(cmd, " ");
-	copy = str;
+	if (cmd)
+	{
+		str = ft_strjoin(cmd, " ");
+		copy = str;
+	}
 	str = ft_strjoin(str, option);
-	free(copy);
+	if (cmd)
+		free(copy);
 	copy = str;
 	str = ft_strjoin(str, " ");
 	free(copy);
@@ -219,12 +226,16 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
 	free(copy);
 	new->args = ft_split(NULL, str, " ");
 	free(str);
-	if (cmd)
+	if (!cmd)
+		new->cmd = NULL;
+	else
 		new->cmd = ft_strdup(cmd);
 	new->infile = NULL;
 	new->outfile = NULL;
 	new->infd = -1;
 	new->outfd = -1;
+	new->argcount = 0;
+	new->env = NULL;
 	new->next = NULL;
 	return (new);
 }

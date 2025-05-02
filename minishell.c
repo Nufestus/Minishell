@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:48:56 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:57:24 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,4 +59,6 @@ int	main(int ac, char **av, char **env)
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);
+	rl_clear_history();
+	rl_on_new_line();
 }

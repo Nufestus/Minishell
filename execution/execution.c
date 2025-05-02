@@ -6,21 +6,23 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:31:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:56:28 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void openfiles(t_commandline *command)
+int openfiles(t_commandline *command)
 {
     int outfd;
     int infd;
+    int size;
     t_files *infiles;
     t_files *outfiles;
     
     outfd = -2;
     infd = -2;
+    size = ft_commandsize(command->mini->commandline);
     infiles = command->infile;
     while(infiles)
     {
@@ -29,6 +31,8 @@ void openfiles(t_commandline *command)
         if (infd == -1)
         {
             perror(infiles->file);
+            if (checkcommand(command->cmd) && size == 1)
+                return (1);
             exit(0);
         }
         infiles = infiles->next;
@@ -44,6 +48,7 @@ void openfiles(t_commandline *command)
         outfiles = outfiles->next;
     }
     command->outfd = outfd;
+    return (0);
 }
 
 
@@ -177,12 +182,17 @@ void	error(char *str)
 
 void handlebuiltins(t_commandline *command)
 {
-    if (!ft_strcmp(command->cmd, "env"))
-        ft_env(command->mini, command->args);
-    else if (!ft_strcmp(command->cmd, "pwd"))
-        ft_pwd(command->mini);
-    else if (!ft_strcmp(command->cmd, "cd"))
-        ft_cd(command);
+    if (command->cmd)
+    {
+        if (!ft_strcmp(command->cmd, "env"))
+            ft_env(command->mini, command->args);
+        else if (!ft_strcmp(command->cmd, "pwd"))
+            ft_pwd(command->mini);
+        else if (!ft_strcmp(command->cmd, "cd"))
+            ft_cd(command);
+        else if (!ft_strcmp(command->cmd, "echo"))
+            ft_echo(command);
+    }
 }
 
 void handleiolast(t_commandline *command)
@@ -321,15 +331,20 @@ void handleiosingle(t_commandline *command)
 
 int checkcommand(char *cmd)
 {
-    if (!ft_strcmp(cmd, "cd") 
-        || !ft_strcmp(cmd, "env") 
-        || !ft_strcmp(cmd, "pwd")
-        || !ft_strcmp(cmd, "echo")
-        || !ft_strcmp(cmd, "export")
-        || !ft_strcmp(cmd, "unset")
-        || !ft_strcmp(cmd, "exit"))
-        return (1);
-    return (0);
+    if (cmd)
+    {
+        if (!ft_strcmp(cmd, "cd") 
+            || !ft_strcmp(cmd, "env") 
+            || !ft_strcmp(cmd, "pwd")
+            || !ft_strcmp(cmd, "echo")
+            || !ft_strcmp(cmd, "export")
+            || !ft_strcmp(cmd, "unset")
+            || !ft_strcmp(cmd, "exit"))
+            return (1);
+        return (0);
+    }
+    else
+        return 15;
 }
 
 void setupfirstcommand(t_commandline *command)
@@ -421,7 +436,11 @@ void	startpipex(t_commandline *command)
             childlabor(copy);
         else if (size == 1)
         {
-            openfiles(command);
+            if (openfiles(command) == 1)
+            {
+                copy = copy->next;
+                continue;
+            }
             handleiosingle(command);
             closeallpipes(command->mini, size);
             command->env = constructenv(command->mini->env);
