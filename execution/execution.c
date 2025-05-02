@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:48:02 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:31:01 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,7 +324,7 @@ int checkcommand(char *cmd)
     if (!ft_strcmp(cmd, "cd") 
         || !ft_strcmp(cmd, "env") 
         || !ft_strcmp(cmd, "pwd")
-        // || !ft_strcmp(cmd, "echo")
+        || !ft_strcmp(cmd, "echo")
         || !ft_strcmp(cmd, "export")
         || !ft_strcmp(cmd, "unset")
         || !ft_strcmp(cmd, "exit"))
@@ -386,7 +386,7 @@ void	childlabor(t_commandline *command)
     if (!command->index)
         setupfirstcommand(command);
     else if (!command->next)
-        setuplastcommand(command);
+        setuplastcommand(command); 
     else
         setupmiddlecommand(command);
 }

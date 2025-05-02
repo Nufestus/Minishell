@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:48:46 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 11:10:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,7 +217,7 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
 	copy = str;
 	str = ft_strjoin(str, arg);
 	free(copy);
-	new->args = ft_split(0, str, " ");
+	new->args = ft_split(NULL, str, " ");
 	free(str);
 	if (cmd)
 		new->cmd = ft_strdup(cmd);

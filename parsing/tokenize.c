@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:48:33 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/29 11:10:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ void syntax(int *check, char *flag, t_minishell *mini)
         printf("%s\n", flag);
         free(flag);
     }
-    *check = 1;
+    if (check)
+        *check = 1;
 }
 
 int parsepipe(t_tokenize *list)
@@ -384,11 +385,15 @@ int tokenize(t_minishell *mini)
     if (str == NULL)
     {
         free(addspaces);
-        if (check == 1)
+        if (check == 2)
             return (-1);
+        else if (check == 1)
+        {
+            syntax(NULL, "'quotes'", mini);
+            return (-1);
+        }
     }
     str = expanding(str, mini);
-    str = removequotes(str);
     tokenizesymbols(str, mini);
     tokenizewords(mini);
     retokenize(mini);

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 09:49:02 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/04/30 21:31:26 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -152,5 +152,6 @@ void handleiosingle(t_commandline *command);
 void openfiles(t_commandline *command);
 char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
+void unset(char **str, t_env **env);
 
 #endif
