@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 21:10:33 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/04/30 19:30:09 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,8 @@ char    **ft_split(int *check, char *s, char *delims)
     k = count_str((char *)s, delims);
     if (k == 0)
     {
-        *check = 1;
+        if (check)
+            *check = 1;
         return (NULL);
     }
     index = 0;

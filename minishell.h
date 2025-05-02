@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 21:18:56 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:34:05 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ typedef struct s_commandline
 {
 	int		infd;
 	int		outfd;
-	int index;
+	int		index;
+	int argcount;
 	char *cmd;
 	char **args;
 	char **env;
@@ -148,8 +149,11 @@ void ft_cd(t_commandline *commandline);
 int checkcommand(char *cmd);
 char **constructenv(t_env *env);
 void handleiosingle(t_commandline *command);
-void openfiles(t_commandline *command);
+int	openfiles(t_commandline *command);
 char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
+char *ft_getenv(char *str, t_minishell *mini);
+int isanoption(char *str);
+void ft_echo(t_commandline *command);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 17:59:00 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/01 19:34:46 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,14 +28,17 @@ void	ft_putstr_fd(char *s, int fd)
 
 void ft_pwd(t_minishell *mini)
 {
-    char path[4096];
+    char *path;
     int size;
 
+    path = NULL;
     size = ft_commandsize(mini->commandline);
-    if (getcwd(path, sizeof(path)))
+    if (getcwd(0, 0))
         printf("%s\n", path);
     else
         perror("pwd");
+    if (path)
+        free(path);
     if (size != 1)
         exit(0);
 }
