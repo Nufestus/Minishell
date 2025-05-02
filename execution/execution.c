@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:56:28 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:19:36 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -401,7 +401,7 @@ void	childlabor(t_commandline *command)
     if (!command->index)
         setupfirstcommand(command);
     else if (!command->next)
-        setuplastcommand(command); 
+        setuplastcommand(command);
     else
         setupmiddlecommand(command);
 }

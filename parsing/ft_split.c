@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:57:08 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 14:13:52 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static int    is_delim(char c, char *delims)
     return (0);
 }
 
-int countquotes(char *s, int *doublequotes, int *singlequotes)
+int countquotes(char *s, bool *doublequotes, bool *singlequotes)
 {
     int twoquotes;
     int onequotes;
@@ -63,32 +63,26 @@ int countquotes(char *s, int *doublequotes, int *singlequotes)
         if (s[i] == '\'')
             onequotes++;
     if (twoquotes % 2 != 0)
-        *doublequotes = 1;
-    else if (twoquotes == 0)
-        *doublequotes = 2;
+        *doublequotes = true;
     if (onequotes % 2 != 0)
-        *singlequotes = 1;
-    else if (singlequotes == 0)
-        *singlequotes = 2;
+        *singlequotes = true;
     return (0);
 }
 
 static size_t    count_str(char *s, char *delims)
 {
     unsigned int    i;
-    int doublequotes;
-    int singlequotes;
+    bool doublequotes;
+    bool singlequotes;
     size_t            word;
 
     i = 0;
     word = 0;
-    doublequotes = 0;
-    singlequotes = 0;
+    doublequotes = false;
+    singlequotes = false;
     countquotes(s, &doublequotes, &singlequotes);
-    if (doublequotes == 1 || singlequotes == 1)
+    if (doublequotes || singlequotes)
         return (0);
-    else if (doublequotes == 2 || singlequotes == 2)
-        return (-1);
     while (s[i] != '\0')
     {
         if (s[i] == '"' || s[i] == '\'')
@@ -160,7 +154,7 @@ static char    **free_mem(char **s, int i)
 
 char    **ft_split(int *check, char *s, char *delims)
 {
-    int        k;
+    size_t        k;
     size_t        index;
     char        **p;
 
@@ -177,7 +171,7 @@ char    **ft_split(int *check, char *s, char *delims)
     p = (char **) malloc((sizeof(char *)) * (k + 1));
     if (!p)
         return (NULL);
-    while (index < (size_t)k)
+    while (index < k)
     {
         while (is_delim(*s, delims))
             s++;
