@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/28 21:35:03 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/03 14:07:52 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -143,9 +143,15 @@ char *expand(char *str, t_minishell *mini)
     while (str[i])
     {
         if (str[i] == '\'' && !indouble)
+		{
             insingle = !insingle;
+			i++;
+		}
         else if (str[i] == '"' && !insingle)
+		{
             indouble = !indouble;
+			i++;
+		}
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/01 20:44:53 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/02 13:59:54 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void retokenize(t_minishell *mini)
     {
         if (list->type == ARG && list->prev && 
             (list->prev->type == FILE || list->prev->type == PIPE) 
-                && list->next && (list->next->type == ARG || list->next->category))
+                && ((list->next && (list->next->type == ARG || list->next->category)) || !list->next))
             list->type = CMD;
         list = list->next;
     }
