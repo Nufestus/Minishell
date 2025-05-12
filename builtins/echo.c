@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/01 19:42:03 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/12 21:15:20 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,10 @@ void ft_echo(t_commandline *command)
         if (optioncheck)
             ft_putstr_fd(res, command->outfd);
         else
-            ft_putstr_fd(res, command->outfd);
+		{
+			ft_putstr_fd(res, command->outfd);
+			ft_putstr_fd("\n", command->outfd);
+		}
     }
     free(copy);
     if (size > 1)

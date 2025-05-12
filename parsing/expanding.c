@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/03 14:07:52 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/03 16:06:53 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char *ft_getenv(char *str, t_minishell *mini)
 			return (temp->value);
 		temp = temp->next;
 	}
-	return ("");
+	return (NULL);
 }
 
 int	ft_isalnumm(int c)
@@ -68,7 +68,7 @@ int    lenwithoutvar(char *str)
 			i++;
 		}
 	}
-	return (j + 4);
+	return (j);
 }
 
 int varlen(char *str, t_minishell *mini)
@@ -146,11 +146,13 @@ char *expand(char *str, t_minishell *mini)
 		{
             insingle = !insingle;
 			i++;
+			continue;
 		}
         else if (str[i] == '"' && !insingle)
 		{
             indouble = !indouble;
 			i++;
+			continue;
 		}
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
@@ -165,7 +167,7 @@ char *expand(char *str, t_minishell *mini)
 				if (!var)
 				{
 					free(expanded);
-					return("");
+					return(NULL);
 				}
 				expandedvar = ft_getenv(var, mini);
 				if (expandedvar)

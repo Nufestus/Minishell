@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/30 20:59:45 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/05 14:44:14 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,14 +15,24 @@
 void ft_setenv(char *envname, char *newvalue, t_minishell *mini)
 {
     t_env *env;
+    char *fullstring;
+    char *copy;
 
     env = mini->env;
     while(env)
     {
         if (!ft_strcmp(env->variable, envname))
         {
-            free(env->value);
+            if (env->value)
+                free(env->value);
             env->value = ft_strdup(newvalue);
+            fullstring = ft_strjoin(env->variable, "=");
+            copy = fullstring;
+            fullstring = ft_strjoin(fullstring, env->value);
+            free(copy);
+            free(env->string);
+            env->string = ft_strdup(fullstring);
+            free(fullstring);
             return ;
         }
         env = env->next;
@@ -45,7 +55,7 @@ void ft_cd(t_commandline *commandline)
     oldcwd = getcwd(0, 0);
     if (!oldcwd)
     {
-        perror("cd");
+        perror("getcwd");
         if (size != 1)
             exit(0);
         return ;
@@ -87,7 +97,7 @@ void ft_cd(t_commandline *commandline)
     pwd = getcwd(0, 0);
     if (!pwd)
     {
-        perror("cd");
+        perror("getcwd");
         if (size != 1)
             exit(0);
         return ;

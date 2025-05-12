@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/01 19:17:27 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/08 15:09:50 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,10 @@ int openfiles(t_commandline *command)
     int outfd;
     int infd;
     int size;
+    char *del;
     t_files *infiles;
     t_files *outfiles;
-    
+
     outfd = -2;
     infd = -2;
     size = ft_commandsize(command->mini->commandline);
@@ -28,13 +29,21 @@ int openfiles(t_commandline *command)
     {
         if (infiles->type != HEDOC)
             infd = open(infiles->file, O_RDONLY);
+        else if (infiles->type == HEDOC)
+        {
+            del = ft_strjoin(infiles->delimiter, "\n");
+            infd = getinput(del);
+            free(del);
+        }
         if (infd == -1)
         {
             perror(infiles->file);
             if (checkcommand(command->cmd) && size == 1)
                 return (1);
-            exit(0);
+            return (1);
         }
+        if (infiles->next)
+            close(infd);
         infiles = infiles->next;
     }
     command->infd = infd;
@@ -45,6 +54,8 @@ int openfiles(t_commandline *command)
             outfd = open(outfiles->file, O_RDWR | O_CREAT | O_TRUNC, 0644);
         else if (outfiles->type == APPEND)
             outfd = open(outfiles->file, O_RDWR | O_CREAT | O_APPEND, 0644);
+        if (outfiles->next && outfd != -1)
+            close(outfd);
         outfiles = outfiles->next;
     }
     command->outfd = outfd;
@@ -120,7 +131,7 @@ char	*checkfile(t_commandline *command)
             return (freestr(path), ft_strdup(str));
 		free(str);
 	}
-	return (freestr(path), ft_strdup(command->args[0]));
+	return (freestr(path), NULL);
 }
 
 char **constructenv(t_env *env)
@@ -192,6 +203,8 @@ void handlebuiltins(t_commandline *command)
             ft_cd(command);
         else if (!ft_strcmp(command->cmd, "echo"))
             ft_echo(command);
+        else if (!ft_strcmp(command->cmd, "unset"))
+            unset(command);
     }
 }
 
@@ -200,6 +213,8 @@ void handleiolast(t_commandline *command)
     t_minishell *mini;
     
     mini = command->mini;
+    if (command->infd == -1)
+        exit(0);
     if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
     if (command->outfd == -2)
@@ -218,7 +233,6 @@ void setuplastcommand(t_commandline *command)
     pid = fork();
     if (!pid)
     {
-        openfiles(command);
         handleiolast(command);
         if (command->infd != STDIN_FILENO)
         {
@@ -258,8 +272,10 @@ void setuplastcommand(t_commandline *command)
 void handleiomiddle(t_commandline *command)
 {
     t_minishell *mini;
-    
+
     mini = command->mini;
+    if (command->infd == -1)
+        exit(0);
     if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
     if (command->outfd == -2)
@@ -278,7 +294,6 @@ void setupmiddlecommand(t_commandline *command)
     pid = fork();
     if (!pid)
     {
-        openfiles(command);
         handleiomiddle(command);
         close(mini->pipes[command->index][0]);
         if (command->infd != STDIN_FILENO)
@@ -321,6 +336,8 @@ void handleiosingle(t_commandline *command)
     t_minishell *mini;
 
     mini = command->mini;
+    if (command->infd == -1)
+        exit(0);
     if (command->infd == -2)
         command->infd = 0;
     if (command->outfd == -2 && command->next)
@@ -343,8 +360,7 @@ int checkcommand(char *cmd)
             return (1);
         return (0);
     }
-    else
-        return 15;
+    return 15;
 }
 
 void setupfirstcommand(t_commandline *command)
@@ -359,7 +375,6 @@ void setupfirstcommand(t_commandline *command)
     pid = fork();
     if (!pid)
     {
-        openfiles(command);
         handleiosingle(command);
         close(mini->pipes[command->index][0]);
         if (command->infd != STDIN_FILENO)
@@ -436,7 +451,7 @@ void	startpipex(t_commandline *command)
             childlabor(copy);
         else if (size == 1)
         {
-            if (openfiles(command) == 1)
+            if (command->infd == -1)
             {
                 copy = copy->next;
                 continue;

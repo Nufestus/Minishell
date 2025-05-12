@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:59:54 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/10 22:50:30 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,16 +23,30 @@ void    setupnode(int index, int category, int type, char *str, t_tokenize **tok
     ft_lstadd_back(tokens, newnode);
 }
 
-void syntax(int *check, char *flag, t_minishell *mini)
+void syntaxhere(int *check, char *flag, int print)
 {
-    (void)mini;
-    if (flag)
+    if (print)
     {
-        flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
-        printf("%s\n", flag);
-        free(flag);
+        if (flag)
+            printf("shell: syntax error near unexpected token '%s'\n", flag);
     }
-    *check = 1;
+    if (check)
+        *check = 1;
+}
+
+void syntax(int *check, char *flag, int print)
+{
+    if (print)
+    {
+        if (flag)
+        {
+            flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
+            printf("%s\n", flag);
+            free(flag);
+        }
+    }
+    if (check)
+        *check = 1;
 }
 
 int parsepipe(t_tokenize *list)
@@ -359,8 +373,13 @@ int tokenize(t_minishell *mini)
     if (str == NULL)
     {
         free(addspaces);
-        if (check == 1)
+        if (check == 2)
             return (-1);
+        else if (check == 1)
+        {
+            syntax(NULL, "'quotes'", 1);
+            return (-1);
+        }
     }
     str = expanding(str, mini);
     tokenizesymbols(str, mini);

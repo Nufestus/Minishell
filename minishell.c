@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/30 18:15:33 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/09 15:16:06 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,6 @@ int	main(int ac, char **av, char **env)
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);
-	rl_clear_history();
 	rl_on_new_line();
+	rl_redisplay();
 }
