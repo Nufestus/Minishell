@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:57:40 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/12 22:37:21 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -123,7 +123,7 @@ int isanoption(char *str)
         while(str[i] == 'n')
             i++;
     }
-    if (str[i] == '\0')
+    if (str[i] == '\0' && i != 0)
         return (1);
     return (0);
 }

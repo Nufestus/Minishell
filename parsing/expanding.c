@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/29 10:58:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 00:15:56 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,6 +44,10 @@ int    lenwithoutvar(char *str)
 	j = 0;
 	while (str[i])
 	{
+		if (str[i] == '\'')
+			j++;
+		else if (str[i] == '"')
+			j++;
 		if (str[i] == '$' && str[i + 1] != '\0')
 		{
 			i++;
@@ -68,7 +72,7 @@ int    lenwithoutvar(char *str)
 			i++;
 		}
 	}
-	return (j + 4);
+	return (j);
 }
 
 int varlen(char *str, t_minishell *mini)
@@ -197,6 +201,8 @@ char *expand(char *str, t_minishell *mini)
 				}
 				free(expandedvar);
 			}
+			else if (str[i] == '$' && str[i + 1] == '$')
+				i+=2;
 			else
 				expanded[j++] = str[i++];
 		}
@@ -217,6 +223,7 @@ char **expanding(char **strs, t_minishell *mini)
 	{
 		tmp = strs[i];
 		strs[i] = expand(strs[i], mini);
+		// printf("%s\n", strs[i]);
 		free(tmp);
 		i++;
 	}

@@ -6,13 +6,13 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/04/30 21:30:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/12 12:43:16 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void lstremoveif(t_env **env, char *value)
+void removenode(t_env **env, char *value)
 {
     t_env *curr;
     t_env *prev;
@@ -59,7 +59,7 @@ void unset(char **str, t_env **env)
         while (tmp)
         {
             if (!ft_strcmp(str[i], tmp->value))
-                lstremoveif(env, tmp->value);
+                removenode(env, tmp->value);
             tmp = tmp->next;
         }
         i++;

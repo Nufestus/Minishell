@@ -6,7 +6,7 @@
 #    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/05/02 14:19:53 by rammisse         ###   ########.fr        #
+#    Updated: 2025/05/13 00:17:35 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,12 +15,12 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
+CFLAGS = -Wall -Wextra -Werror
 
 SRCS = minishell.c parsing/readinput.c parsing/ft_split.c utils/utils.c \
 		parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c \
 		execution/execution.c execution/env_pwd.c execution/cd.c \
-		parsing/expanding.c execution/echo.c
+		parsing/expanding.c execution/echo.c builtins/unset.c
 
 OBJS = $(SRCS:.c=.o)
 

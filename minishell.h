@@ -6,11 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2025/04/30 21:31:26 by rammisse         ###   ########.fr       */
-=======
-/*   Updated: 2025/05/01 19:34:05 by aammisse         ###   ########.fr       */
->>>>>>> origin/ahmed
+/*   Updated: 2025/05/12 16:04:45 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -159,6 +155,8 @@ char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
 char *ft_getenv(char *str, t_minishell *mini);
 int isanoption(char *str);
+void unset(char **str, t_env **env);
 void ft_echo(t_commandline *command);
+int	ft_isalnumm(int c);
 
 #endif

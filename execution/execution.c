@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 14:19:36 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/12 11:53:16 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -192,6 +192,8 @@ void handlebuiltins(t_commandline *command)
             ft_cd(command);
         else if (!ft_strcmp(command->cmd, "echo"))
             ft_echo(command);
+        else if (!ft_strcmp(command->cmd, "unset"))
+            unset(command->args, &command->mini->env);
     }
 }
 
