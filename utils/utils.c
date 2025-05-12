@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   utils.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/02 13:57:34 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/12 20:58:31 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -199,41 +199,64 @@ t_commandline	*ft_commandlast(t_commandline *lst)
 	return (lst);
 }
 
-t_commandline	*ft_commandnew(char *cmd, char *option, char *arg)
+void initializetonone(char **str, int len)
 {
-	char *str;
+	int i;
+
+	i = 0;
+	while (i < len)
+	{
+		str[i] = NULL;
+		i++;
+	}
+}
+
+char **ft_strdupdouble(char *cmd, char *option, char **str)
+{
+	int i;
+	int j;
+	char **res;
+
+	i = 0;
+	while(str[i])
+		i++;
+	res = malloc(sizeof(char *) * (i + 3));
+	i = 0;
+	if (cmd)
+	{
+		res[i] = ft_strdup(cmd);
+		i++;
+	}
+	if (option)
+	{
+		res[i] = ft_strdup(option);
+		i++;
+	}
+	j = 0;
+	while(str[j])
+		res[i++] = ft_strdup(str[j++]);
+	res[i] = NULL;
+	return (res);
+}
+
+t_commandline	*ft_commandnew(char *cmd, char *option, char **arg)
+{
 	char *copy;
 	t_commandline	*new;
 
 	copy = NULL;
-	str = NULL;
 	new = (t_commandline *)malloc(sizeof(t_commandline));
 	if (!new)
 		return (NULL);
-	if (cmd)
-	{
-		str = ft_strjoin(cmd, " ");
-		copy = str;
-	}
-	str = ft_strjoin(str, option);
-	if (cmd)
-		free(copy);
-	copy = str;
-	str = ft_strjoin(str, " ");
-	free(copy);
-	copy = str;
-	str = ft_strjoin(str, arg);
-	free(copy);
-	new->args = ft_split(NULL, str, " ");
-	free(str);
+	new->args = ft_strdupdouble(cmd, option, arg);
 	if (!cmd)
 		new->cmd = NULL;
 	else
 		new->cmd = ft_strdup(cmd);
 	new->infile = NULL;
 	new->outfile = NULL;
-	new->infd = -1;
-	new->outfd = -1;
+	new->infd = -2;
+	new->outfd = -2;
 	new->argcount = 0;
 	new->env = NULL;
 	new->next = NULL;
@@ -376,9 +399,10 @@ int	ft_commandsize(t_commandline *lst)
 	if (!lst)
 		return (0);
 	i = 0;
-	while (lst != NULL)
+	t_commandline *command = lst;
+	while (command != NULL)
 	{
-		lst = lst->next;
+		command = command->next;
 		i++;
 	}
 	return (i);
@@ -397,4 +421,16 @@ int	ft_envsize(t_env *lst)
 		i++;
 	}
 	return (i);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	size_t	i;
+
+	i = 0;
+	while (i < n)
+	{
+		((unsigned char *)s)[i] = 0;
+		i++;
+	}
 }

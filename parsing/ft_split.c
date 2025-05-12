@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 21:11:29 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 00:20:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,6 +171,7 @@ char    **ft_split(int *check, char *s, char *delims)
     p = (char **) malloc((sizeof(char *)) * (k + 1));
     if (!p)
         return (NULL);
+    initializetonone(p, k);
     while (index < k)
     {
         while (is_delim(*s, delims))

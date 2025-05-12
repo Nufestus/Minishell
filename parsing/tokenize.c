@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 22:37:21 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 00:21:07 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,27 @@ void    setupnode(int index, int category, int type, char *str, t_tokenize **tok
     ft_lstadd_back(tokens, newnode);
 }
 
-void syntax(int *check, char *flag, t_minishell *mini)
+void syntaxhere(int *check, char *flag, int print)
 {
-    (void)mini;
-    if (flag)
+    if (print)
     {
-        flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
-        printf("%s\n", flag);
-        free(flag);
+        if (flag)
+            printf("shell: syntax error near unexpected token '%s'\n", flag);
+    }
+    if (check)
+        *check = 1;
+}
+
+void syntax(int *check, char *flag, int print)
+{
+    if (print)
+    {
+        if (flag)
+        {
+            flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
+            printf("%s\n", flag);
+            free(flag);
+        }
     }
     if (check)
         *check = 1;
@@ -72,7 +85,7 @@ void retokenize(t_minishell *mini)
     {
         if (list->type == ARG && list->prev && 
             (list->prev->type == FILE || list->prev->type == PIPE) 
-                && list->next && (list->next->type == ARG || list->next->category))
+                && ((list->next && (list->next->type == ARG || list->next->category)) || !list->next))
             list->type = CMD;
         list = list->next;
     }
@@ -364,7 +377,7 @@ int tokenize(t_minishell *mini)
             return (-1);
         else if (check == 1)
         {
-            syntax(NULL, "'quotes'", mini);
+            syntax(NULL, "'quotes'", 1);
             return (-1);
         }
     }
