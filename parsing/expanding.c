@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:29:20 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,6 +119,13 @@ int varlen(char *str, t_minishell *mini)
 	return (finallen);
 }
 
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
 char *expand(char *str, t_minishell *mini)
 {
     int total;
@@ -203,6 +210,8 @@ char *expand(char *str, t_minishell *mini)
 			}
 			else if (str[i] == '$' && str[i + 1] == '$')
 				i+=2;
+			else if (str[i] == '$' && ft_isdigit(str[i + 1]))
+				i += 2;
 			else
 				expanded[j++] = str[i++];
 		}

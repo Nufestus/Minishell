@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:01:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,7 @@ void	parse(t_minishell *mini)
 	char *del;
 	int check;
 	t_tokenize *list;
+	t_tokenize *copy;
 
 	check = 0;
 	del = NULL;
@@ -100,4 +101,10 @@ void	parse(t_minishell *mini)
 	}
 	if (check == 1)
 		mini->check = 1;
+	copy = mini->tokens;
+	while(copy)
+	{
+		printf("%s / %s\n", copy->str, handletypes(copy->type));
+		copy = copy->next;
+	}
 }
