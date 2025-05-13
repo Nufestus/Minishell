@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 13:38:11 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:55:06 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,7 +287,7 @@ void heredocerror(char *str)
 	printf("%s\n", str);
 }
 
-int getinput(char *del)
+int getinput(char *del, t_minishell *mini)
 {
 	int fd[2];
 	int iteration;
@@ -300,7 +300,7 @@ int getinput(char *del)
 	while(1)
 	{
 		write(0, "> ", 3);
-		line = get_next_line(0);
+		line = expand(get_next_line(0), mini);
 		if (!line)
 		{
 			printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", iteration, newdel);
@@ -328,7 +328,7 @@ void openallfiles(t_minishell *mini)
 	command = mini->commandline;
 	while(command)
 	{
-		openfiles(command);
+		openfiles(command, mini);
 		command = command->next;
 	}
 }

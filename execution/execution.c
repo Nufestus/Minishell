@@ -6,13 +6,13 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:35 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:54:38 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int openfiles(t_commandline *command)
+int openfiles(t_commandline *command, t_minishell *mini)
 {
     int outfd;
     int infd;
@@ -32,7 +32,7 @@ int openfiles(t_commandline *command)
         else if (infiles->type == HEDOC)
         {
             del = ft_strjoin(infiles->delimiter, "\n");
-            infd = getinput(del);
+            infd = getinput(del, mini);
             free(del);
         }
         if (infd == -1)

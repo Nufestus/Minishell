@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:22:02 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 18:55:00 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,7 +150,7 @@ void ft_cd(t_commandline *commandline);
 int checkcommand(char *cmd);
 char **constructenv(t_env *env);
 void handleiosingle(t_commandline *command);
-int	openfiles(t_commandline *command);
+int openfiles(t_commandline *command, t_minishell *mini);
 char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
 char *ft_getenv(char *str, t_minishell *mini);
@@ -160,12 +160,13 @@ void ft_echo(t_commandline *command);
 void	ft_bzero(void *s, size_t n);
 void initializetonone(char **str, int len);
 char	*ft_strtrim(char *s1, char *set);
-int getinput(char *del);
+int getinput(char *del, t_minishell *mini);
 void heredocerror(char *str);
 void unset(t_commandline *commandline);
 void syntaxhere(int *check, char *flag, int print);
 void syntax(int *check, char *flag, int print);
 int countheredocs(t_tokenize *tokens);
 void	reparse(t_minishell *mini);
+char *expand(char *str, t_minishell *mini);
 
 #endif
