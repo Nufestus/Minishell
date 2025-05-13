@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 21:05:01 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:18:30 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,7 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
+	int	linecount;
 	int	**pipes;
 	int exitstatus;
 	int check;
@@ -159,7 +160,7 @@ void ft_echo(t_commandline *command);
 void	ft_bzero(void *s, size_t n);
 void initializetonone(char **str, int len);
 char	*ft_strtrim(char *s1, char *set);
-int getinput(char *del);
+int getinput(t_commandline *command, char *del);
 void heredocerror(char *str);
 void unset(t_commandline *commandline);
 void syntaxhere(int *check, char *flag, int print);

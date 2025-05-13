@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/11 00:25:47 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:19:09 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,7 @@ void	reparse(t_minishell *mini)
 			else if (list->type == HEDOC && list->next && list->next->type == DEL)
 			{
 				del = ft_strjoin(list->next->str, "\n");
-				close(getinput(del));
+				close(getinput(NULL, del));
 				free(del);
 			}
 			if (check == 1)

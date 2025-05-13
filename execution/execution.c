@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/08 15:09:50 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:17:53 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int openfiles(t_commandline *command)
         else if (infiles->type == HEDOC)
         {
             del = ft_strjoin(infiles->delimiter, "\n");
-            infd = getinput(del);
+            infd = getinput(command, del);
             free(del);
         }
         if (infd == -1)

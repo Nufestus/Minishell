@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 21:07:16 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/13 19:19:25 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -287,15 +287,13 @@ void heredocerror(char *str)
 	printf("%s\n", str);
 }
 
-int getinput(char *del)
+int getinput(t_commandline *command, char *del)
 {
 	int fd[2];
-	int iteration;
 	char *newdel;
 	char *line;
 
 	pipe(fd);
-	iteration = 1;
 	newdel = ft_strtrim(del, "\n");
 	while(1)
 	{
@@ -303,7 +301,8 @@ int getinput(char *del)
 		line = get_next_line(0);
 		if (!line)
 		{
-			printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", iteration, newdel);
+			if (command)
+				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", command->mini->linecount, newdel);
 			free(line);
 			break ;
 		}
@@ -313,7 +312,6 @@ int getinput(char *del)
 			break ;
 		}
 		write(fd[1], line, ft_strlen(line));
-		iteration++;
 		free(line);
 	}
 	free(newdel);
@@ -396,11 +394,10 @@ char	*openheredocs(t_tokenize *tokens)
 
 void readinput(t_minishell *mini)
 {
-	// char *heredoc;
-
     while(1)
 	{
 		mini->input = readline(INPUT1 INPUT2);
+		mini->linecount++;
 		if (!mini->input)
 		{
 			free(mini->input);
