@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/10 22:50:30 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/14 17:16:48 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,10 +133,10 @@ int isanoption(char *str)
     if (str[i] == '-')
     {
         i++;
-        while(str[i] == 'n')
+        while(str[i] && str[i] == 'n')
             i++;
     }
-    if (str[i] == '\0')
+    if (str[i] == '\0' && i != 1)
         return (1);
     return (0);
 }
