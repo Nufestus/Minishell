@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/14 14:53:07 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 16:43:25 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -415,7 +415,7 @@ void readinput(t_minishell *mini)
 			rl_redisplay();
 			continue;
 		}
-		add_history(mini->input);
+		// add_history(mini->input);
 		if (tokenize(mini) == -1)
 		{
 			freelisttokens(mini->tokens);

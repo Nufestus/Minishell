@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 02:34:34 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 16:41:29 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,49 +35,10 @@ int	ft_isalnumm(int c)
 		return (0);
 }
 
-int    lenwithoutvar(char *str)
-{   
-	int        i;
-	int        j;
-
-	i = 0;
-	j = 0;
-	while (str[i])
-	{
-		if (str[i] == '\'')
-			j++;
-		else if (str[i] == '"')
-			j++;
-		if (str[i] == '$' && str[i + 1] != '\0')
-		{
-			i++;
-			if (ft_isalpha(str[i]) || str[i] == '_')
-			{
-				while (str[i] && ft_isalnumm(str[i]))
-					i++;
-			}
-			else 
-			{
-				j++;
-				if (str[i])
-				{
-					j++;
-					i++;
-				}
-			}
-		}
-		else
-		{
-			j++;
-			i++;
-		}
-	}
-	return (j);
-}
-
 int varlen(char *str, t_minishell *mini)
 {
 	int i;
+	int insingle;
 	int finallen;
 	int start;
 	int len;
@@ -88,6 +49,7 @@ int varlen(char *str, t_minishell *mini)
 	start = 0;
 	len = 0;
 	finallen = 0;
+	insingle = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1] != '\0')
@@ -111,7 +73,10 @@ int varlen(char *str, t_minishell *mini)
 				i += 2;
 			}
 			else
+			{
 				i++;
+				finallen++;
+			}
 		}
 		else
 			i++;
@@ -124,6 +89,37 @@ int	ft_isdigit(int c)
 	if (c >= '0' && c <= '9')
 		return (1);
 	return (0);
+}
+
+int quoted(char *str)
+{
+	int i;
+	int len;
+	char quote;
+
+	i = 0;
+	len = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
+			quote = str[i];
+			i++;
+			while (str[i] && str[i] != quote)
+			{
+				len++;
+				i++;
+			}
+			if (str[i] == quote)
+				i++;
+		}
+		else
+		{
+			len++;
+			i++;
+		}
+	}
+	return (len);
 }
 
 char *expand(char *str, t_minishell *mini)
@@ -140,7 +136,7 @@ char *expand(char *str, t_minishell *mini)
 	size_t	k;
 	char *var;
 
-    total = varlen(str, mini) + lenwithoutvar(str);
+    total = varlen(str, mini) + ft_strlen(str);
     insingle = 0;
     indouble = 0;
     i = 0;
@@ -173,7 +169,6 @@ char *expand(char *str, t_minishell *mini)
 					return(NULL);
 				}
 				expandedvar = ft_getenv(var, &mini);
-				expandedvar = ft_strtrim(expandedvar, "\'\"");
 				if (expandedvar)
 				{
 					k = 0;

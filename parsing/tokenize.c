@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 05:50:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 16:43:00 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -375,29 +375,82 @@ int countdouble(char *str, char *delims)
     return (count);
 }
 
+int countword(char **str)
+{
+    int i;
+    int k;
+    int copy;
+    char q;
+    char *s;
+
+    i = 0;
+    k = 0;
+    s = *str;
+    while (s[i])
+    {
+        while (s[i] && ft_strchr(" \t\n\r\v\f", s[i]))
+            i++;
+        if (!s[i])
+            break ;
+        k = 0;
+        while (s[i] && !ft_strchr(" \t\n\r\v\f", s[i]))
+        {
+            if (s[i] == '"' || s[i] == '\'')
+            {
+                q = s[i++];
+                while (s[i] && s[i] != q)
+                {
+                    k++;
+                    i++;
+                }
+                if (s[i] == q)
+                    i++;
+            }
+            else
+            {
+                k++;
+                i++;
+            }
+        }
+        copy = i;
+        while(copy > 0)
+        {
+            (*str)++;
+            copy--;
+        }
+        return (k);
+    }
+    return (k);
+}
+
 char **ft_reparse(int *check, char *str, t_minishell *mini)
 {
     int     i;
+    int z;
     int j;
     int k;
     char q;
     char **strs;
     char *token;
+    char *copy;
 
     i = 0;
     j = 0;
     str = expand(str, mini);
+    copy = str;
     strs = malloc((countdouble(str, " \t\n\r\v\f") + 1) * sizeof(char *));
     if (!strs)
         return (NULL);
     strs[0] = NULL;
     while (str[i])
     {
+        z = countword(&copy);
+        printf("\n\n\n%d\n\n\n", z);
         while (str[i] && ft_strchr(" \t\n\r\v\f", str[i]))
             i++;
         if (!str[i])
             break ;
-        token = malloc(ft_strlen(str) + 1);
+        token = malloc(z + 1);
         if (!token)
             return (NULL);
         k = 0;
@@ -442,6 +495,8 @@ int tokenize(t_minishell *mini)
     check = 0;
     mini->tokens = NULL;
     addspaces = fillspace(mini->input);
+    if (addspaces == NULL)
+        return (-1);
     str = ft_reparse(&check, addspaces, mini);
     if (str == NULL)
     {
