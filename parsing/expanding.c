@@ -6,17 +6,17 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 18:29:20 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 02:34:34 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char *ft_getenv(char *str, t_minishell *mini)
+char *ft_getenv(char *str, t_minishell **mini)
 {
 	t_env *temp;
 	
-	temp = mini->env;
+	temp = (*mini)->env;
 	while (temp)
 	{
 		if (ft_strcmp(str, temp->variable) == 0)
@@ -100,7 +100,7 @@ int varlen(char *str, t_minishell *mini)
 					i++;
 				len = i - start;
 				var = ft_substr(str, start, len);
-				expandedvar = ft_getenv(var, mini);
+				expandedvar = ft_getenv(var, &mini);
 				if (expandedvar)
 					finallen += ft_strlen(expandedvar);
 				free(var);
@@ -154,17 +154,9 @@ char *expand(char *str, t_minishell *mini)
     while (str[i])
     {
         if (str[i] == '\'' && !indouble)
-		{
             insingle = !insingle;
-			i++;
-			continue;
-		}
         else if (str[i] == '"' && !insingle)
-		{
             indouble = !indouble;
-			i++;
-			continue;
-		}
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
@@ -180,7 +172,8 @@ char *expand(char *str, t_minishell *mini)
 					free(expanded);
 					return(NULL);
 				}
-				expandedvar = ft_getenv(var, mini);
+				expandedvar = ft_getenv(var, &mini);
+				expandedvar = ft_strtrim(expandedvar, "\'\"");
 				if (expandedvar)
 				{
 					k = 0;
@@ -209,7 +202,7 @@ char *expand(char *str, t_minishell *mini)
 				free(expandedvar);
 			}
 			else if (str[i] == '$' && str[i + 1] == '$')
-				i+=2;
+				i += 2;
 			else if (str[i] == '$' && ft_isdigit(str[i + 1]))
 				i += 2;
 			else
@@ -220,21 +213,4 @@ char *expand(char *str, t_minishell *mini)
 	}
 	expanded[j] = '\0';
 	return (expanded);
-}
-
-char **expanding(char **strs, t_minishell *mini)
-{
-	int		i;
-	char	*tmp;
-	
-	i = 0;
-	while (strs[i])
-	{
-		tmp = strs[i];
-		strs[i] = expand(strs[i], mini);
-		// printf("%s\n", strs[i]);
-		free(tmp);
-		i++;
-	}
-	return (strs);
 }

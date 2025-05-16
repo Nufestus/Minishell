@@ -6,44 +6,11 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 20:36:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 02:23:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-t_env	*ft_lstlastt(t_env *lst)
-{
-	if (!lst)
-		return (NULL);
-	while (lst->next != NULL)
-		lst = lst->next;
-	return (lst);
-}
-
-void	ft_lstadd_backk(t_env **lst, t_env *new)
-{
-	if (!lst || !new)
-		return ;
-	if (*lst)
-		ft_lstlast(*lst)->next = new;
-	else
-		*lst = new;
-}
-
-t_env	*ft_lstneww(char *string, char *variable, char *value)
-{
-	t_env	*newnode;
-
-	newnode = (t_tokenize *) malloc (sizeof(t_tokenize));
-	if (!newnode)
-		return (NULL);
-	newnode->string = string;
-	newnode->value = value;
-	newnode->variable = variable;
-	newnode->next = NULL;
-	return (newnode);
-}
 
 int	ft_isalnummm(int c)
 {
@@ -64,60 +31,209 @@ int	ft_isalphaa(int c)
 		return (0); 
 }
 
-int checkvalid(char *str)
+char *getvalue(char *str)
 {
 	int i;
+	char *value;
+	int start;
+
+	i = 0;
+	start = 0;
+	value = NULL;
+	if (ft_isalpha(str[i]) || str[i] == '_')
+	{
+		i++;
+		while (str[i] && ft_isalnummm(str[i]))
+			i++;
+		if (str[i] == '+' && str[i + 1] == '=')
+			i += 2;
+		else if (str[i] == '=')
+			i++;
+		start = i;
+		while (str[i])
+			i++;
+		value = ft_substr(str, start, i - start);
+	}
+	return (value);
+}
+
+char *getvar(char *str)
+{
+	int i;
+	char *var;
+	int start;
+
+	i = 0;
+	start = 0;
+	var = NULL;
+	if (ft_isalpha(str[i]) || str[i] == '_')
+	{
+		start = i;
+		while (str[i] && ft_isalnummm(str[i]))
+			i++;
+		var = ft_substr(str, start, i - start);
+	}
+	return (var);
+}
+
+int checkvalid(char *str, t_minishell *mini)
+{
+	int i;
+	char *var;
 	
 	i = 0;
+	var = getvar(str);
+	if (!var)
+		return (0);
 	if (ft_isalphaa(str[i]) || str[i] == '_')
 	{
 		i++;
 		while (str[i] && ft_isalnummm(str[i]))
 			i++;
-		if (str[i] == '=')
-			return (1);
-		else if (str[i] == '\0')
-			return (2);
-		else 
-			return (0);
+		if (str[i] == '=' && !ft_getenv(var, &mini))
+			return (free(var), 1);
+		else if (str[i] == '+' && str[i + 1] == '=')
+			return (free(var), 2);
 	}
-	else
-		return (0);
+	else if (ft_getenv(var, &mini))
+		return (free(var), 3);
+	return (free(var), 0);
 }
 
-int countvar(char *str)
+char *getstring(char *str)
 {
 	int i;
+	int sym;
+	char *string;
 
 	i = 0;
-	if (ft_isalpha(str[i] || str[i] == '_'))
-	{
+	while(str[i])
 		i++;
-		while (str[i] && ft_isalnummm(str[i]))
-			i++;
+	string = malloc(i + 1);
+	i = 0;
+	sym = 0;
+	while(str[i])
+	{
+		if (str[i] == '+' && !sym)
+		{
+			sym = 1;
+			continue;
+		}
+		string[i] = str[i];
+		i++;
 	}
-	return (i);
+	string[i] = '\0';
+	return (string);
 }
 
-void export(t_minishell *mini)
+t_env *getenvnode(t_env *env, char *var)
+{
+	t_env *tmp;
+
+	tmp = env;
+	while(tmp)
+	{
+		if (!ft_strcmp(var, tmp->variable))
+			return (tmp);
+		tmp = tmp->next;
+	}
+	return (NULL);
+}
+
+void export(t_commandline *command)
 {
 	int i;
+	t_env *new;
+	size_t size;
+	int start;
 	char *var;
 	char *value;
 	char *string;
+	char *tmp;
 	int j;
 	char **str;
 	
-	i = 0;
+	i = 1;
 	j = 0;
-	str = mini->commandline->args;
+	start = 0;
+	size = ft_commandsize(command->mini->commandline);
+	str = command->args;
+	if (!str[1])
+	{
+		new = command->mini->env;
+		if (size > 1)
+		{
+			while(new)
+			{
+				printf("declare -x %s=\"%s\"\n", new->variable, new->value);
+				new = new->next;
+			}
+			exit(0);
+		}
+		else
+		{
+			while(new)
+			{
+				ft_putstr_fd("declare -x ", command->outfd);
+				ft_putstr_fd(new->variable, command->outfd);
+				ft_putstr_fd("=\"", command->outfd);
+				ft_putstr_fd(new->value, command->outfd);
+				ft_putstr_fd("\"\n", command->outfd);
+				new = new->next;
+			}
+		}
+		return ;
+	}
 	while (str[i])
 	{
+		value = getvalue(str[i]);
+		var = getvar(str[i]);
+		string = ft_strdup(str[i]);
 		j = 0;
-		if (checkvalid(str[i]) == 1)
+		if (checkvalid(str[i], command->mini) == 1)
 		{
-			
+			new = ft_envnew(value, var, string);
+			new->isexported = false;
+			ft_envadd_back(&command->mini->env, new);
 		}
+		else if (checkvalid(str[i], command->mini) == 2)
+		{
+			new = getenvnode(command->mini->env, var);
+			if (new)
+			{
+				tmp = new->value;
+				new->value = ft_strjoin(new->value, value);
+				free(tmp);
+				tmp = new->string;
+				new->string = ft_strjoin(new->string, value);
+				free(tmp);
+			}
+			else
+			{
+				tmp = string;
+				string = getstring(string);
+				free(tmp);
+				new = ft_envnew(value, var, string);
+				new->isexported = false;
+				ft_envadd_back(&command->mini->env, new);
+			}
+		}
+		else if (checkvalid(str[i], command->mini) == 3)
+		{
+			new = getenvnode(command->mini->env, var);
+			tmp = new->value;
+			new->value = ft_strjoin(new->value, value);
+			free(tmp);
+			tmp = new->string;
+			new->string = ft_strjoin(new->string, value);
+			free(tmp);
+		}
+		free(value);
+		free(string);
+		free(var);
 		i++;
 	}
+	if (size > 1)
+		exit(0);
+	return ;
 }

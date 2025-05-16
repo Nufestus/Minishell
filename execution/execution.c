@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 18:54:38 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 02:28:21 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ char	*checkfile(t_commandline *command)
 		str = ft_strjoin(str, command->args[0]);
 		free(tmp);
 		if (!access(str, F_OK | X_OK))
-            return (freestr(path), ft_strdup(str));
+            return (freestr(path), str);
 		free(str);
 	}
 	return (freestr(path), NULL);
@@ -179,7 +179,7 @@ void	printerror(char *str)
 {
 	write(2, str, ft_strlen(str));
 	write(2, ": Permission denied\n", 21);
-	exit(EXIT_FAILURE);
+	exit(errno);
 }
 
 void	error(char *str)
@@ -205,6 +205,10 @@ void handlebuiltins(t_commandline *command)
             ft_echo(command);
         else if (!ft_strcmp(command->cmd, "unset"))
             unset(command);
+        else if (!ft_strcmp(command->cmd, "exit"))
+            ft_exit(command);
+        else if (!ft_strcmp(command->cmd, "export"))
+            export(command);
     }
 }
 
@@ -214,7 +218,7 @@ void handleiolast(t_commandline *command)
     
     mini = command->mini;
     if (command->infd == -1)
-        exit(0);
+        exit(errno);
     if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
     if (command->outfd == -2)
@@ -263,7 +267,7 @@ void setuplastcommand(t_commandline *command)
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);
-        exit(EXIT_FAILURE);
+        exit(errno);
     }
     close(mini->pipes[command->index][1]);
     close(mini->pipes[command->index - 1][0]);
@@ -275,7 +279,7 @@ void handleiomiddle(t_commandline *command)
 
     mini = command->mini;
     if (command->infd == -1)
-        exit(0);
+        exit(errno);
     if (command->infd == -2)
         command->infd = mini->pipes[command->index - 1][0];
     if (command->outfd == -2)
@@ -325,7 +329,7 @@ void setupmiddlecommand(t_commandline *command)
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);
-        exit(EXIT_FAILURE);
+        exit(errno);
     }
     close(mini->pipes[command->index][1]);
     close(mini->pipes[command->index - 1][0]);
@@ -337,7 +341,7 @@ void handleiosingle(t_commandline *command)
 
     mini = command->mini;
     if (command->infd == -1)
-        exit(0);
+        exit(errno);
     if (command->infd == -2)
         command->infd = 0;
     if (command->outfd == -2 && command->next)
@@ -406,7 +410,9 @@ void setupfirstcommand(t_commandline *command)
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);
-        exit(EXIT_FAILURE);
+        free(command->cmd);
+        freedoublearray(command->args);
+        exit(errno);
     }
     close(mini->pipes[command->index][1]);
 }
@@ -434,7 +440,7 @@ void closeallpipes(t_minishell *mini, int size)
     }
 }
 
-void	startpipex(t_commandline *command)
+void	startpipex(t_minishell *mini)
 {
 	int	i;
     int size;
@@ -442,8 +448,8 @@ void	startpipex(t_commandline *command)
     t_commandline *copy;
 
 	i = -1;
-    copy = command;
-    initializepipes(command->mini);
+    copy = mini->commandline;
+    initializepipes(mini);
     size = ft_commandsize(copy);
 	while (++i < size)
     {
@@ -451,25 +457,25 @@ void	startpipex(t_commandline *command)
             childlabor(copy);
         else if (size == 1)
         {
-            if (command->infd == -1)
+            if (mini->commandline->infd == -1)
             {
                 copy = copy->next;
                 continue;
             }
-            handleiosingle(command);
-            closeallpipes(command->mini, size);
-            command->env = constructenv(command->mini->env);
+            handleiosingle(mini->commandline);
+            closeallpipes(mini, size);
+            mini->commandline->env = constructenv(mini->env);
             handlebuiltins(copy);
         }
         copy = copy->next;
     }
 	while (waitpid(-1, &status, 0) != -1)
         {}
-    command->mini->exitstatus = status >> 8;
+    mini->exitstatus = WEXITSTATUS(status);
 }
 
 void execute(t_minishell *mini)
 {
     // removenodes(mini);
-    startpipex(mini->commandline);
+    startpipex(mini);
 }

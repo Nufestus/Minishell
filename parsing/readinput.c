@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 18:55:06 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/14 14:53:07 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,13 +147,13 @@ void	setupcommandline(t_minishell *mini)
 	char *option;
 	int argcount;
 	int count;
-	int i;
+	// int i;
 	t_commandline *command;
 	t_commandline *copy;
 	t_tokenize *file;
 	t_tokenize *token;
-	t_files *wtf;
-	t_files *idk;
+	// t_files *wtf;
+	// t_files *idk;
 
 	token = mini->tokens;
 	file = mini->tokens;
@@ -197,6 +197,7 @@ void	setupcommandline(t_minishell *mini)
 			if (!token)
 				break ;
 			count = getarguments(token);
+			arg = malloc(sizeof(char *) * (count + 1));
 			while (token && token->type != PIPE)
 			{
 				if (token->type == CMD)
@@ -218,53 +219,53 @@ void	setupcommandline(t_minishell *mini)
 		}
 	}
 	addfile(file, mini->commandline);
-	printf("\n\n\n");
-	if (mini->commandline)
-	{
-		copy = mini->commandline;
-		while(copy)
-		{
-			printf("Commandline %d:\n", copy->index);
-			idk = copy->infile;
-			wtf = copy->outfile;
-			printf("----------------------------------------------------\n");
-			if (copy->cmd)
-				printf("Cmd: %s\nNumber of Args:%d\nArgs: ", copy->cmd, copy->argcount);
-			else
-				printf("Cmd: %s\nNumber of Args:%d\nArgs: ", "no cmd", copy->argcount);
-			i = 0;
-			if (!copy->args)
-				printf("(null)\n");
-			else
-			{
-				while(copy->args[i])
-					printf("%s , ", copy->args[i++]);
-			}
-			printf("\nInfiles:\n");
-			if (!idk)
-				printf("NONE");
-			while(idk)
-			{
-				if (idk->file)
-					printf(" | file : %s --> type : %s | ", idk->file, handletypes(idk->type));
-				if (idk->delimiter)
-					printf(" | Del : %s  | ", idk->delimiter);
-				idk = idk->next;
-			}
-			printf("\nOutfiles:\n");
-			if (!wtf)
-				printf("NONE");
-			while(wtf)
-			{
-				if (wtf->file)
-					printf(" | file : %s --> type : %s |", wtf->file, handletypes(wtf->type));
-				wtf = wtf->next;
-			}
-			printf("\n----------------------------------------------------\n\n");
-			printf("\n\n");
-			copy = copy->next;
-		}
-	}
+	// printf("\n\n\n");
+	// if (mini->commandline)
+	// {
+	// 	copy = mini->commandline;
+	// 	while(copy)
+	// 	{
+	// 		printf("Commandline %d:\n", copy->index);
+	// 		idk = copy->infile;
+	// 		wtf = copy->outfile;
+	// 		printf("----------------------------------------------------\n");
+	// 		if (copy->cmd)
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", copy->cmd, copy->argcount);
+	// 		else
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", "no cmd", copy->argcount);
+	// 		i = 0;
+	// 		if (!copy->args)
+	// 			printf("(null)\n");
+	// 		else
+	// 		{
+	// 			while(copy->args[i])
+	// 				printf("%s , ", copy->args[i++]);
+	// 		}
+	// 		printf("\nInfiles:\n");
+	// 		if (!idk)
+	// 			printf("NONE");
+	// 		while(idk)
+	// 		{
+	// 			if (idk->file)
+	// 				printf(" | file : %s --> type : %s | ", idk->file, handletypes(idk->type));
+	// 			if (idk->delimiter)
+	// 				printf(" | Del : %s  | ", idk->delimiter);
+	// 			idk = idk->next;
+	// 		}
+	// 		printf("\nOutfiles:\n");
+	// 		if (!wtf)
+	// 			printf("NONE");
+	// 		while(wtf)
+	// 		{
+	// 			if (wtf->file)
+	// 				printf(" | file : %s --> type : %s |", wtf->file, handletypes(wtf->type));
+	// 			wtf = wtf->next;
+	// 		}
+	// 		printf("\n----------------------------------------------------\n\n");
+	// 		printf("\n\n");
+	// 		copy = copy->next;
+	// 	}
+	// }
 }
 
 void freedoubleint(t_minishell *mini)
@@ -435,10 +436,10 @@ void readinput(t_minishell *mini)
 			continue ;
 		}
 		setupcommandline(mini);
+		freelisttokens(mini->tokens);
 		openallfiles(mini);
 		execute(mini);
 		freedoubleint(mini);
-		freelisttokens(mini->tokens);
 		freelistcommandline(mini->commandline);
 	}
 }

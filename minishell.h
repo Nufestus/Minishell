@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 18:55:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 04:52:17 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,6 +104,7 @@ typedef struct s_minishell
 	t_env *env;
 	t_tokenize *tokens;
 	t_commandline *commandline;
+	t_files		*files;
 }               t_minishell;
 
 char    **ft_split(int *check, char *s, char *delims);
@@ -153,7 +154,7 @@ void handleiosingle(t_commandline *command);
 int openfiles(t_commandline *command, t_minishell *mini);
 char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
-char *ft_getenv(char *str, t_minishell *mini);
+char *ft_getenv(char *str, t_minishell **mini);
 int isanoption(char *str);
 // void unset(char **str, t_env **env);
 void ft_echo(t_commandline *command);
@@ -168,5 +169,11 @@ void syntax(int *check, char *flag, int print);
 int countheredocs(t_tokenize *tokens);
 void	reparse(t_minishell *mini);
 char *expand(char *str, t_minishell *mini);
+int	ft_isdigit(int c);
+void ft_exit(t_commandline *command);
+void export(t_commandline *command);
+char	*fillspace(const char *input);
+char *expand(char *str, t_minishell *mini);
+int    is_delim(char c, char *delims);
 
 #endif

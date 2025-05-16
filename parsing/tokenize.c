@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 16:05:35 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 05:50:31 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -141,7 +141,7 @@ int isanoption(char *str)
     return (0);
 }
 
-void tokenizesymbols(char **str, t_minishell *mini)
+void tokenizesymbols(char **str, t_tokenize **tokens)
 {
     int i;
 
@@ -149,19 +149,19 @@ void tokenizesymbols(char **str, t_minishell *mini)
     while (str[i])
     {
         if (!ft_strcmp(str[i], "|"))
-            setupnode(i, 0, PIPE, str[i], &mini->tokens);
+            setupnode(i, 0, PIPE, str[i], tokens);
         else if (!ft_strcmp(str[i], ">>"))
-            setupnode(i, 1, APPEND, str[i], &mini->tokens);
+            setupnode(i, 1, APPEND, str[i], tokens);
         else if (!ft_strcmp(str[i], "<<"))
-            setupnode(i, 1, HEDOC, str[i], &mini->tokens);
+            setupnode(i, 1, HEDOC, str[i], tokens);
         else if (!ft_strcmp(str[i], ">"))
-            setupnode(i, 1, REDOUT, str[i], &mini->tokens);
+            setupnode(i, 1, REDOUT, str[i], tokens);
         else if (!ft_strcmp(str[i], "<"))
-            setupnode(i, 1, REDIN, str[i], &mini->tokens);
+            setupnode(i, 1, REDIN, str[i], tokens);
         else if (isanoption(str[i]))
-            setupnode(i, 0, OPTION, str[i], &mini->tokens);
+            setupnode(i, 0, OPTION, str[i], tokens);
         else
-            setupnode(i, 0, WORD, str[i], &mini->tokens);
+            setupnode(i, 0, WORD, str[i], tokens);
         i++;
     }
 }
@@ -358,6 +358,79 @@ char	*ft_strtrim(char *s1, char *set)
 	return (trim);
 }
 
+int countdouble(char *str, char *delims)
+{
+    int i;
+    int count;
+
+    i = 0;
+    count = 0;
+    while (str[i])
+    {
+        if (!is_delim(str[i], delims) && (is_delim(str[i + 1], delims)
+                || str[i + 1] == '\0'))
+            count++;
+        i++;
+    }
+    return (count);
+}
+
+char **ft_reparse(int *check, char *str, t_minishell *mini)
+{
+    int     i;
+    int j;
+    int k;
+    char q;
+    char **strs;
+    char *token;
+
+    i = 0;
+    j = 0;
+    str = expand(str, mini);
+    strs = malloc((countdouble(str, " \t\n\r\v\f") + 1) * sizeof(char *));
+    if (!strs)
+        return (NULL);
+    strs[0] = NULL;
+    while (str[i])
+    {
+        while (str[i] && ft_strchr(" \t\n\r\v\f", str[i]))
+            i++;
+        if (!str[i])
+            break ;
+        token = malloc(ft_strlen(str) + 1);
+        if (!token)
+            return (NULL);
+        k = 0;
+        while (str[i] && !ft_strchr(" \t\n\r\v\f", str[i]))
+        {
+            if (str[i] == '"' || str[i] == '\'')
+            {
+                q = str[i++];
+                while (str[i] && str[i] != q)
+                    token[k++] = str[i++];
+                if (str[i] == q)
+                    i++;
+                else if (str[i] != q)
+                {
+                    *check = 1;
+                    if (strs)
+                        freedoublearray(strs);
+                    return (free(token), free(str), NULL);
+                }
+            }
+            else
+                token[k++] = str[i++];
+        }
+        token[k] = '\0';
+        strs[j++] = ft_strdup(token);
+        free(token);
+    }
+    strs[j] = NULL;
+    free(str);
+    return (strs);
+}
+
+
 int tokenize(t_minishell *mini)
 {
     int i;
@@ -369,7 +442,7 @@ int tokenize(t_minishell *mini)
     check = 0;
     mini->tokens = NULL;
     addspaces = fillspace(mini->input);
-    str = ft_split(&check, addspaces, " \t\n\r\v\f");
+    str = ft_reparse(&check, addspaces, mini);
     if (str == NULL)
     {
         free(addspaces);
@@ -381,8 +454,7 @@ int tokenize(t_minishell *mini)
             return (-1);
         }
     }
-    str = expanding(str, mini);
-    tokenizesymbols(str, mini);
+    tokenizesymbols(str, &mini->tokens);
     tokenizewords(mini);
     retokenize(mini);
     freedoublearray(str);

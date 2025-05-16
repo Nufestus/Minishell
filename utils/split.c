@@ -6,19 +6,22 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:44:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/02/25 00:22:03 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 04:52:11 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int    is_delim(char c, char *delims)
+int    is_delim(char c, char *delims)
 {
-    while (*delims)
+    int i;
+
+    i = 0;
+    while (delims[i])
     {
-        if (c == *delims)
+        if (c == delims[i])
             return (1);
-        delims++;
+        i++;
     }
     return (0);
 }

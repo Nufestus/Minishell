@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:05 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/14 15:13:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ void ft_echo(t_commandline *command)
     }
     free(copy);
     if (size > 1)
-        exit(0);
+		exit(0);
+	command->mini->exitstatus = 0;
     return ;
 }

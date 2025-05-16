@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_next_line.h                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/11/20 13:04:42 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/05 13:38:18 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/15 23:29:19 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,5 +32,6 @@ char	*get_next_line(int fd);
 char	*ft_calloc(size_t num, size_t size);
 char	*ft_stringjoin(char *s1, char *s2);
 size_t	ft_getstrlen(const char *s);
+char	*ft_strchr(const char *s, int c);
 
 #endif
