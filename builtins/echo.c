@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/14 18:56:19 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 17:37:46 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,18 +93,20 @@ void ft_echo(t_commandline *command)
     copy = NULL;
     while(command->args[i])
     {
-        // if (!finishedoptions && isanoption(command->args[i]))
-		// {
-        //     optioncheck = 1;
-		// 	i++;
-		// 	continue ;
-		// }
-		// finishedoptions = 1;
-        res = ft_join(res, command->args[i]);
-        if (copy)
-            free(copy);
-        copy = res;
-        i++;
+        if (isanoption(command->args[i]) && !finishedoptions)
+    	{
+    	    optioncheck = 1;
+    	    i++;
+    	}
+    	else
+    	{
+    	    finishedoptions = 1;
+    	    res = ft_join(res, command->args[i]);
+			if (copy)
+    	    	free(copy);
+    	    copy = res;
+    	    i++;
+    	}
     }
     if (size > 1)
     {

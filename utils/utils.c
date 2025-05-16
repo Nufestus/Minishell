@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/12 20:58:31 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 17:35:48 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -211,7 +211,7 @@ void initializetonone(char **str, int len)
 	}
 }
 
-char **ft_strdupdouble(char *cmd, char *option, char **str)
+char **ft_strdupdouble(char *cmd, char **str)
 {
 	int i;
 	int j;
@@ -227,11 +227,6 @@ char **ft_strdupdouble(char *cmd, char *option, char **str)
 		res[i] = ft_strdup(cmd);
 		i++;
 	}
-	if (option)
-	{
-		res[i] = ft_strdup(option);
-		i++;
-	}
 	j = 0;
 	while(str[j])
 		res[i++] = ft_strdup(str[j++]);
@@ -239,7 +234,7 @@ char **ft_strdupdouble(char *cmd, char *option, char **str)
 	return (res);
 }
 
-t_commandline	*ft_commandnew(char *cmd, char *option, char **arg)
+t_commandline	*ft_commandnew(char *cmd, char **arg)
 {
 	char *copy;
 	t_commandline	*new;
@@ -248,7 +243,7 @@ t_commandline	*ft_commandnew(char *cmd, char *option, char **arg)
 	new = (t_commandline *)malloc(sizeof(t_commandline));
 	if (!new)
 		return (NULL);
-	new->args = ft_strdupdouble(cmd, option, arg);
+	new->args = ft_strdupdouble(cmd, arg);
 	if (!cmd)
 		new->cmd = NULL;
 	else

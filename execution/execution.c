@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 19:17:53 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 15:06:15 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -465,7 +465,7 @@ void	startpipex(t_commandline *command)
     }
 	while (waitpid(-1, &status, 0) != -1)
         {}
-    command->mini->exitstatus = status >> 8;
+    command->mini->exitstatus = WEXITSTATUS(status);
 }
 
 void execute(t_minishell *mini)

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 19:18:30 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 17:36:06 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ void	parse(t_minishell *mini);
 char *handletypes(int i);
 void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
 t_commandline	*ft_commandlast(t_commandline *lst);
-t_commandline	*ft_commandnew(char *cmd, char *option, char **arg);
+t_commandline	*ft_commandnew(char *cmd, char **arg);
 void freelistcommandline(t_commandline *list);
 void	ft_fileadd_back(t_files **lst, t_files *new);
 t_files	*ft_filelast(t_files *lst);
