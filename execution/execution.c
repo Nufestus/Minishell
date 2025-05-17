@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 05:01:14 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:26:21 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int openfiles(t_commandline *command, t_minishell *mini)
         else if (infiles->type == HEDOC)
         {
             del = ft_strjoin(infiles->delimiter, "\n");
-            infd = getinput(del, mini);
+            infd = getinput(infiles->delinquotes, del, mini);
             free(del);
         }
         if (infd == -1)

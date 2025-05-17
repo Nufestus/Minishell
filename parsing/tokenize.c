@@ -6,18 +6,18 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:07:59 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:36:54 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void    setupnode(int inquotes, int index, int category, int type, char *str, t_tokenize **tokens)
+void    setupnode(int split, int index, int category, int type, char *str, t_tokenize **tokens)
 {
     t_tokenize *newnode;
 
     newnode = ft_lstnew(ft_lstlast(*tokens), type);
-    newnode->split = inquotes;
+    newnode->split = split;
     newnode->index = index;
     newnode->str = ft_strdup(str);
     newnode->category = category;
@@ -430,27 +430,27 @@ int countword(char **str)
     return (k);
 }
 
-void handle(int inquotes, char *str, int i, t_tokenize **tokens)
+void handle(int split, char *str, int i, t_tokenize **tokens)
 {
-    if (!inquotes)
+    if (!split || split == 2)
     {
         if (!ft_strcmp(str, "|"))
-            setupnode(inquotes, i, 0, PIPE, str, tokens);
+            setupnode(split, i, 0, PIPE, str, tokens);
         else if (!ft_strcmp(str, ">>"))
-            setupnode(inquotes, i, 1, APPEND, str, tokens);
+            setupnode(split, i, 1, APPEND, str, tokens);
         else if (!ft_strcmp(str, "<<"))
-            setupnode(inquotes, i, 1, HEDOC, str, tokens);
+            setupnode(split, i, 1, HEDOC, str, tokens);
         else if (!ft_strcmp(str, ">"))
-            setupnode(inquotes, i, 1, REDOUT, str, tokens);
+            setupnode(split, i, 1, REDOUT, str, tokens);
         else if (!ft_strcmp(str, "<"))
-            setupnode(inquotes, i, 1, REDIN, str, tokens);
+            setupnode(split, i, 1, REDIN, str, tokens);
         else if (isanoption(str))
-            setupnode(inquotes, i, 0, OPTION, str, tokens);
+            setupnode(split, i, 0, OPTION, str, tokens);
         else
-            setupnode(inquotes, i, 0, WORD, str, tokens);
+            setupnode(split, i, 0, WORD, str, tokens);
     }
     else
-        setupnode(inquotes, i, 0, WORD, str, tokens);
+        setupnode(split, i, 0, WORD, str, tokens);
 }
 
 void    ft_reparse(int *check, char *str, t_minishell *mini)
@@ -466,7 +466,6 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
 
     i = 0;
     j = 0;
-    copy = str;
     while (str[i])
     {
         flag = 0;
@@ -501,16 +500,20 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 token[k++] = str[i++];
         }
         token[k] = '\0';
+        copy = token;
         token = expand(&flag, token, mini);
+        free(copy);
         // printf("%s\n", token);
-        if (flag)
+        if (flag == 1)
         {
             k = 0;
-            int flager = 1;
             char **s = ft_split(NULL, token, " \t\n\r\v\f");
             while(s[k])
-                handle(flager, s[k++], j++, &mini->tokens);
+                handle(1, s[k++], j++, &mini->tokens);
+            freedoublearray(s);
         }
+        else if (flag == 2)
+            handle(2, token, j++, &mini->tokens);
         else
             handle(0, token, j++, &mini->tokens);
         free(token);

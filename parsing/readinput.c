@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 03:14:51 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:35:05 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	t_files *new;
 	t_files *list;
 	int type;
+	int	delquotes;
 	char *file;
 	char *del;
 
@@ -69,6 +70,9 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	del = NULL;
 	new = NULL;
 	list = NULL;
+	delquotes = 0;
+	if (token->next->split == 2 && token->type == HEDOC)
+		token->split = token->next->split;
 	if (token->type == REDIN || token->type == APPEND
 			|| token->type == REDOUT)
 	{
@@ -77,10 +81,13 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	}
 	else if (token->type == HEDOC)
 	{
+		if (token->split == 2)
+			delquotes = 1;
 		type = token->type;
 		del = ft_strdup(token->next->str);
 	}
 	new = ft_filenew(file, del, type);
+	new->delinquotes = delquotes;
 	if (token->type == REDIN || token->type == HEDOC)
 		ft_fileadd_back(&command->infile, new);
 	if (token->type == REDOUT || token->type == APPEND)
@@ -288,7 +295,7 @@ void heredocerror(char *str)
 	printf("%s\n", str);
 }
 
-int getinput(char *del, t_minishell *mini)
+int getinput(int delflag, char *del, t_minishell *mini)
 {
 	int fd[2];
 	char *newdel;
@@ -310,8 +317,11 @@ int getinput(char *del, t_minishell *mini)
 			break ;
 		}
 		copy = line;
-		line = expand(NULL, line, mini);
-		free(copy);
+		if (!delflag)
+		{
+			line = expand(NULL, line, mini);
+			free(copy);
+		}
 		if (!ft_strcmp(line, del))
 		{
 			free(line);

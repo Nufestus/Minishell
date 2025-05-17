@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:02:45 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:26:45 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ struct s_tokenize;
 
 typedef struct s_files
 {
+	int		delinquotes;
 	int		type;
 	char	*file;
 	char	*delimiter;
@@ -164,7 +165,7 @@ void ft_echo(t_commandline *command);
 void	ft_bzero(void *s, size_t n);
 void initializetonone(char **str, int len);
 char	*ft_strtrim(char *s1, char *set);
-int getinput(char *del, t_minishell *mini);
+int getinput(int delflag, char *del, t_minishell *mini);
 void heredocerror(char *str);
 void unset(t_commandline *commandline);
 void syntaxhere(int *check, char *flag, int print);
