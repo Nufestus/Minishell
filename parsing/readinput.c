@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:25:18 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:02:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,7 +171,7 @@ void	setupcommandline(t_minishell *mini)
 		if (token->index == 0)
 		{
 			count = getarguments(token);
-			arg = malloc(sizeof(char *) * (count + 1));
+			arg = malloc(sizeof(char *) * (count + 3));
 			while (token && token->type != PIPE)
 			{
 				if (token->type == CMD)
@@ -179,11 +179,11 @@ void	setupcommandline(t_minishell *mini)
 				else if (token->type == ARG)
 					arg[argcount++] = ft_strdup(token->str);
 				else if (token->type == OPTION)
-					option = token->str;
+					arg[argcount++] = ft_strdup(token->str);
 				token = token->next;
 			}
 			arg[argcount] = NULL;
-			command = ft_commandnew(cmd, option, arg);
+			command = ft_commandnew(cmd, arg);
 			command->index = index;
 			command->mini = mini;
 			command->argcount = argcount;
@@ -197,7 +197,7 @@ void	setupcommandline(t_minishell *mini)
 			if (!token)
 				break ;
 			count = getarguments(token);
-			arg = malloc(sizeof(char *) * (count + 1));
+			arg = malloc(sizeof(char *) * (count + 3));
 			while (token && token->type != PIPE)
 			{
 				if (token->type == CMD)
@@ -205,11 +205,11 @@ void	setupcommandline(t_minishell *mini)
 				else if (token->type == ARG)
 					arg[argcount++] = ft_strdup(token->str);
 				else if (token->type == OPTION)
-					option = token->str;
+					arg[argcount++] = ft_strdup(token->str);
 				token = token->next;
 			}
 			arg[argcount] = NULL;
-			command = ft_commandnew(cmd, option, arg);
+			command = ft_commandnew(cmd, arg);
 			command->index = index;
 			command->mini = mini;
 			command->argcount = argcount;
@@ -291,30 +291,33 @@ void heredocerror(char *str)
 int getinput(char *del, t_minishell *mini)
 {
 	int fd[2];
-	int iteration;
 	char *newdel;
 	char *line;
+	char *copy;
 
 	pipe(fd);
-	iteration = 1;
+	line = NULL;
 	newdel = ft_strtrim(del, "\n");
 	while(1)
 	{
 		write(0, "> ", 3);
-		line = expand(get_next_line(0), mini);
+		line = get_next_line(0);
 		if (!line)
 		{
-			printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", iteration, newdel);
+			if (mini)
+				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
 			free(line);
 			break ;
 		}
-		else if (!ft_strcmp(line, del))
+		copy = line;
+		line = expand(NULL, line, mini);
+		free(copy);
+		if (!ft_strcmp(line, del))
 		{
 			free(line);
 			break ;
 		}
 		write(fd[1], line, ft_strlen(line));
-		iteration++;
 		free(line);
 	}
 	free(newdel);
@@ -334,75 +337,13 @@ void openallfiles(t_minishell *mini)
 	}
 }
 
-char *getfakeinput(char *del)
-{
-	char *res;
-	char *copy;
-	int iteration;
-	char *newdel;
-	char *line;
-
-	iteration = 1;
-	res = NULL;
-	copy = NULL;
-	newdel = ft_strtrim(del, "\n");
-	while(1)
-	{
-		write(0, "> ", 3);
-		line = get_next_line(0);
-		if (!line)
-		{
-			printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", iteration, newdel);
-			free(line);
-			break ;
-		}
-		else if (!ft_strcmp(line, del))
-		{
-			free(line);
-			break ;
-		}
-		copy = res;
-		res = ft_strjoin(res, line);
-		if (copy)
-			free(copy);
-		iteration++;
-		free(line);
-	}
-	free(newdel);
-	return (res);
-}
-
-char	*openheredocs(t_tokenize *tokens)
-{
-	char *del;
-	char *res;
-	t_tokenize *token;
-
-	token = tokens;
-	res = NULL;
-	while(token)
-	{
-		if (token->type == HEDOC && token->next && token->next->type == DEL)
-		{
-			if (res)
-				free(res);
-			del = ft_strjoin(token->next->str, "\n");
-			res = getfakeinput(del);
-			free(del);
-		}
-		token = token->next;
-	}
-	return res;
-}
-
 void readinput(t_minishell *mini)
 {
-	// char *heredoc;
-
     while(1)
 	{
 		callallsignals();
 		mini->input = readline(INPUT1 INPUT2);
+		mini->linecount++;
 		if (!mini->input)
 		{
 			free(mini->input);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expanding.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 16:41:29 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 04:37:53 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,7 @@ int varlen(char *str, t_minishell *mini)
 {
 	int i;
 	int insingle;
+	int indouble;
 	int finallen;
 	int start;
 	int len;
@@ -50,6 +51,7 @@ int varlen(char *str, t_minishell *mini)
 	len = 0;
 	finallen = 0;
 	insingle = 0;
+	indouble = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1] != '\0')
@@ -122,7 +124,7 @@ int quoted(char *str)
 	return (len);
 }
 
-char *expand(char *str, t_minishell *mini)
+char *expand(int *check, char *str, t_minishell *mini)
 {
     int total;
     int insingle;
@@ -150,9 +152,17 @@ char *expand(char *str, t_minishell *mini)
     while (str[i])
     {
         if (str[i] == '\'' && !indouble)
+		{
             insingle = !insingle;
+			i++;
+			continue;
+		}
         else if (str[i] == '"' && !insingle)
+		{
             indouble = !indouble;
+			i++;
+			continue;
+		}
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
@@ -171,6 +181,11 @@ char *expand(char *str, t_minishell *mini)
 				expandedvar = ft_getenv(var, &mini);
 				if (expandedvar)
 				{
+					if (!indouble)
+					{
+						if (check)
+							*check = 1;
+					}
 					k = 0;
 					while (expandedvar[k])
 					{

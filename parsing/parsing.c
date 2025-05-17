@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 20:30:16 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:03:15 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ void	reparse(t_minishell *mini)
 				|| (list->next && list->next->type == PIPE 
 				&& list->type == PIPE) || (!list->next && list->type == PIPE))
 				syntax(&check, "'|'", 0);
-			else if (list->next && list->next->category && list->category && list->type != HEDOC)
+			else if (list->next && list->next->category && list->category)
 				syntaxhere(&check, list->next->str, 0);
 			else if (!list->next && list->category)
 				syntax(&check, "'newline'", 0);
@@ -59,7 +59,7 @@ void	reparse(t_minishell *mini)
 			else if (list->type == HEDOC && list->next && list->next->type == DEL)
 			{
 				del = ft_strjoin(list->next->str, "\n");
-				close(getinput(del, mini));
+				close(getinput(del, NULL));
 				free(del);
 			}
 			if (check == 1)
@@ -74,6 +74,7 @@ void	parse(t_minishell *mini)
 	char *del;
 	int check;
 	t_tokenize *list;
+	t_tokenize *copy;
 
 	check = 0;
 	del = NULL;
@@ -84,7 +85,7 @@ void	parse(t_minishell *mini)
 			|| (list->next && list->next->type == PIPE 
 			&& list->type == PIPE) || (!list->next && list->type == PIPE))
 			syntax(&check, "'|'", 1);
-		else if (list->next && list->next->category && list->category && list->type != HEDOC)
+		else if (list->next && list->next->category && list->category)
 			syntaxhere(&check, list->next->str, 1);
 		else if (!list->next && list->category)
 			syntax(&check, "'newline'", 1);
@@ -100,4 +101,11 @@ void	parse(t_minishell *mini)
 	}
 	if (check == 1)
 		mini->check = 1;
+	copy = mini->tokens;
+	while(copy)
+	{
+		// printf("%d\n", copy->inquotes);
+		printf("%s / %s\n", copy->str, handletypes(copy->type));
+		copy = copy->next;
+	}
 }

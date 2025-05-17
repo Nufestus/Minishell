@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:23:07 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:03:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -62,6 +63,7 @@ typedef struct s_files
 
 typedef struct s_tokenize
 {
+	int					inquotes;
 	int					type;
 	int					category;
 	int					index;
@@ -97,6 +99,7 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
+	int	linecount;
 	int	**pipes;
 	int exitstatus;
 	int check;
@@ -128,7 +131,7 @@ void	parse(t_minishell *mini);
 char *handletypes(int i);
 void	ft_commandadd_back(t_commandline **lst, t_commandline *new);
 t_commandline	*ft_commandlast(t_commandline *lst);
-t_commandline	*ft_commandnew(char *cmd, char *option, char **arg);
+t_commandline	*ft_commandnew(char *cmd, char **arg);
 void freelistcommandline(t_commandline *list);
 void	ft_fileadd_back(t_files **lst, t_files *new);
 t_files	*ft_filelast(t_files *lst);
@@ -168,12 +171,11 @@ void syntaxhere(int *check, char *flag, int print);
 void syntax(int *check, char *flag, int print);
 int countheredocs(t_tokenize *tokens);
 void	reparse(t_minishell *mini);
-char *expand(char *str, t_minishell *mini);
+char *expand(int *check, char *str, t_minishell *mini);
 int	ft_isdigit(int c);
 void ft_exit(t_commandline *command);
 void export(t_commandline *command);
 char	*fillspace(const char *input);
-char *expand(char *str, t_minishell *mini);
 int    is_delim(char c, char *delims);
 void signalhandle(int sig);
 void callallsignals();

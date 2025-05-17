@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/14 15:13:32 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:28:20 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,6 +80,7 @@ void ft_echo(t_commandline *command)
 {
     int i;
     int optioncheck;
+	int finishedoptions;
     char *res;
     char *copy;
     int size;
@@ -87,20 +88,25 @@ void ft_echo(t_commandline *command)
     i = 1;
     size = ft_commandsize(command);
     optioncheck = 0;
+	finishedoptions = 0;
     res = NULL;
     copy = NULL;
     while(command->args[i])
     {
-        if (isanoption(command->args[i]))
-            optioncheck = 1;
-        else
-        {
-            res = ft_join(res, command->args[i]);
-            if (copy)
-                free(copy);
-            copy = res;
-        }
-        i++;
+        if (isanoption(command->args[i]) && !finishedoptions)
+    	{
+    	    optioncheck = 1;
+    	    i++;
+    	}
+    	else
+    	{
+    	    finishedoptions = 1;
+    	    res = ft_join(res, command->args[i]);
+			if (copy)
+    	    	free(copy);
+    	    copy = res;
+    	    i++;
+    	}
     }
     if (size > 1)
     {
