@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:28:20 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 05:02:34 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void ft_echo(t_commandline *command)
     int size;
 
     i = 1;
-    size = ft_commandsize(command);
+    size = ft_commandsize(command->mini->commandline);
     optioncheck = 0;
 	finishedoptions = 0;
     res = NULL;

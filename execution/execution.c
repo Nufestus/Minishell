@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:41:58 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 05:01:14 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -248,7 +248,7 @@ void setuplastcommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        if (command->args && !ft_find(command->args[0], "./")
+        if (command->args && !ft_find(command->args[0], "/")
             && !checkcommand(command->cmd))
         {
             free(command->cmd);
@@ -263,7 +263,7 @@ void setuplastcommand(t_commandline *command)
             printerror(command->cmd);
         handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
-        if (command->args && !ft_find(command->args[0], "./"))
+        if (command->args && !ft_find(command->args[0], "/"))
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);
@@ -310,7 +310,7 @@ void setupmiddlecommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        if (command->args && !ft_find(command->args[0], "./")
+        if (command->args && !ft_find(command->args[0], "/")
             && !checkcommand(command->cmd))
         {
             free(command->cmd);
@@ -325,7 +325,7 @@ void setupmiddlecommand(t_commandline *command)
 			printerror(command->cmd);
         handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
-        if (command->args && !ft_find(command->args[0], "./"))
+        if (command->args && !ft_find(command->args[0], "/"))
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);
@@ -391,7 +391,7 @@ void setupfirstcommand(t_commandline *command)
             dup2(command->outfd, 1);
             close(command->outfd);
         }
-        if (command->args && !ft_find(command->args[0], "./")
+        if (command->args && !ft_find(command->args[0], "/")
             && !checkcommand(command->cmd))
         {
             free(command->cmd);
@@ -406,7 +406,7 @@ void setupfirstcommand(t_commandline *command)
 			printerror(command->cmd);
         handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
-        if (command->args && !ft_find(command->args[0], "./"))
+        if (command->args && !ft_find(command->args[0], "/"))
 			error(command->args[0]);
 		else if (command->args)
 			perror(command->args[0]);

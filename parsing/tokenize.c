@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 04:39:48 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:07:59 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ void    setupnode(int inquotes, int index, int category, int type, char *str, t_
     t_tokenize *newnode;
 
     newnode = ft_lstnew(ft_lstlast(*tokens), type);
-    newnode->inquotes = inquotes;
+    newnode->split = inquotes;
     newnode->index = index;
     newnode->str = ft_strdup(str);
     newnode->category = category;
@@ -134,7 +134,7 @@ int isanoption(char *str)
         while(str[i] && str[i] == 'n')
             i++;
     }
-    if (str[i] == '\0')
+    if (str[i] == '\0' && i != 0)
         return (1);
     return (0);
 }
@@ -200,30 +200,34 @@ char	*fillspace(const char *input)
 {
 	int		i;
 	int		j;
+    int     inquote;
 	char	*out;
 
     j = 0;
     i = 0;
+    inquote = 0;
     out = malloc(strlen(input) * 3 + 1);
 	if (!out)
 		return NULL;
 	while (input[i])
     {
-		if ((input[i] == '<' || input[i] == '>') && input[i + 1] == input[i])
+        if (input[i] == '\'' || input[i] == '"')
+            inquote = !inquote;
+		if ((input[i] == '<' || input[i] == '>') && input[i + 1] == input[i] && !inquote)
         {
-			if (j > 0 && (out[j - 1] != ' ' && out[j - 1] != '"' && out[j - 1] != '\''))
+			if (j > 0 && out[j - 1] != ' ')
 				out[j++] = ' ';
 			out[j++] = input[i++];
 			out[j++] = input[i++];
-			if (input[i] && (input[i] != ' ' && input[i] != '"' && input[i] != '\''))
+			if (input[i] && input[i] != ' ')
 				out[j++] = ' ';
 		}
-		else if (is_token(input[i]))
+		else if (is_token(input[i]) && !inquote)
         {
-			if (j > 0 && (out[j - 1] != ' ' && out[j - 1] != '"' && out[j - 1] != '\''))
+			if (j > 0 && out[j - 1] != ' ')
 				out[j++] = ' ';
 			out[j++] = input[i++];
-			if (input[i] && (input[i] != ' ' && input[i] != '"' && input[i] != '\''))
+			if (input[i] && input[i] != ' ')
 				out[j++] = ' ';
 		}
 		else
@@ -428,18 +432,23 @@ int countword(char **str)
 
 void handle(int inquotes, char *str, int i, t_tokenize **tokens)
 {
-    if (!ft_strcmp(str, "|"))
-        setupnode(inquotes, i, 0, PIPE, str, tokens);
-    else if (!ft_strcmp(str, ">>"))
-        setupnode(inquotes, i, 1, APPEND, str, tokens);
-    else if (!ft_strcmp(str, "<<"))
-        setupnode(inquotes, i, 1, HEDOC, str, tokens);
-    else if (!ft_strcmp(str, ">"))
-        setupnode(inquotes, i, 1, REDOUT, str, tokens);
-    else if (!ft_strcmp(str, "<"))
-        setupnode(inquotes, i, 1, REDIN, str, tokens);
-    else if (isanoption(str))
-        setupnode(inquotes, i, 0, OPTION, str, tokens);
+    if (!inquotes)
+    {
+        if (!ft_strcmp(str, "|"))
+            setupnode(inquotes, i, 0, PIPE, str, tokens);
+        else if (!ft_strcmp(str, ">>"))
+            setupnode(inquotes, i, 1, APPEND, str, tokens);
+        else if (!ft_strcmp(str, "<<"))
+            setupnode(inquotes, i, 1, HEDOC, str, tokens);
+        else if (!ft_strcmp(str, ">"))
+            setupnode(inquotes, i, 1, REDOUT, str, tokens);
+        else if (!ft_strcmp(str, "<"))
+            setupnode(inquotes, i, 1, REDIN, str, tokens);
+        else if (isanoption(str))
+            setupnode(inquotes, i, 0, OPTION, str, tokens);
+        else
+            setupnode(inquotes, i, 0, WORD, str, tokens);
+    }
     else
         setupnode(inquotes, i, 0, WORD, str, tokens);
 }
@@ -493,13 +502,14 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
         }
         token[k] = '\0';
         token = expand(&flag, token, mini);
-        printf("%s\n", token);
+        // printf("%s\n", token);
         if (flag)
         {
             k = 0;
+            int flager = 1;
             char **s = ft_split(NULL, token, " \t\n\r\v\f");
             while(s[k])
-                handle(0, s[k++], j++, &mini->tokens);
+                handle(flager, s[k++], j++, &mini->tokens);
         }
         else
             handle(0, token, j++, &mini->tokens);

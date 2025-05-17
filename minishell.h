@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 04:00:31 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:02:45 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ typedef struct s_files
 
 typedef struct s_tokenize
 {
-	int					inquotes;
+	int					split;
 	int					type;
 	int					category;
 	int					index;
