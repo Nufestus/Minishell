@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:03:46 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:44:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -179,5 +179,6 @@ char	*fillspace(const char *input);
 int    is_delim(char c, char *delims);
 void signalhandle(int sig);
 void callallsignals();
+void quithandle(int sig);
 
 #endif

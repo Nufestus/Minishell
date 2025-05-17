@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:22 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 15:35:23 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,21 +48,12 @@ void unset(t_commandline *commandline)
 {
     int i;
     char **str;
-    t_env *env;
-    t_env *tmp;
 
     i = 1;
-    env = commandline->mini->env;
     str = commandline->args;
     while (str[i])
     {
-        tmp = env;
-        while (tmp)
-        {
-            if (!ft_strcmp(str[i], tmp->variable))
-                lstremoveif(env, tmp->variable);
-            tmp = tmp->next;
-        }
+        lstremoveif(commandline->mini->env, str[i]);
         i++;
     }
 }

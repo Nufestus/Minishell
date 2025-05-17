@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 17:04:03 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 21:00:45 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,11 @@ void ft_pwd(t_minishell *mini)
     if (size != 1)
         exit(0);
     mini->exitstatus = 0;
+}
+
+void printenv()
+{
+    
 }
 
 void ft_env(t_minishell *mini, char **args)

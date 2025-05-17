@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:22:55 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:39:39 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,9 +21,14 @@ void signalhandle(int sig)
 	rl_replace_line("", 0);
 	rl_redisplay();
 }
+void quithandle(int sig)
+{
+    (void)sig;
+    printf("quit\n");
+}
 
 void callallsignals()
 {
-    signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, signalhandle);
+    signal(SIGQUIT, SIG_IGN);
 }

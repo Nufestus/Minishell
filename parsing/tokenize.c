@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:02:54 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 19:03:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,7 +134,7 @@ int isanoption(char *str)
         while(str[i] && str[i] == 'n')
             i++;
     }
-    if (str[i] == '\0')
+    if (str[i] == '\0' && i != 0)
         return (1);
     return (0);
 }
@@ -493,7 +493,6 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
         }
         token[k] = '\0';
         token = expand(&flag, token, mini);
-        printf("%s\n", token);
         if (flag)
         {
             k = 0;
