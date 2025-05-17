@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 16:43:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 20:28:36 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -445,7 +445,6 @@ char **ft_reparse(int *check, char *str, t_minishell *mini)
     while (str[i])
     {
         z = countword(&copy);
-        printf("\n\n\n%d\n\n\n", z);
         while (str[i] && ft_strchr(" \t\n\r\v\f", str[i]))
             i++;
         if (!str[i])
@@ -495,6 +494,7 @@ int tokenize(t_minishell *mini)
     check = 0;
     mini->tokens = NULL;
     addspaces = fillspace(mini->input);
+
     if (addspaces == NULL)
         return (-1);
     str = ft_reparse(&check, addspaces, mini);

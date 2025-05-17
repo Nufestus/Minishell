@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 15:43:24 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:23:07 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,5 +175,7 @@ void export(t_commandline *command);
 char	*fillspace(const char *input);
 char *expand(char *str, t_minishell *mini);
 int    is_delim(char c, char *delims);
+void signalhandle(int sig);
+void callallsignals();
 
 #endif

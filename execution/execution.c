@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 02:28:21 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:24:30 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,6 +466,7 @@ void	startpipex(t_minishell *mini)
             closeallpipes(mini, size);
             mini->commandline->env = constructenv(mini->env);
             handlebuiltins(copy);
+            return ;
         }
         copy = copy->next;
     }
@@ -477,5 +478,6 @@ void	startpipex(t_minishell *mini)
 void execute(t_minishell *mini)
 {
     // removenodes(mini);
+
     startpipex(mini);
 }
