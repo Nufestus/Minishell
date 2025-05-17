@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:36:54 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 16:55:04 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -432,7 +432,7 @@ int countword(char **str)
 
 void handle(int split, char *str, int i, t_tokenize **tokens)
 {
-    if (!split || split == 2)
+    if (!split || split == 2 || split == 3)
     {
         if (!ft_strcmp(str, "|"))
             setupnode(split, i, 0, PIPE, str, tokens);
@@ -453,6 +453,52 @@ void handle(int split, char *str, int i, t_tokenize **tokens)
         setupnode(split, i, 0, WORD, str, tokens);
 }
 
+char *removequotes(int *flag, char *str)
+{
+    int total;
+    int insingle;
+    int indouble;
+    int i;
+	int start;
+	int len;
+    int j;
+    char *expanded;
+	size_t	k;
+
+    total = ft_strlen(str);
+    insingle = 0;
+    indouble = 0;
+    i = 0;
+    j = 0;
+	start = 0;
+	len = 0;
+	k = 0;
+    expanded = malloc(total + 1);
+    if (!expanded)
+        return (NULL);
+    while (str[i])
+    {
+        if (str[i] == '\'' && !indouble)
+		{
+            insingle = !insingle;
+			i++;
+			continue;
+		}
+        else if (str[i] == '"' && !insingle)
+		{
+            indouble = !indouble;
+			i++;
+			continue;
+		}
+		else
+			expanded[j++] = str[i++];
+        if (flag && *flag == 0 && (insingle || indouble))
+            *flag = 3;
+	}
+	expanded[j] = '\0';
+	return (expanded);
+}
+
 void    ft_reparse(int *check, char *str, t_minishell *mini)
 {
     int flag;
@@ -463,9 +509,13 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
     char q;
     char *token;
     char *copy;
+    char *string;
+    char *prev;
 
     i = 0;
     j = 0;
+    copy = str;
+    prev = NULL;
     while (str[i])
     {
         flag = 0;
@@ -500,9 +550,24 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 token[k++] = str[i++];
         }
         token[k] = '\0';
-        copy = token;
-        token = expand(&flag, token, mini);
-        free(copy);
+        if (prev && ft_strcmp(prev, "<<"))
+        {
+            string = token;
+            token = expand(&flag, token, mini);
+            free(string);
+        }
+        else if (prev && !ft_strcmp(prev, "<<"))
+        {
+            string = token;
+            token = removequotes(&flag, token);
+            free(string);
+        }
+        else
+        {
+            string = token;
+            token = expand(&flag, token, mini);
+            free(string);
+        }
         // printf("%s\n", token);
         if (flag == 1)
         {
@@ -512,10 +577,11 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 handle(1, s[k++], j++, &mini->tokens);
             freedoublearray(s);
         }
-        else if (flag == 2)
-            handle(2, token, j++, &mini->tokens);
+        else if (flag == 2 || flag == 3)
+            handle(flag, token, j++, &mini->tokens);
         else
             handle(0, token, j++, &mini->tokens);
+        prev = ft_strdup(token);
         free(token);
     }
 }

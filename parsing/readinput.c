@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:35:05 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 17:07:44 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	new = NULL;
 	list = NULL;
 	delquotes = 0;
-	if (token->next->split == 2 && token->type == HEDOC)
+	if ((token->next->split == 2 || token->next->split == 3) && token->type == HEDOC)
 		token->split = token->next->split;
 	if (token->type == REDIN || token->type == APPEND
 			|| token->type == REDOUT)
@@ -81,7 +81,7 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	}
 	else if (token->type == HEDOC)
 	{
-		if (token->split == 2)
+		if (token->split == 2 || token->split == 3)
 			delquotes = 1;
 		type = token->type;
 		del = ft_strdup(token->next->str);
@@ -298,39 +298,36 @@ void heredocerror(char *str)
 int getinput(int delflag, char *del, t_minishell *mini)
 {
 	int fd[2];
-	char *newdel;
 	char *line;
 	char *copy;
 
 	pipe(fd);
 	line = NULL;
-	newdel = ft_strtrim(del, "\n");
 	while(1)
 	{
-		write(0, "> ", 3);
-		line = get_next_line(0);
+		line = readline("> ");
 		if (!line)
 		{
 			if (mini)
-				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
+				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
 			free(line);
 			break ;
 		}
 		copy = line;
-		if (!delflag)
-		{
-			line = expand(NULL, line, mini);
-			free(copy);
-		}
 		if (!ft_strcmp(line, del))
 		{
 			free(line);
 			break ;
 		}
+		if (!delflag)
+		{
+			line = expand(NULL, line, mini);
+			free(copy);
+		}
 		write(fd[1], line, ft_strlen(line));
+		write(fd[1], "\n", 2);
 		free(line);
 	}
-	free(newdel);
 	close(fd[1]);
 	return (fd[0]);
 }
