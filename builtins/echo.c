@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 17:37:46 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 19:28:20 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,7 +111,7 @@ void ft_echo(t_commandline *command)
     if (size > 1)
     {
         if (optioncheck)
-            printf("%s", res);
+            printf("%s\n", res);
         else
             printf("%s\n", res);
     }
@@ -127,6 +127,7 @@ void ft_echo(t_commandline *command)
     }
     free(copy);
     if (size > 1)
-        exit(0);
+		exit(0);
+	command->mini->exitstatus = 0;
     return ;
 }

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 17:35:57 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 03:14:51 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,13 +147,13 @@ void	setupcommandline(t_minishell *mini)
 	char *option;
 	int argcount;
 	int count;
-	int i;
+	// int i;
 	t_commandline *command;
 	t_commandline *copy;
 	t_tokenize *file;
 	t_tokenize *token;
-	t_files *wtf;
-	t_files *idk;
+	// t_files *wtf;
+	// t_files *idk;
 
 	token = mini->tokens;
 	file = mini->tokens;
@@ -219,53 +219,53 @@ void	setupcommandline(t_minishell *mini)
 		}
 	}
 	addfile(file, mini->commandline);
-	printf("\n\n\n");
-	if (mini->commandline)
-	{
-		copy = mini->commandline;
-		while(copy)
-		{
-			printf("Commandline %d:\n", copy->index);
-			idk = copy->infile;
-			wtf = copy->outfile;
-			printf("----------------------------------------------------\n");
-			if (copy->cmd)
-				printf("Cmd: %s\nNumber of Args:%d\nArgs: ", copy->cmd, copy->argcount);
-			else
-				printf("Cmd: %s\nNumber of Args:%d\nArgs: ", "no cmd", copy->argcount);
-			i = 0;
-			if (!copy->args)
-				printf("(null)\n");
-			else
-			{
-				while(copy->args[i])
-					printf("%s , ", copy->args[i++]);
-			}
-			printf("\nInfiles:\n");
-			if (!idk)
-				printf("NONE");
-			while(idk)
-			{
-				if (idk->file)
-					printf(" | file : %s --> type : %s | ", idk->file, handletypes(idk->type));
-				if (idk->delimiter)
-					printf(" | Del : %s  | ", idk->delimiter);
-				idk = idk->next;
-			}
-			printf("\nOutfiles:\n");
-			if (!wtf)
-				printf("NONE");
-			while(wtf)
-			{
-				if (wtf->file)
-					printf(" | file : %s --> type : %s |", wtf->file, handletypes(wtf->type));
-				wtf = wtf->next;
-			}
-			printf("\n----------------------------------------------------\n\n");
-			printf("\n\n");
-			copy = copy->next;
-		}
-	}
+	// printf("\n\n\n");
+	// if (mini->commandline)
+	// {
+	// 	copy = mini->commandline;
+	// 	while(copy)
+	// 	{
+	// 		printf("Commandline %d:\n", copy->index);
+	// 		idk = copy->infile;
+	// 		wtf = copy->outfile;
+	// 		printf("----------------------------------------------------\n");
+	// 		if (copy->cmd)
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", copy->cmd, copy->argcount);
+	// 		else
+	// 			printf("Cmd: %s\nNumber of Args:%d\nArgs: ", "no cmd", copy->argcount);
+	// 		i = 0;
+	// 		if (!copy->args)
+	// 			printf("(null)\n");
+	// 		else
+	// 		{
+	// 			while(copy->args[i])
+	// 				printf("%s , ", copy->args[i++]);
+	// 		}
+	// 		printf("\nInfiles:\n");
+	// 		if (!idk)
+	// 			printf("NONE");
+	// 		while(idk)
+	// 		{
+	// 			if (idk->file)
+	// 				printf(" | file : %s --> type : %s | ", idk->file, handletypes(idk->type));
+	// 			if (idk->delimiter)
+	// 				printf(" | Del : %s  | ", idk->delimiter);
+	// 			idk = idk->next;
+	// 		}
+	// 		printf("\nOutfiles:\n");
+	// 		if (!wtf)
+	// 			printf("NONE");
+	// 		while(wtf)
+	// 		{
+	// 			if (wtf->file)
+	// 				printf(" | file : %s --> type : %s |", wtf->file, handletypes(wtf->type));
+	// 			wtf = wtf->next;
+	// 		}
+	// 		printf("\n----------------------------------------------------\n\n");
+	// 		printf("\n\n");
+	// 		copy = copy->next;
+	// 	}
+	// }
 }
 
 void freedoubleint(t_minishell *mini)
@@ -288,13 +288,15 @@ void heredocerror(char *str)
 	printf("%s\n", str);
 }
 
-int getinput(t_commandline *command, char *del)
+int getinput(char *del, t_minishell *mini)
 {
 	int fd[2];
 	char *newdel;
 	char *line;
+	char *copy;
 
 	pipe(fd);
+	line = NULL;
 	newdel = ft_strtrim(del, "\n");
 	while(1)
 	{
@@ -302,12 +304,15 @@ int getinput(t_commandline *command, char *del)
 		line = get_next_line(0);
 		if (!line)
 		{
-			if (command)
-				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", command->mini->linecount, newdel);
+			if (mini)
+				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
 			free(line);
 			break ;
 		}
-		else if (!ft_strcmp(line, del))
+		copy = line;
+		line = expand(NULL, line, mini);
+		free(copy);
+		if (!ft_strcmp(line, del))
 		{
 			free(line);
 			break ;
@@ -327,70 +332,9 @@ void openallfiles(t_minishell *mini)
 	command = mini->commandline;
 	while(command)
 	{
-		openfiles(command);
+		openfiles(command, mini);
 		command = command->next;
 	}
-}
-
-char *getfakeinput(char *del)
-{
-	char *res;
-	char *copy;
-	int iteration;
-	char *newdel;
-	char *line;
-
-	iteration = 1;
-	res = NULL;
-	copy = NULL;
-	newdel = ft_strtrim(del, "\n");
-	while(1)
-	{
-		write(0, "> ", 3);
-		line = get_next_line(0);
-		if (!line)
-		{
-			printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", iteration, newdel);
-			free(line);
-			break ;
-		}
-		else if (!ft_strcmp(line, del))
-		{
-			free(line);
-			break ;
-		}
-		copy = res;
-		res = ft_strjoin(res, line);
-		if (copy)
-			free(copy);
-		iteration++;
-		free(line);
-	}
-	free(newdel);
-	return (res);
-}
-
-char	*openheredocs(t_tokenize *tokens)
-{
-	char *del;
-	char *res;
-	t_tokenize *token;
-
-	token = tokens;
-	res = NULL;
-	while(token)
-	{
-		if (token->type == HEDOC && token->next && token->next->type == DEL)
-		{
-			if (res)
-				free(res);
-			del = ft_strjoin(token->next->str, "\n");
-			res = getfakeinput(del);
-			free(del);
-		}
-		token = token->next;
-	}
-	return res;
 }
 
 void readinput(t_minishell *mini)
@@ -433,10 +377,10 @@ void readinput(t_minishell *mini)
 			continue ;
 		}
 		setupcommandline(mini);
+		freelisttokens(mini->tokens);
 		openallfiles(mini);
 		execute(mini);
 		freedoubleint(mini);
-		freelisttokens(mini->tokens);
 		freelistcommandline(mini->commandline);
 	}
 }

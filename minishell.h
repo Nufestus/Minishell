@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 17:36:06 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 04:00:31 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -62,6 +63,7 @@ typedef struct s_files
 
 typedef struct s_tokenize
 {
+	int					inquotes;
 	int					type;
 	int					category;
 	int					index;
@@ -105,6 +107,7 @@ typedef struct s_minishell
 	t_env *env;
 	t_tokenize *tokens;
 	t_commandline *commandline;
+	t_files		*files;
 }               t_minishell;
 
 char    **ft_split(int *check, char *s, char *delims);
@@ -151,21 +154,28 @@ void ft_cd(t_commandline *commandline);
 int checkcommand(char *cmd);
 char **constructenv(t_env *env);
 void handleiosingle(t_commandline *command);
-int	openfiles(t_commandline *command);
+int openfiles(t_commandline *command, t_minishell *mini);
 char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
-char *ft_getenv(char *str, t_minishell *mini);
+char *ft_getenv(char *str, t_minishell **mini);
 int isanoption(char *str);
+// void unset(char **str, t_env **env);
 void ft_echo(t_commandline *command);
 void	ft_bzero(void *s, size_t n);
 void initializetonone(char **str, int len);
 char	*ft_strtrim(char *s1, char *set);
-int getinput(t_commandline *command, char *del);
+int getinput(char *del, t_minishell *mini);
 void heredocerror(char *str);
 void unset(t_commandline *commandline);
 void syntaxhere(int *check, char *flag, int print);
 void syntax(int *check, char *flag, int print);
 int countheredocs(t_tokenize *tokens);
 void	reparse(t_minishell *mini);
+char *expand(int *check, char *str, t_minishell *mini);
+int	ft_isdigit(int c);
+void ft_exit(t_commandline *command);
+void export(t_commandline *command);
+char	*fillspace(const char *input);
+int    is_delim(char c, char *delims);
 
 #endif

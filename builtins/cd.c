@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/05 14:44:14 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/16 02:22:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ void ft_cd(t_commandline *commandline)
     {
         perror("getcwd");
         if (size != 1)
-            exit(0);
+            exit(1);
         return ;
     }
     if (command->argcount > 1)
@@ -66,20 +66,20 @@ void ft_cd(t_commandline *commandline)
         if (size != 1)
         {
             free(oldcwd);
-            exit(0);
+            exit(1);
         }
         return ;
     }
     if (!targetdir)
     {
-        targetdir = ft_getenv("HOME", mini);
+        targetdir = ft_getenv("HOME", &mini);
         if (!targetdir)
         {
             ft_putstr_fd("cd; HOME not set!", 2);
             if (size != 1)
             {
                 free(oldcwd);
-                exit(0);
+                exit(1);
             }
             return ;
         }
@@ -90,7 +90,7 @@ void ft_cd(t_commandline *commandline)
         if (size != 1)
         {
             free(oldcwd);
-            exit(0);
+            exit(1);
         }
         return ;
     }
@@ -99,7 +99,11 @@ void ft_cd(t_commandline *commandline)
     {
         perror("getcwd");
         if (size != 1)
-            exit(0);
+        {
+            free(oldcwd);
+            free(pwd);
+            exit(1);
+        }
         return ;
     }
     ft_setenv("PWD", pwd, mini);
@@ -108,6 +112,7 @@ void ft_cd(t_commandline *commandline)
     free(pwd);
     if (size != 1)
         exit(0);
+    command->mini->exitstatus = 0;
     return ;
 }
 

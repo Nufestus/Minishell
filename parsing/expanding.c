@@ -6,17 +6,17 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/03 16:06:53 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 04:37:53 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char *ft_getenv(char *str, t_minishell *mini)
+char *ft_getenv(char *str, t_minishell **mini)
 {
 	t_env *temp;
 	
-	temp = mini->env;
+	temp = (*mini)->env;
 	while (temp)
 	{
 		if (ft_strcmp(str, temp->variable) == 0)
@@ -35,45 +35,11 @@ int	ft_isalnumm(int c)
 		return (0);
 }
 
-int    lenwithoutvar(char *str)
-{   
-	int        i;
-	int        j;
-
-	i = 0;
-	j = 0;
-	while (str[i])
-	{
-		if (str[i] == '$' && str[i + 1] != '\0')
-		{
-			i++;
-			if (ft_isalpha(str[i]) || str[i] == '_')
-			{
-				while (str[i] && ft_isalnumm(str[i]))
-					i++;
-			}
-			else 
-			{
-				j++;
-				if (str[i])
-				{
-					j++;
-					i++;
-				}
-			}
-		}
-		else
-		{
-			j++;
-			i++;
-		}
-	}
-	return (j);
-}
-
 int varlen(char *str, t_minishell *mini)
 {
 	int i;
+	int insingle;
+	int indouble;
 	int finallen;
 	int start;
 	int len;
@@ -84,6 +50,8 @@ int varlen(char *str, t_minishell *mini)
 	start = 0;
 	len = 0;
 	finallen = 0;
+	insingle = 0;
+	indouble = 0;
 	while (str[i])
 	{
 		if (str[i] == '$' && str[i + 1] != '\0')
@@ -96,7 +64,7 @@ int varlen(char *str, t_minishell *mini)
 					i++;
 				len = i - start;
 				var = ft_substr(str, start, len);
-				expandedvar = ft_getenv(var, mini);
+				expandedvar = ft_getenv(var, &mini);
 				if (expandedvar)
 					finallen += ft_strlen(expandedvar);
 				free(var);
@@ -107,7 +75,10 @@ int varlen(char *str, t_minishell *mini)
 				i += 2;
 			}
 			else
+			{
 				i++;
+				finallen++;
+			}
 		}
 		else
 			i++;
@@ -115,7 +86,45 @@ int varlen(char *str, t_minishell *mini)
 	return (finallen);
 }
 
-char *expand(char *str, t_minishell *mini)
+int	ft_isdigit(int c)
+{
+	if (c >= '0' && c <= '9')
+		return (1);
+	return (0);
+}
+
+int quoted(char *str)
+{
+	int i;
+	int len;
+	char quote;
+
+	i = 0;
+	len = 0;
+	while (str[i])
+	{
+		if (str[i] == '\'' || str[i] == '"')
+		{
+			quote = str[i];
+			i++;
+			while (str[i] && str[i] != quote)
+			{
+				len++;
+				i++;
+			}
+			if (str[i] == quote)
+				i++;
+		}
+		else
+		{
+			len++;
+			i++;
+		}
+	}
+	return (len);
+}
+
+char *expand(int *check, char *str, t_minishell *mini)
 {
     int total;
     int insingle;
@@ -129,7 +138,7 @@ char *expand(char *str, t_minishell *mini)
 	size_t	k;
 	char *var;
 
-    total = varlen(str, mini) + lenwithoutvar(str);
+    total = varlen(str, mini) + ft_strlen(str);
     insingle = 0;
     indouble = 0;
     i = 0;
@@ -169,9 +178,14 @@ char *expand(char *str, t_minishell *mini)
 					free(expanded);
 					return(NULL);
 				}
-				expandedvar = ft_getenv(var, mini);
+				expandedvar = ft_getenv(var, &mini);
 				if (expandedvar)
 				{
+					if (!indouble)
+					{
+						if (check)
+							*check = 1;
+					}
 					k = 0;
 					while (expandedvar[k])
 					{
@@ -197,6 +211,10 @@ char *expand(char *str, t_minishell *mini)
 				}
 				free(expandedvar);
 			}
+			else if (str[i] == '$' && str[i + 1] == '$')
+				i += 2;
+			else if (str[i] == '$' && ft_isdigit(str[i + 1]))
+				i += 2;
 			else
 				expanded[j++] = str[i++];
 		}
@@ -205,20 +223,4 @@ char *expand(char *str, t_minishell *mini)
 	}
 	expanded[j] = '\0';
 	return (expanded);
-}
-
-char **expanding(char **strs, t_minishell *mini)
-{
-	int		i;
-	char	*tmp;
-	
-	i = 0;
-	while (strs[i])
-	{
-		tmp = strs[i];
-		strs[i] = expand(strs[i], mini);
-		free(tmp);
-		i++;
-	}
-	return (strs);
 }

@@ -5,44 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/02/25 00:16:00 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/03 16:31:17 by aammisse         ###   ########.fr       */
+/*   Created: 2025/05/17 04:00:12 by aammisse          #+#    #+#             */
+/*   Updated: 2025/05/17 04:03:10 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
-{
-	size_t	i;
-	size_t	len;
-
-	i = 0;
-	len = 0;
-	while (src[len] != '\0')
-		len++;
-	if (dstsize == 0)
-		return (len);
-	while (src[i] != '\0' && i < dstsize - 1)
-	{
-		dst[i] = src[i];
-		i++;
-	}
-	if (dstsize > 0)
-		dst[i] = '\0';
-	return (len);
-}
-
-static int    is_delim(char c, char *delims)
-{
-    while (*delims)
-    {
-        if (c == *delims)
-            return (1);
-        delims++;
-    }
-    return (0);
-}
 
 int countquotes(char *s, bool *doublequotes, bool *singlequotes)
 {
