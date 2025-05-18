@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_pwd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/15 20:18:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 21:04:19 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ void ft_pwd(t_minishell *mini)
         free(path);
     if (size != 1)
         exit(0);
+    mini->exitstatus = 0;
 }
 
 void ft_env(t_minishell *mini, char **args)
@@ -68,6 +69,7 @@ void ft_env(t_minishell *mini, char **args)
         ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
         if (size != 1)
             exit(1);
+        mini->exitstatus = 1;
         return ;
     }
     env = mini->env;

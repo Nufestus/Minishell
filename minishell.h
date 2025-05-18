@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:26:45 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 15:42:57 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,7 +146,6 @@ void	ft_envadd_back(t_env **lst, t_env *new);
 void freelistenv(t_env *list);
 int	ft_commandsize(t_commandline *lst);
 int	ft_envsize(t_env *lst);
-char **expanding(char **strs, t_minishell *mini);
 void execute(t_minishell *mini);
 void ft_env(t_minishell *mini, char **args);
 void ft_pwd(t_minishell *mini);
@@ -156,7 +155,6 @@ int checkcommand(char *cmd);
 char **constructenv(t_env *env);
 void handleiosingle(t_commandline *command);
 int openfiles(t_commandline *command, t_minishell *mini);
-char **expanding(char **strs, t_minishell *mini);
 char	*ft_itoa(int n);
 char *ft_getenv(char *str, t_minishell **mini);
 int isanoption(char *str);
@@ -178,5 +176,8 @@ void ft_exit(t_commandline *command);
 void export(t_commandline *command);
 char	*fillspace(const char *input);
 int    is_delim(char c, char *delims);
+int is_directory(char *path);
+void directoryerror(char *s);
+t_env *getenvnode(t_env *env, char *var);
 
 #endif

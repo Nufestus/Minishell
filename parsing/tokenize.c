@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 16:55:04 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:08:33 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -569,21 +569,32 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
             free(string);
         }
         // printf("%s\n", token);
-        if (flag == 1)
+        if (token[0] == '\0')
         {
-            k = 0;
-            char **s = ft_split(NULL, token, " \t\n\r\v\f");
-            while(s[k])
-                handle(1, s[k++], j++, &mini->tokens);
-            freedoublearray(s);
+            free(token);
+            continue;
         }
-        else if (flag == 2 || flag == 3)
-            handle(flag, token, j++, &mini->tokens);
         else
-            handle(0, token, j++, &mini->tokens);
-        prev = ft_strdup(token);
+        {
+            if (flag == 1)
+            {
+                k = 0;
+                char **s = ft_split(NULL, token, " \t\n\r\v\f");
+                while(s[k])
+                    handle(1, s[k++], j++, &mini->tokens);
+                freedoublearray(s);
+            }
+            else if (flag == 2 || flag == 3)
+                handle(flag, token, j++, &mini->tokens);
+            else
+                handle(0, token, j++, &mini->tokens);
+            if (prev)
+                free(prev);
+            prev = ft_strdup(token);
+        }
         free(token);
     }
+    free(prev);
 }
 
 
@@ -602,7 +613,6 @@ int tokenize(t_minishell *mini)
     ft_reparse(&check, addspaces, mini);
     if (check)
     {
-        free(addspaces);
         if (check == 2)
             return (-1);
         else if (check == 1)

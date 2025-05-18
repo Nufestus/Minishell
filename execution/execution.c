@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 17:00:44 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 16:01:15 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,18 +177,13 @@ void initializepipes(t_minishell *mini)
 
 void	printerror(char *str)
 {
-	write(2, str, ft_strlen(str));
-	write(2, ": Permission denied\n", 21);
+	printf("%s: Permission denied\n", str);
 	exit(errno);
 }
 
 void	error(char *str)
 {
-	char	*tmp;
-
-	tmp = ft_strjoin(str, ": command not found\n");
-	write(2, tmp, ft_strlen(tmp) + 1);
-	free(tmp);
+	printf("%s: command not found\n", str);
 }
 
 void handlebuiltins(t_commandline *command)
@@ -259,12 +254,19 @@ void setuplastcommand(t_commandline *command)
             free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
         }
-        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
-            printerror(command->cmd);
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1 && !is_directory(command->cmd))
+			printerror(command->cmd);
+        else if (is_directory(command->cmd))
+            directoryerror(command->cmd);
         handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
         if (command->args && !ft_find(command->args[0], "/"))
-			error(command->args[0]);
+        {
+            error(command->args[0]);
+            free(command->cmd);
+            freedoublearray(command->args);
+            exit(127);
+        }
 		else if (command->args)
 			perror(command->args[0]);
         exit(errno);
@@ -321,12 +323,19 @@ void setupmiddlecommand(t_commandline *command)
             free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
         }
-        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1 && !is_directory(command->cmd))
 			printerror(command->cmd);
+        else if (is_directory(command->cmd))
+            directoryerror(command->cmd);
         handlebuiltins(command);
         execve(command->cmd, command->args, command->env);
         if (command->args && !ft_find(command->args[0], "/"))
-			error(command->args[0]);
+        {
+            error(command->args[0]);
+            free(command->cmd);
+            freedoublearray(command->args);
+            exit(127);
+        }
 		else if (command->args)
 			perror(command->args[0]);
         exit(errno);
@@ -367,9 +376,62 @@ int checkcommand(char *cmd)
     return 15;
 }
 
+static int	check_sign(int sign)
+{
+	if (sign < 0)
+		return (0);
+	else
+		return (-1);
+}
+
+int	ft_atoi_custom(const char *str)
+{
+	long long	result;
+	long long	old_result;
+	int			sign;
+	int			i;
+
+	result = 0;
+	sign = 1;
+	i = 0;
+	while ((str[i] >= 9 && str[i] <= 13) || str[i] == 32)
+		i++;
+	if (str[i] == '-' || str[i] == '+')
+	{
+		if (str[i] == '-')
+			sign *= -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		old_result = result;
+		result = result * 10 + (sign * (str[i] - '0'));
+		if ((result / 10) != old_result)
+			return (check_sign(sign));
+		i++;
+	}
+	return (result);
+}
+
+int is_directory(char *path)
+{
+    struct stat statbuf;
+
+    if (stat(path, &statbuf))
+        return (0);
+    return (S_ISDIR(statbuf.st_mode));
+}
+
+void directoryerror(char *s)
+{
+    printf("%s: Is a directory\n", s);
+    exit(126);
+}
+
 void setupfirstcommand(t_commandline *command)
 {
     pid_t pid;
+    t_env *node;
     int size;
     t_minishell *mini;
     
@@ -402,12 +464,34 @@ void setupfirstcommand(t_commandline *command)
             free(command->cmd);
             command->cmd = ft_strdup(command->args[0]);
         }
-        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1)
+        if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1 && !is_directory(command->cmd))
 			printerror(command->cmd);
+        else if (is_directory(command->cmd))
+            directoryerror(command->cmd);
         handlebuiltins(command);
+        if (!ft_strcmp(command->args[0], "./minishell"))
+        {
+            node = getenvnode(command->mini->env, "SHLVL");
+            int num = ft_atoi_custom(node->value);
+            num++;
+            char *value = ft_itoa(num);
+            free(node->value);
+            node->value = ft_strdup(value);
+            node->string = ft_strjoin(node->variable, "=");
+            char *tmp = node->string;
+            node->string = ft_strjoin(node->string, node->value);
+            free(tmp);
+            freedoublearray(command->env);
+            command->env = constructenv(command->mini->env);
+        }
         execve(command->cmd, command->args, command->env);
         if (command->args && !ft_find(command->args[0], "/"))
-			error(command->args[0]);
+        {
+            error(command->args[0]);
+            free(command->cmd);
+            freedoublearray(command->args);
+            exit(127);
+        }
 		else if (command->args)
 			perror(command->args[0]);
         free(command->cmd);

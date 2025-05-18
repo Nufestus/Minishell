@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 17:07:44 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:48:29 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -309,7 +309,7 @@ int getinput(int delflag, char *del, t_minishell *mini)
 		if (!line)
 		{
 			if (mini)
-				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
+				printf("warning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
 			free(line);
 			break ;
 		}
@@ -344,6 +344,45 @@ void openallfiles(t_minishell *mini)
 	}
 }
 
+void checkheredocs(t_minishell *mini)
+{
+	int count;
+	int check;
+	t_tokenize *list;
+
+	check = 0;
+	count = 0;
+	list = mini->tokens;
+	while(list)
+	{
+		if ((list->index == 0 && list->type == PIPE)
+			|| (list->next && list->next->type == PIPE 
+			&& list->type == PIPE) || (!list->next && list->type == PIPE))
+			syntax(&check, "'|'", 0);
+		else if (list->next && list->next->category && list->category)
+			syntaxhere(&check, list->next->str, 0);
+		else if (!list->next && list->category)
+			syntax(&check, "'newline'", 0);
+		else if (list->prev && list->prev->category && list->type == PIPE)
+			syntax(&check, "'|'", 0);
+		else if (!ft_strcmp(list->str, "\\"))
+			syntax(&check, "'\\'", 0);
+		else if (!ft_strcmp(list->str, ";"))
+			syntax(&check, "';'", 0);
+		else if (list->type == HEDOC && list->next
+				&& list->next->type == DEL)
+			count++;
+		if (check == 1)
+			break ;
+		list = list->next;
+	}
+	if (count > 16 && check)
+	{
+		mini->check = 2;
+		heredocerror("shell: maximum here-document count exceeded");
+	}
+}
+
 void readinput(t_minishell *mini)
 {
     while(1)
@@ -359,27 +398,28 @@ void readinput(t_minishell *mini)
 		if (mini->input[0] == '\0')
 		{
 			free(mini->input);
-			rl_on_new_line();
-			rl_redisplay();
 			continue;
 		}
-		// add_history(mini->input);
+		add_history(mini->input);
 		if (tokenize(mini) == -1)
 		{
 			freelisttokens(mini->tokens);
+			mini->exitstatus = 2;
 			continue ;
 		}
-		parse(mini);
-		if (!countheredocs(mini->tokens) && !mini->check)
+		checkheredocs(mini);
+		if (mini->check != 2)
+			parse(mini);
+		else
 		{
 			freelisttokens(mini->tokens);
-			heredocerror("shell: maximum here-document count exceeded");
 			exit(1);
 		}
 		reparse(mini);
 		if (mini->check == 1)
 		{
 			mini->check = 0;
+			mini->exitstatus = 2;
 			freelisttokens(mini->tokens);
 			continue ;
 		}
