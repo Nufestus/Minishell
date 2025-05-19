@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 17:37:56 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:12:52 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,17 +58,21 @@ int	countargs(char *args, char *option)
 
 void handlefiles(t_tokenize *token, t_commandline *command)
 {
-	t_files	*new;
-	t_files	*list;
-	int		type;
-	char	*file;
-	char	*del;
+	t_files *new;
+	t_files *list;
+	int type;
+	int	delquotes;
+	char *file;
+	char *del;
 
 	type = 0;
 	file = NULL;
 	del = NULL;
 	new = NULL;
 	list = NULL;
+	delquotes = 0;
+	if ((token->next->split == 2 || token->next->split == 3) && token->type == HEDOC)
+		token->split = token->next->split;
 	if (token->type == REDIN || token->type == APPEND
 			|| token->type == REDOUT)
 	{
@@ -77,10 +81,13 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 	}
 	else if (token->type == HEDOC)
 	{
+		if (token->split == 2 || token->split == 3)
+			delquotes = 1;
 		type = token->type;
 		del = ft_strdup(token->next->str);
 	}
 	new = ft_filenew(file, del, type);
+	new->delinquotes = delquotes;
 	if (token->type == REDIN || token->type == HEDOC)
 		ft_fileadd_back(&command->infile, new);
 	if (token->type == REDOUT || token->type == APPEND)
@@ -141,17 +148,17 @@ int	getarguments(t_tokenize *tokens)
 
 void	setupcommandline(t_minishell *mini)
 {
-	char			*cmd;
-	int				index;
-	char			**arg;
-	char			*option;
-	int				argcount;
-	int				count;
+	char *cmd;
+	int index;
+	char **arg;
+	char *option;
+	int argcount;
+	int count;
 	// int i;
-	t_commandline	*command;
-	t_commandline	*copy;
-	t_tokenize		*file;
-	t_tokenize		*token;
+	t_commandline *command;
+	t_commandline *copy;
+	t_tokenize *file;
+	t_tokenize *token;
 	// t_files *wtf;
 	// t_files *idk;
 
@@ -288,7 +295,7 @@ void	heredocerror(char *str)
 	printf("%s\n", str);
 }
 
-int	getinput(char *del, t_minishell *mini)
+int getinput(int delflag, char *del, t_minishell *mini)
 {
 	pid_t pid;
 	int		fd[2];
@@ -304,25 +311,28 @@ int	getinput(char *del, t_minishell *mini)
 	{
 		while(1)
 		{
-			write(0, "> ", 3);
 			signal(SIGINT, heredochandle);
-			line = get_next_line(0);
+			line = readline("> ");
 			if (!line)
 			{
 				if (mini)
-					printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
+					printf("warning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
 				free(line);
 				break ;
 			}
 			copy = line;
-			line = expand(NULL, line, mini);
-			free(copy);
 			if (!ft_strcmp(line, del))
 			{
 				free(line);
 				break ;
 			}
+			if (!delflag)
+			{
+				line = expand(NULL, line, mini);
+				free(copy);
+			}
 			write(fd[1], line, ft_strlen(line));
+			write(fd[1], "\n", 2);
 			free(line);
 		}
 		free(newdel);
@@ -346,6 +356,45 @@ void	openallfiles(t_minishell *mini)
 	}
 }
 
+void checkheredocs(t_minishell *mini)
+{
+	int count;
+	int check;
+	t_tokenize *list;
+
+	check = 0;
+	count = 0;
+	list = mini->tokens;
+	while(list)
+	{
+		if ((list->index == 0 && list->type == PIPE)
+			|| (list->next && list->next->type == PIPE 
+			&& list->type == PIPE) || (!list->next && list->type == PIPE))
+			syntax(&check, "'|'", 0);
+		else if (list->next && list->next->category && list->category)
+			syntaxhere(&check, list->next->str, 0);
+		else if (!list->next && list->category)
+			syntax(&check, "'newline'", 0);
+		else if (list->prev && list->prev->category && list->type == PIPE)
+			syntax(&check, "'|'", 0);
+		else if (!ft_strcmp(list->str, "\\"))
+			syntax(&check, "'\\'", 0);
+		else if (!ft_strcmp(list->str, ";"))
+			syntax(&check, "';'", 0);
+		else if (list->type == HEDOC && list->next
+				&& list->next->type == DEL)
+			count++;
+		if (check == 1)
+			break ;
+		list = list->next;
+	}
+	if (count > 16 && check)
+	{
+		mini->check = 2;
+		heredocerror("shell: maximum here-document count exceeded");
+	}
+}
+
 void	readinput(t_minishell *mini)
 {
     while(1)
@@ -362,27 +411,28 @@ void	readinput(t_minishell *mini)
 		if (mini->input[0] == '\0')
 		{
 			free(mini->input);
-			rl_on_new_line();
-			rl_redisplay();
 			continue;
 		}
 		add_history(mini->input);
 		if (tokenize(mini) == -1)
 		{
 			freelisttokens(mini->tokens);
+			mini->exitstatus = 2;
 			continue ;
 		}
-		parse(mini);
-		if (!countheredocs(mini->tokens) && !mini->check)
+		checkheredocs(mini);
+		if (mini->check != 2)
+			parse(mini);
+		else
 		{
 			freelisttokens(mini->tokens);
-			heredocerror("shell: maximum here-document count exceeded");
 			exit(1);
 		}
 		reparse(mini);
 		if (mini->check == 1)
 		{
 			mini->check = 0;
+			mini->exitstatus = 2;
 			freelisttokens(mini->tokens);
 			continue ;
 		}

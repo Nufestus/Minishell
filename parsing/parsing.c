@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 16:45:57 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:12:25 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ void	reparse(t_minishell *mini)
 				syntax(&check, "';'", 0);
 			else if (list->type == HEDOC && list->next && list->next->type == DEL)
 			{
-				del = ft_strjoin(list->next->str, "\n");
-				close(getinput(del, NULL));
+				del = ft_strdup(list->str);
+				close(getinput(0, del, mini));
 				free(del);
 			}
 			if (check == 1)
@@ -71,13 +71,11 @@ void	reparse(t_minishell *mini)
 
 void	parse(t_minishell *mini)
 {
-	char *del;
 	int check;
 	t_tokenize *list;
-	t_tokenize *copy;
+	// t_tokenize *copy;
 
 	check = 0;
-	del = NULL;
 	list = mini->tokens;
 	while(list)
 	{
@@ -101,11 +99,11 @@ void	parse(t_minishell *mini)
 	}
 	if (check == 1)
 		mini->check = 1;
-	copy = mini->tokens;
-	while(copy)
-	{
-		// printf("%d\n", copy->inquotes);
-		printf("%s / %s\n", copy->str, handletypes(copy->type));
-		copy = copy->next;
-	}
+	// copy = mini->tokens;
+	// while(copy)
+	// {
+	// 	// printf("%d\n", copy->inquotes);
+	// 	printf("%s / %s\n", copy->str, handletypes(copy->type));
+	// 	copy = copy->next;
+	// }
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 17:37:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:17:51 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@
 # include <errno.h>
 # include <fcntl.h>
 # include <limits.h>
-# include "utils/GNL/get_next_line.h"
 
 # define INPUT1 "\033[1;96;40mSHELL\033[0m"
 # define INPUT2 "\033[1;96;40m ✗ \033[0m"
@@ -54,37 +53,39 @@ struct	s_tokenize;
 
 typedef struct s_files
 {
-	int				type;
-	char			*file;
-	char			*delimiter;
-	struct s_files	*next;
+	int		delinquotes;
+	int		type;
+	char	*file;
+	char	*delimiter;
+	struct s_files *next;
 }	t_files;
 
 typedef struct s_tokenize
 {
-	int					inquotes;
+	int					split;
 	int					type;
 	int					category;
 	int					index;
 	char				*str;
 	struct s_tokenize	*next;
 	struct s_tokenize	*prev;
-}	t_tokenize;
+	
+} t_tokenize;
 
 typedef struct s_commandline
 {
-	int						infd;
-	int						outfd;
-	int						index;
-	int						argcount;
-	char					*cmd;
-	char					**args;
-	char					**env;
-	t_files					*outfile;
-	t_files					*infile;
-	struct s_minishell		*mini;
-	struct s_commandline	*next;
-}	t_commandline;
+	int		infd;
+	int		outfd;
+	int		index;
+	int argcount;
+	char *cmd;
+	char **args;
+	char **env;
+	t_files *outfile;
+	t_files *infile;
+	struct s_minishell *mini;
+	struct s_commandline *next;
+}           t_commandline;
 
 typedef struct s_env
 {
@@ -97,16 +98,17 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
-	int				linecount;
-	int				**pipes;
-	int				exitstatus;
-	int				check;
-	char			*input;
-	t_env			*env;
-	t_tokenize		*tokens;
-	t_commandline	*commandline;
-	t_files			*files;
-}	t_minishell;
+	bool envstate;
+	int	linecount;
+	int	**pipes;
+	int exitstatus;
+	int check;
+	char *input;
+	t_env *env;
+	t_tokenize *tokens;
+	t_commandline *commandline;
+	t_files		*files;
+}               t_minishell;
 
 char			**ft_split(int *check, char *s, char *delims);
 int				ft_strcmp(char *str, char *str1);
@@ -159,7 +161,7 @@ void			ft_echo(t_commandline *command);
 void			ft_bzero(void *s, size_t n);
 void			initializetonone(char **str, int len);
 char			*ft_strtrim(char *s1, char *set);
-int				getinput(char *del, t_minishell *mini);
+int				getinput(int delflag, char *del, t_minishell *mini);
 void			heredocerror(char *str);
 void			unset(t_commandline *commandline);
 void			syntaxhere(int *check, char *flag, int print);
@@ -176,5 +178,9 @@ void			signalhandle(int sig);
 void			callallsignals(void);
 void			quithandle(int sig);
 void heredochandle(int sig);
+t_env *getenvnode(t_env *env, char *var);
+int is_directory(char *path);
+void directoryerror(char *s);
+char	*ft_strchr(const char *s, int c);
 
 #endif

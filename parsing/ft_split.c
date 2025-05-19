@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 04:00:12 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 18:12:30 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:12:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,15 @@ char    **ft_split(int *check, char *s, char *delims)
     size_t        index;
     char        **p;
 
-    (void)check;
     if (!s || !delims)
         return (NULL);
     k = count_str((char *)s, delims);
+    if (k == 0)
+    {
+        if (check)
+            *check = 1;
+        return (NULL);
+    }
     index = 0;
     p = (char **) malloc((sizeof(char *)) * (k + 1));
     if (!p)

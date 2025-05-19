@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 22:24:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:09:11 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,39 @@ char	*ft_join(const char *s1, const char *s2)
 	return (join);
 }
 
-void	helpecho(int size, char *res, int optioncheck, t_commandline *command)
+void ft_echo(t_commandline *command)
 {
-	if (size > 1)
+    int i;
+    int optioncheck;
+	int finishedoptions;
+    char *res;
+    char *copy;
+    int size;
+
+    i = 1;
+    size = ft_commandsize(command->mini->commandline);
+    optioncheck = 0;
+	finishedoptions = 0;
+    res = NULL;
+    copy = NULL;
+    while(command->args[i])
+    {
+        if (isanoption(command->args[i]) && !finishedoptions)
+    	{
+    	    optioncheck = 1;
+    	    i++;
+    	}
+    	else
+    	{
+    	    finishedoptions = 1;
+    	    res = ft_join(res, command->args[i]);
+			if (copy)
+    	    	free(copy);
+    	    copy = res;
+    	    i++;
+    	}
+    }
+    if (size > 1)
     {
         if (optioncheck)
             printf("%s\n", res);
@@ -95,45 +125,9 @@ void	helpecho(int size, char *res, int optioncheck, t_commandline *command)
 			ft_putstr_fd("\n", command->outfd);
 		}
     }
+    free(copy);
     if (size > 1)
 		exit(0);
 	command->mini->exitstatus = 0;
-}
-
-void initecho(int *i, char **res, int *optioncheck, int *finishedoptions)
-{
-	*i = 0;
-    *optioncheck = 0;
-	*finishedoptions = 0;
-	*res = NULL;
-}
-
-void ft_echo(t_commandline *command)
-{
-    int i;
-    int optioncheck;
-	int finishedoptions;
-    char *res;
-    char *copy;
-    int size;
-
-    size = ft_commandsize(command);
-	initecho(&i, &res, &optioncheck, &finishedoptions);
-    copy = NULL;
-    while(command->args[++i])
-    {
-        if (isanoption(command->args[i]) && !finishedoptions)
-    	    optioncheck = 1;
-    	else
-    	{
-    	    finishedoptions = 1;
-    	    res = ft_join(res, command->args[i]);
-			if (copy)
-    	    	free(copy);
-    	    copy = res;
-    	}
-    }
-	helpecho(size, res, optioncheck, command);
-    free(copy);
     return ;
 }

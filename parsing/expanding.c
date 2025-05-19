@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:16:50 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:11:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,6 +163,9 @@ char *expand(int *check, char *str, t_minishell *mini)
 			i++;
 			continue;
 		}
+		if (indouble || insingle)
+			if (check)
+				*check = 2;
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')

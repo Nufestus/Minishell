@@ -6,7 +6,7 @@
 #    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/05/18 17:38:41 by rammisse         ###   ########.fr        #
+#    Updated: 2025/05/19 14:18:14 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,8 +20,7 @@ CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
 SRCS = minishell.c parsing/readinput.c utils/utils.c builtins/export.c \
 		parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c \
 		execution/execution.c builtins/env_pwd.c builtins/cd.c \
-		parsing/expanding.c builtins/echo.c utils/GNL/get_next_line.c \
-		utils/GNL/get_next_line_utils.c builtins/unset.c builtins/exit.c \
+		parsing/expanding.c builtins/echo.c builtins/unset.c builtins/exit.c \
 		parsing/ft_split.c execution/signals.c utils/utils1.c utils/utils2.c \
 		utils/utils3.c utils/utils4.c utils/utils5.c
 

@@ -3,6 +3,8 @@
         "minishell.h": "c",
         "get_next_line.h": "c",
         "string": "c",
-        "string_view": "c"
+        "string_view": "c",
+        "readline.h": "c",
+        "termios.h": "c"
     }
 }
