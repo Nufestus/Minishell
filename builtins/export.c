@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 18:09:20 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:25:45 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ void export(t_commandline *command)
 		new = command->mini->env;
 		if (size > 1)
 		{
-			while(new)
+			while (new)
 			{
 				printf("declare -x %s=\"%s\"\n", new->variable, new->value);
 				new = new->next;

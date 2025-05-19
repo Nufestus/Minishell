@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 16:40:25 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 17:41:17 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,7 +478,6 @@ void	startpipex(t_minishell *mini)
 
 void execute(t_minishell *mini)
 {
-    // removenodes(mini);
     signal(SIGQUIT, quithandle);
     startpipex(mini);
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:35:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:22:18 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void lstremoveif(t_env *env, char *value)
 {
     t_env *curr;
+    t_env *copy;
     t_env *prev;
     
     curr = env;
@@ -24,7 +25,7 @@ void lstremoveif(t_env *env, char *value)
         if (!ft_strcmp(curr->variable, value))
         {
             if (prev == NULL)
-                env = curr->next;
+                copy = curr->next;
             else
                 prev->next = curr->next;
             free(curr->string);
@@ -32,7 +33,7 @@ void lstremoveif(t_env *env, char *value)
             free(curr->variable);
             free(curr);
             if (prev == NULL)
-                curr = env;
+                curr = copy;
             else
                 curr = prev->next;
         }

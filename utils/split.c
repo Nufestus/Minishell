@@ -6,91 +6,91 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:44:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 04:52:11 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:44:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int    is_delim(char c, char *delims)
+int	is_delim(char c, char *delims)
 {
-    int i;
+	int	i;
 
-    i = 0;
-    while (delims[i])
-    {
-        if (c == delims[i])
-            return (1);
-        i++;
-    }
-    return (0);
+	i = 0;
+	while (delims[i])
+	{
+		if (c == delims[i])
+			return (1);
+		i++;
+	}
+	return (0);
 }
 
-static size_t    count_str(char *s, char *delims)
+static size_t	count_str(char *s, char *delims)
 {
-    unsigned int    i;
-    size_t            word;
+	unsigned int	i;
+	size_t			word;
 
-    i = 0;
-    word = 0;
-    while (s[i] != '\0')
-    {
-        if (!is_delim(s[i], delims) && (is_delim(s[i + 1], delims)
-                || s[i + 1] == '\0'))
-            word++;
-        i++;
-    }
-    return (word);
+	i = 0;
+	word = 0;
+	while (s[i] != '\0')
+	{
+		if (!is_delim(s[i], delims) && (is_delim(s[i + 1], delims)
+				|| s[i + 1] == '\0'))
+			word++;
+		i++;
+	}
+	return (word);
 }
 
-static size_t    str_length(char const *s, char *delims)
+static size_t	str_length(char const *s, char *delims)
 {
-    size_t    i;
+	size_t	i;
 
-    i = 0;
-    while (s[i] && !is_delim(s[i], delims))
-        i++;
-    return (i);
+	i = 0;
+	while (s[i] && !is_delim(s[i], delims))
+		i++;
+	return (i);
 }
 
-static char    **free_mem(char **s, int i)
+static char	**free_mem(char **s, int i)
 {
-    int    index;
+	int	index;
 
-    index = 0;
-    while (index < i)
-    {
-        free(s[index]);
-        index++;
-    }
-    free(s);
-    return (NULL);
+	index = 0;
+	while (index < i)
+	{
+		free(s[index]);
+		index++;
+	}
+	free(s);
+	return (NULL);
 }
 
-char    **split(char const *s, char *delims)
+char	**split(char const *s, char *delims)
 {
-    size_t        k;
-    size_t        index;
-    char        **p;
+	size_t	k;
+	size_t	index;
+	char	**p;
 
-    if (!s || !delims)
-        return (NULL);
-    k = count_str((char *)s, delims);
-    index = 0;
-    p = (char **) malloc((sizeof(char *)) * (k + 1));
-    if (!p)
-        return (NULL);
-    while (index < k)
-    {
-        while (is_delim(*s, delims))
-            s++;
-        p[index] = (char *)malloc((sizeof(char) * (str_length(s, delims) + 1)));
-        if (!p[index])
-            return (free_mem(p, index));
-        ft_strlcpy(p[index], s, str_length(s, delims) + 1);
-        s = s + str_length(s, delims);
-        index++;
-    }
-    p[index] = NULL;
-    return (p);
+	if (!s || !delims)
+		return (NULL);
+	k = count_str((char *)s, delims);
+	index = 0;
+	p = (char **) malloc((sizeof(char *)) * (k + 1));
+	if (!p)
+		return (NULL);
+	while (index < k)
+	{
+		while (is_delim(*s, delims))
+			s++;
+		p[index] = (char *)malloc((sizeof(char) * (str_length(s, delims) + 1)));
+		if (!p[index])
+			return (free_mem(p, index));
+		ft_strlcpy(p[index], s, str_length(s, delims) + 1);
+		s = s + str_length(s, delims);
+		index++;
+	}
+	p[index] = NULL;
+	return (p);
 }

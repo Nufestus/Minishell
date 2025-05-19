@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 16:50:47 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 17:37:56 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,11 +58,11 @@ int	countargs(char *args, char *option)
 
 void handlefiles(t_tokenize *token, t_commandline *command)
 {
-	t_files *new;
-	t_files *list;
-	int type;
-	char *file;
-	char *del;
+	t_files	*new;
+	t_files	*list;
+	int		type;
+	char	*file;
+	char	*del;
 
 	type = 0;
 	file = NULL;
@@ -91,8 +91,8 @@ void handlefiles(t_tokenize *token, t_commandline *command)
 
 void addfile(t_tokenize *token, t_commandline *commandline)
 {
-	t_tokenize *copy;
-	t_commandline *command;
+	t_tokenize		*copy;
+	t_commandline	*command;
 
 	copy = token;
 	command = commandline;
@@ -124,10 +124,10 @@ void addfile(t_tokenize *token, t_commandline *commandline)
 	}
 }
 
-int getarguments(t_tokenize *tokens)
+int	getarguments(t_tokenize *tokens)
 {
-	int res;
-	t_tokenize *token;
+	int			res;
+	t_tokenize	*token;
 
 	res = 0;
 	token = tokens;
@@ -141,17 +141,17 @@ int getarguments(t_tokenize *tokens)
 
 void	setupcommandline(t_minishell *mini)
 {
-	char *cmd;
-	int index;
-	char **arg;
-	char *option;
-	int argcount;
-	int count;
+	char			*cmd;
+	int				index;
+	char			**arg;
+	char			*option;
+	int				argcount;
+	int				count;
 	// int i;
-	t_commandline *command;
-	t_commandline *copy;
-	t_tokenize *file;
-	t_tokenize *token;
+	t_commandline	*command;
+	t_commandline	*copy;
+	t_tokenize		*file;
+	t_tokenize		*token;
 	// t_files *wtf;
 	// t_files *idk;
 
@@ -268,10 +268,10 @@ void	setupcommandline(t_minishell *mini)
 	// }
 }
 
-void freedoubleint(t_minishell *mini)
+void	freedoubleint(t_minishell *mini)
 {
-	int i;
-	int size;
+	int	i;
+	int	size;
 
 	i = 0;
 	size = ft_commandsize(mini->commandline);
@@ -283,51 +283,60 @@ void freedoubleint(t_minishell *mini)
 	free(mini->pipes);
 }
 
-void heredocerror(char *str)
+void	heredocerror(char *str)
 {
 	printf("%s\n", str);
 }
 
-int getinput(char *del, t_minishell *mini)
+int	getinput(char *del, t_minishell *mini)
 {
-	int fd[2];
-	char *newdel;
-	char *line;
-	char *copy;
+	pid_t pid;
+	int		fd[2];
+	char	*newdel;
+	char	*line;
+	char	*copy;
 
 	pipe(fd);
 	line = NULL;
 	newdel = ft_strtrim(del, "\n");
-	while(1)
+	pid = fork();
+	if (!pid)
 	{
-		write(0, "> ", 3);
-		line = get_next_line(0);
-		if (!line)
+		while(1)
 		{
-			if (mini)
-				printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
+			write(0, "> ", 3);
+			signal(SIGINT, heredochandle);
+			line = get_next_line(0);
+			if (!line)
+			{
+				if (mini)
+					printf("\nwarning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, newdel);
+				free(line);
+				break ;
+			}
+			copy = line;
+			line = expand(NULL, line, mini);
+			free(copy);
+			if (!ft_strcmp(line, del))
+			{
+				free(line);
+				break ;
+			}
+			write(fd[1], line, ft_strlen(line));
 			free(line);
-			break ;
 		}
-		copy = line;
-		line = expand(NULL, line, mini);
-		free(copy);
-		if (!ft_strcmp(line, del))
-		{
-			free(line);
-			break ;
-		}
-		write(fd[1], line, ft_strlen(line));
-		free(line);
+		free(newdel);
+		close(fd[1]);
+		close(fd[0]);
 	}
-	free(newdel);
+	waitpid(-1, NULL, 0);
 	close(fd[1]);
 	return (fd[0]);
 }
 
-void openallfiles(t_minishell *mini)
+void	openallfiles(t_minishell *mini)
 {
-	t_commandline *command;
+	t_commandline	*command;
 
 	command = mini->commandline;
 	while(command)
@@ -337,7 +346,7 @@ void openallfiles(t_minishell *mini)
 	}
 }
 
-void readinput(t_minishell *mini)
+void	readinput(t_minishell *mini)
 {
     while(1)
 	{

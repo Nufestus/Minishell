@@ -6,32 +6,32 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 15:03:27 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/17 22:36:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void setupenv(char **env, t_minishell *mini)
+void	setupenv(char **env, t_minishell *mini)
 {
-	char *var;
-	char *value;
-	char *string;
-	t_env *node;
-	int i;
-	int j;
-	int start;
+	char	*var;
+	char	*value;
+	char	*string;
+	t_env	*node;
+	int		i;
+	int		j;
+	int		start;
 
 	i = 0;
 	j = 0;
-	while(env[i])
+	while (env[i])
 	{
 		j = 0;
-		while(env[i][j] && env[i][j] != '=')
+		while (env[i][j] && env[i][j] != '=')
 			j++;
 		var = ft_substr(env[i], 0, j);
 		start = j;
-		while(env[i][j])
+		while (env[i][j])
 			j++;
 		value = ft_substr(env[i], start + 1, j);
 		string = ft_strdup(env[i]);
@@ -46,7 +46,7 @@ void setupenv(char **env, t_minishell *mini)
 
 int	main(int ac, char **av, char **env)
 {
-	t_minishell mini;
+	t_minishell	mini;
 
 	(void)ac;
 	(void)av;
