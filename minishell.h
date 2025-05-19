@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 15:42:57 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:42:44 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -100,6 +100,7 @@ typedef struct s_env
 
 typedef struct s_minishell
 {
+	bool envstate;
 	int	linecount;
 	int	**pipes;
 	int exitstatus;
@@ -179,5 +180,6 @@ int    is_delim(char c, char *delims);
 int is_directory(char *path);
 void directoryerror(char *s);
 t_env *getenvnode(t_env *env, char *var);
+char *getstring(char *str);
 
 #endif

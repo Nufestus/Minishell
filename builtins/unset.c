@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/13 00:20:22 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:22:37 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void lstremoveif(t_env *env, char *value)
 {
     t_env *curr;
+    t_env *copy;
     t_env *prev;
     
     curr = env;
@@ -24,7 +25,7 @@ void lstremoveif(t_env *env, char *value)
         if (!ft_strcmp(curr->variable, value))
         {
             if (prev == NULL)
-                env = curr->next;
+                copy = curr->next;
             else
                 prev->next = curr->next;
             free(curr->string);
@@ -32,7 +33,7 @@ void lstremoveif(t_env *env, char *value)
             free(curr->variable);
             free(curr);
             if (prev == NULL)
-                curr = env;
+                curr = copy;
             else
                 curr = prev->next;
         }
@@ -48,21 +49,12 @@ void unset(t_commandline *commandline)
 {
     int i;
     char **str;
-    t_env *env;
-    t_env *tmp;
 
     i = 1;
-    env = commandline->mini->env;
     str = commandline->args;
     while (str[i])
     {
-        tmp = env;
-        while (tmp)
-        {
-            if (!ft_strcmp(str[i], tmp->variable))
-                lstremoveif(env, tmp->variable);
-            tmp = tmp->next;
-        }
+        lstremoveif(commandline->mini->env, str[i]);
         i++;
     }
 }

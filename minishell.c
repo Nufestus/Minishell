@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 22:48:40 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 19:45:54 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,23 +24,64 @@ void setupenv(char **env, t_minishell *mini)
 
 	i = 0;
 	j = 0;
-	while(env[i])
+	if (!*env)
 	{
-		j = 0;
-		while(env[i][j] && env[i][j] != '=')
-			j++;
-		var = ft_substr(env[i], 0, j);
-		start = j;
-		while(env[i][j])
-			j++;
-		value = ft_substr(env[i], start + 1, j);
-		string = ft_strdup(env[i]);
-		node = ft_envnew(value, var, string);
-		ft_envadd_back(&mini->env, node);
-		free(var);
-		free(value);
-		free(string);
-		i++;
+		int z = 0;
+		char *cwd = getcwd(NULL, 0);
+		char *path = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
+		char *shlvl = ft_strdup("SHLVL=1");
+		char *pwd = ft_strjoin("PWD=", cwd);
+		char **newenv = malloc(sizeof(char *) * (4));
+		newenv[0] = pwd;
+		newenv[1] = shlvl;
+		newenv[2] = path;
+		newenv[3] = NULL;
+		while(newenv[z])
+		{
+			int l = 0;
+			while(newenv[z][l] && newenv[z][l] != '=')
+				l++;
+			var = ft_substr(newenv[z], 0, l);
+			start = l;
+			while(newenv[z][l])
+				l++;
+			value = ft_substr(newenv[z], start + 1, l);
+			string = ft_strdup(newenv[z]);
+			node = ft_envnew(value, var, string);
+			if (!value)
+				node->isexported = 1;
+			if (!ft_strcmp(node->string, path))
+				node->isexported = 1;
+			ft_envadd_back(&mini->env, node);
+			free(var);
+			free(value);
+			free(string);
+			z++;
+		}
+		freedoublearray(newenv);
+	}
+	else
+	{
+		while(env[i])
+		{
+			j = 0;
+			while(env[i][j] && env[i][j] != '=')
+				j++;
+			var = ft_substr(env[i], 0, j);
+			start = j;
+			while(env[i][j])
+				j++;
+			value = ft_substr(env[i], start + 1, j);
+			string = ft_strdup(env[i]);
+			node = ft_envnew(value, var, string);
+			if (!value)
+				node->isexported = 1;
+			ft_envadd_back(&mini->env, node);
+			free(var);
+			free(value);
+			free(string);
+			i++;
+		}
 	}
 }
 

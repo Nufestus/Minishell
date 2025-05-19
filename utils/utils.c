@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 19:33:11 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 19:27:40 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -349,9 +349,12 @@ t_env	*ft_envnew(char *value, char *var, char *string)
 	if (!new)
 		return (NULL);
 	new->isexported = false;
-	new->variable = ft_strdup(var);
-	new->value = ft_strdup(value);
-	new->string = ft_strdup(string);
+	if (var)
+		new->variable = ft_strdup(var);
+	if (value)
+		new->value = ft_strdup(value);
+	if (string)
+		new->string = ft_strdup(string);
 	new->next = NULL;
 	return (new);
 }

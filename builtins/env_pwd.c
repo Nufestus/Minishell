@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 21:04:19 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 19:33:50 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,8 @@ void ft_env(t_minishell *mini, char **args)
     {
         while(env)
         {
-            printf("%s\n", env->string);
+            if (!env->isexported)
+                printf("%s\n", env->string);
             env = env->next;
         }
     }
@@ -85,8 +86,11 @@ void ft_env(t_minishell *mini, char **args)
     {
         while(env)
         {
-            ft_putstr_fd(env->string, mini->commandline->outfd);
-            ft_putstr_fd("\n", mini->commandline->outfd);
+            if (!env->isexported)
+            {
+                ft_putstr_fd(env->string, mini->commandline->outfd);
+                ft_putstr_fd("\n", mini->commandline->outfd);
+            }
             env = env->next;
         }
     }

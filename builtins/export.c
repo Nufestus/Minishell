@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/16 02:23:14 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/18 20:45:30 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,28 +102,32 @@ int checkvalid(char *str, t_minishell *mini)
 
 char *getstring(char *str)
 {
-	int i;
-	int sym;
-	char *string;
+    int i;
+    int j;
+    int skip;
+    char *string;
 
-	i = 0;
-	while(str[i])
-		i++;
-	string = malloc(i + 1);
-	i = 0;
-	sym = 0;
-	while(str[i])
-	{
-		if (str[i] == '+' && !sym)
-		{
-			sym = 1;
-			continue;
-		}
-		string[i] = str[i];
-		i++;
-	}
-	string[i] = '\0';
-	return (string);
+    i = 0;
+    j = 0;
+    skip = 0;
+    while (str[i])
+        i++;
+    string = malloc(i + 1);
+    if (!string)
+        return (NULL);
+    i = 0;
+    while (str[i])
+    {
+        if (!skip && str[i] == '+' && str[i + 1] == '=')
+        {
+            skip = 1;
+            i++; 
+            continue;
+        }
+        string[j++] = str[i++];
+    }
+    string[j] = '\0';
+    return (string);
 }
 
 t_env *getenvnode(t_env *env, char *var)

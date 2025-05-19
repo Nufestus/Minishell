@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 22:08:33 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 13:09:36 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -511,9 +511,11 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
     char *copy;
     char *string;
     char *prev;
+    int exportcheck;
 
     i = 0;
     j = 0;
+    exportcheck = 0;
     copy = str;
     prev = NULL;
     while (str[i])
@@ -550,17 +552,45 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 token[k++] = str[i++];
         }
         token[k] = '\0';
-        if (prev && ft_strcmp(prev, "<<"))
+        if (prev && (ft_strcmp(prev, "<<")  || !ft_strcmp(prev, "export") || exportcheck))
         {
+            
+            if (!ft_strcmp(prev, "export"))
+                exportcheck = 1;
+            else if (!ft_strcmp(token, "|") || !ft_strcmp(token, ">>") || !ft_strcmp(token, ">")
+                    || !ft_strcmp(token, "<") || !ft_strcmp(token, "<"))
+                exportcheck = 0;
+            if (exportcheck)
+            {
+                char *newtoken = malloc(ft_strlen(token) + 3);
+                int x = 0;
+                int z = 0;
+                int sym = 0;
+                while (token[x])
+                {
+                    if (!sym && token[x] == '=')
+                    {
+                        newtoken[z++] = token[x++];
+                        newtoken[z++] = '"';
+                        sym = 1;
+                        continue;
+                    }
+                    newtoken[z++] = token[x++];
+                }
+                newtoken[z++] = '"';
+                newtoken[z] = '\0';
+                free(token);
+                token = newtoken;
+            }
             string = token;
             token = expand(&flag, token, mini);
             free(string);
         }
-        else if (prev && !ft_strcmp(prev, "<<"))
+        else if (prev && (!ft_strcmp(prev, "<<") || !ft_strcmp(prev, "export")))
         {
-            string = token;
-            token = removequotes(&flag, token);
-            free(string);
+                string = token;
+                token = removequotes(&flag, token);
+                free(string);
         }
         else
         {
@@ -568,7 +598,6 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
             token = expand(&flag, token, mini);
             free(string);
         }
-        // printf("%s\n", token);
         if (token[0] == '\0')
         {
             free(token);
@@ -590,8 +619,8 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 handle(0, token, j++, &mini->tokens);
             if (prev)
                 free(prev);
-            prev = ft_strdup(token);
         }
+        prev = ft_strdup(token);
         free(token);
     }
     free(prev);
