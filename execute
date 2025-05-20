@@ -1,4 +1,4 @@
 #!/bin/bash
 make
 make clean
-./minishell
+valgrind --track-fds=yes ./minishell

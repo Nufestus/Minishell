@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 16:16:09 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 20:35:42 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,13 +36,8 @@ int openfiles(t_commandline *command, t_minishell *mini)
 			free(del);
 		}
 		if (infd == -1)
-		{
 			perror(infiles->file);
-			if (checkcommand(command->cmd) && size == 1)
-				return (1);
-			return (1);
-		}
-		if (infiles->next)
+		if (infiles->next && infd != -1 && infd != -4)
 			close(infd);
 		infiles = infiles->next;
 	}
@@ -188,7 +183,11 @@ void initializepipes(t_minishell *mini)
 	while(i < size)
 	{
 		mini->pipes[i] = malloc(sizeof(int) * 2);
-		pipe(mini->pipes[i]);
+		if (pipe(mini->pipes[i]) == -1)
+		{
+			perror("pipe");
+			exit(1);
+		}
 		i++;
 	}
 }
@@ -233,10 +232,15 @@ void handlebuiltins(t_commandline *command)
 void handleiolast(t_commandline *command)
 {
 	t_minishell *mini;
-	
+	int size;
+
 	mini = command->mini;
+	size = ft_commandsize(mini->commandline);
 	if (command->infd == -1)
+	{
+		closeallpipes(mini, size);
 		exit(errno);
+	}
 	if (command->infd == -2)
 		command->infd = mini->pipes[command->index - 1][0];
 	if (command->outfd == -2)
@@ -266,6 +270,7 @@ void setuplastcommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
+		closeallpipes(command->mini, size);
 		if (command->cmd && command->cmd[0] == '\0')
 		{
 			error("\'\'");
@@ -313,10 +318,15 @@ void setuplastcommand(t_commandline *command)
 void handleiomiddle(t_commandline *command)
 {
 	t_minishell *mini;
+	int size;
 
 	mini = command->mini;
+	size = ft_commandsize(mini->commandline);
 	if (command->infd == -1)
+	{
+		closeallpipes(mini, size);
 		exit(errno);
+	}
 	if (command->infd == -2)
 		command->infd = mini->pipes[command->index - 1][0];
 	if (command->outfd == -2)
@@ -347,6 +357,7 @@ void setupmiddlecommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
+		closeallpipes(command->mini, size);
 		if (command->cmd && command->cmd[0] == '\0')
 		{
 			error("\'\'");
@@ -394,10 +405,17 @@ void setupmiddlecommand(t_commandline *command)
 void handleiosingle(t_commandline *command)
 {
 	t_minishell *mini;
+	int size;
 
 	mini = command->mini;
+	size = ft_commandsize(mini->commandline);
 	if (command->infd == -1)
+	{
+		closeallpipes(mini, size);
+		if (command->outfd != -2 && command->outfd != 1)
+			close(command->outfd);
 		exit(errno);
+	}
 	if (command->infd == -2)
 		command->infd = 0;
 	if (command->outfd == -2 && command->next)
@@ -485,6 +503,7 @@ void setupfirstcommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
+		closeallpipes(command->mini, size);
 		if (command->cmd && command->cmd[0] == '\0')
 		{
 			error("\'\'");
@@ -497,7 +516,7 @@ void setupfirstcommand(t_commandline *command)
 			freedoublearray(command->args);
 			exit(0);
 		}
-		if (!ft_find(command->args[0], "/")
+		if (!ft_find(command->args[0], "/") && !ft_find(command->args[0], ".")
 			&& !checkcommand(command->cmd))
 		{
 			free(command->cmd);
@@ -510,7 +529,7 @@ void setupfirstcommand(t_commandline *command)
 		}
 		if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1 && !is_directory(command->cmd))
 			printerror(command->cmd);
-		else if (is_directory(command->cmd))
+		else if (is_directory(command->cmd) && ft_find(command->args[0], ".") && ft_find(command->args[0], "/"))
 			directoryerror(command->cmd);
 		handlebuiltins(command);
 		if (!ft_strcmp(command->args[0], "./minishell"))
@@ -607,6 +626,16 @@ void	startpipex(t_minishell *mini)
 	}
 	while (waitpid(-1, &status, 0) != -1)
 		{}
+	copy = mini->commandline;
+	while(copy)
+	{
+		if (copy->outfd != -1 && copy->outfd != -2)
+			close(copy->outfd);
+		if (copy->infd != -1 && copy->infd != -2 && copy->infd != -4)
+			close(copy->infd);
+		copy = copy->next;
+	}
+	closeallpipes(mini, size);
 	mini->exitstatus = WEXITSTATUS(status);
 }
 

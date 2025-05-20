@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 16:16:31 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 21:28:23 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-
+#include <sys/ioctl.h>
 
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
 #define INPUT2 "\033[1;96;40m ✗ \033[0m"
@@ -187,5 +187,6 @@ void signalhandle(int sig);
 void quithandle(int sig);
 void callallsignals();
 int	ft_find(char *str, char *del);
+void closeallpipes(t_minishell *mini, int size);
 
 #endif

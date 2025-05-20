@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 13:31:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 18:11:13 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,13 +48,18 @@ void lstremoveif(t_env *env, char *value)
 void unset(t_commandline *commandline)
 {
     int i;
+    int size;
     char **str;
 
     i = 1;
+    size = ft_commandsize(commandline->mini->commandline);
     str = commandline->args;
     while (str[i])
     {
         lstremoveif(commandline->mini->env, str[i]);
         i++;
     }
+    if (size > 1)
+        exit(0);
+    return ;
 }

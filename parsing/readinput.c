@@ -6,11 +6,13 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 16:16:58 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 21:40:17 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int g_sig = 0;
 
 int	ft_isspace(char c)
 {
@@ -294,58 +296,59 @@ void heredocerror(char *str)
 {
 	printf("%s\n", str);
 }
+
+void heredochandle(int sig)
+{
+	const char c = '\n';
+    (void)sig;
+    g_sig = 130;
+    ioctl(0, TIOCSTI, &c);
+}
+
 int getinput(int delflag, char *del, t_minishell *mini)
 {
-    pid_t pid;
-	int status;
     int        fd[2];
-    char    *newdel;
     char    *line;
     char    *copy;
 
     pipe(fd);
     line = NULL;
-    newdel = ft_strtrim(del, "\n");
-    pid = fork();
-    if (!pid)
+	signal(SIGINT, heredochandle);
+    while(1)
     {
-		signal(SIGINT, heredochandle);
-        while(1)
+        line = readline("> ");
+		if (g_sig == 130)
+		{
+			close(fd[0]);
+			close(fd[1]);
+			callallsignals();
+			g_sig = 0;
+			free(line);
+			return (-4);
+		}
+        if (!line)
         {
-            line = readline("> ");
-            if (!line)
-            {
-                if (mini)
-                    printf("warning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
-                free(line);
-                break ;
-            }
-            copy = line;
-            if (!ft_strcmp(line, del))
-            {
-                free(line);
-                break ;
-            }
-            if (!delflag)
-            {
-                line = expand(NULL, line, mini);
-                free(copy);
-            }
-            write(fd[1], line, ft_strlen(line));
-            write(fd[1], "\n", 2);
+            if (mini)
+                printf("warning: here-document at line %d delimited by end-of-file (wanted '%s')\n", mini->linecount, del);
             free(line);
+			break ;
         }
-        free(newdel);
-        close(fd[1]);
-        close(fd[0]);
-		exit(0);
+        copy = line;
+        if (!ft_strcmp(line, del))
+        {
+            free(line);
+            break ;
+        }
+        if (!delflag)
+        {
+            line = expand(NULL, line, mini);
+            free(copy);
+        }
+        write(fd[1], line, ft_strlen(line));
+        write(fd[1], "\n", 2);
+        free(line);
     }
-    waitpid(-1, &status, 0);
-	if (WEXITSTATUS(status) == 130)
-	{
-		close(fd[0]);
-		return (-4);
-	}
+	callallsignals();
     close(fd[1]);
     return (fd[0]);
 }
