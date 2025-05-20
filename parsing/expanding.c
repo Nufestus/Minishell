@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 20:17:47 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 22:04:08 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,11 +163,10 @@ char *expand(int *check, char *str, t_minishell *mini)
 			i++;
 			continue;
 		}
-		if (indouble || insingle)
-			if (check)
-				*check = 2;
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
+			if (check && (indouble || insingle))
+				*check = 2;
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
 			{
 				i++;
@@ -186,7 +185,7 @@ char *expand(int *check, char *str, t_minishell *mini)
 				{
 					if (!indouble)
 					{
-						if (check)
+						if (check && !*check)
 							*check = 1;
 					}
 					k = 0;

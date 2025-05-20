@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 19:52:05 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 16:16:09 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int openfiles(t_commandline *command, t_minishell *mini)
 		else if (infiles->type == HEDOC)
 		{
 			del = ft_strdup(infiles->delimiter);
-			infd = getinput(infiles->delinquotes, del, mini);
+			infd = getinput(infiles->delinquotes, del, mini);	
 			free(del);
 		}
 		if (infd == -1)
@@ -108,6 +108,22 @@ int	ft_find(char *str, char *del)
 		i++;
 	}
 	return (0);
+}
+
+int is_directory(char *path)
+{
+	struct stat statbuf;
+
+	if (stat(path, &statbuf))
+		return (0);
+	return (S_ISDIR(statbuf.st_mode));
+}
+
+void directoryerror(char *s)
+{
+	write(2, s, ft_strlen(s));
+	write(2, ": Is a directory\n", 18);
+	exit(126);
 }
 
 char	*checkfile(t_commandline *command)
@@ -250,13 +266,25 @@ void setuplastcommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
-		if (command->args && !ft_find(command->args[0], "/")
+		if (command->cmd && command->cmd[0] == '\0')
+		{
+			error("\'\'");
+			freedoublearray(command->args);
+			free(command->cmd);
+			exit(0);
+		}
+		else if (!command->cmd)
+		{
+			freedoublearray(command->args);
+			exit(0);
+		}
+		if (!ft_find(command->args[0], "/")
 			&& !checkcommand(command->cmd))
 		{
 			free(command->cmd);
 			command->cmd = checkfile(command);
 		}
-		else if (command->args)
+		else
 		{
 			free(command->cmd);
 			command->cmd = ft_strdup(command->args[0]);
@@ -267,7 +295,7 @@ void setuplastcommand(t_commandline *command)
 			directoryerror(command->cmd);
 		handlebuiltins(command);
 		execve(command->cmd, command->args, command->env);
-		if (command->args && !ft_find(command->args[0], "/"))
+		if (!ft_find(command->args[0], "/"))
 		{
 			error(command->args[0]);
 			free(command->cmd);
@@ -319,13 +347,25 @@ void setupmiddlecommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
-		if (command->args && !ft_find(command->args[0], "/")
+		if (command->cmd && command->cmd[0] == '\0')
+		{
+			error("\'\'");
+			freedoublearray(command->args);
+			free(command->cmd);
+			exit(0);
+		}
+		else if (!command->cmd)
+		{
+			freedoublearray(command->args);
+			exit(0);
+		}
+		if (!ft_find(command->args[0], "/")
 			&& !checkcommand(command->cmd))
 		{
 			free(command->cmd);
 			command->cmd = checkfile(command);
 		}
-		else if (command->args)
+		else
 		{
 			free(command->cmd);
 			command->cmd = ft_strdup(command->args[0]);
@@ -336,7 +376,7 @@ void setupmiddlecommand(t_commandline *command)
 			directoryerror(command->cmd);
 		handlebuiltins(command);
 		execve(command->cmd, command->args, command->env);
-		if (command->args && !ft_find(command->args[0], "/"))
+		if (!ft_find(command->args[0], "/"))
 		{
 			error(command->args[0]);
 			free(command->cmd);
@@ -420,22 +460,6 @@ int	ft_atoi_custom(const char *str)
 	return (result);
 }
 
-int is_directory(char *path)
-{
-	struct stat statbuf;
-
-	if (stat(path, &statbuf))
-		return (0);
-	return (S_ISDIR(statbuf.st_mode));
-}
-
-void directoryerror(char *s)
-{
-	write(2, s, ft_strlen(s));
-	write(2, ": Is a directory\n", 18);
-	exit(126);
-}
-
 void setupfirstcommand(t_commandline *command)
 {
 	pid_t pid;
@@ -461,13 +485,25 @@ void setupfirstcommand(t_commandline *command)
 			dup2(command->outfd, 1);
 			close(command->outfd);
 		}
-		if (command->args && !ft_find(command->args[0], "/")
+		if (command->cmd && command->cmd[0] == '\0')
+		{
+			error("\'\'");
+			freedoublearray(command->args);
+			free(command->cmd);
+			exit(0);
+		}
+		else if (!command->cmd)
+		{
+			freedoublearray(command->args);
+			exit(0);
+		}
+		if (!ft_find(command->args[0], "/")
 			&& !checkcommand(command->cmd))
 		{
 			free(command->cmd);
 			command->cmd = checkfile(command);
 		}
-		else if (command->args)
+		else
 		{
 			free(command->cmd);
 			command->cmd = ft_strdup(command->args[0]);
@@ -546,7 +582,14 @@ void	startpipex(t_minishell *mini)
 	while (++i < size)
 	{
 		if (size > 1 || !checkcommand(copy->cmd))
+		{
+			if (mini->commandline->infd == -4)
+			{
+				copy = copy->next;
+				continue;
+			}
 			childlabor(copy);
+		}
 		else if (size == 1)
 		{
 			if (mini->commandline->infd == -1)
@@ -570,5 +613,6 @@ void	startpipex(t_minishell *mini)
 void execute(t_minishell *mini)
 {
 	// removenodes(mini);
+	signal(SIGQUIT, signalhandle);
 	startpipex(mini);
 }

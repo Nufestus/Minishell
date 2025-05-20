@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 19:27:40 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 14:17:00 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -449,4 +449,24 @@ size_t	ft_strlcpy(char *dst, const char *src, size_t dstsize)
 	if (dstsize > 0)
 		dst[i] = '\0';
 	return (len);
+}
+
+char	*ft_strchr(const char *s, int c)
+{
+	int		i;
+	char	d;
+	char	*str;
+
+	i = 0;
+	d = c;
+	str = (char *)s;
+	while (str[i] != '\0')
+	{
+		if (str[i] == d)
+			return (&str[i]);
+		i++;
+	}
+	if (str[i] == d)
+		return (&str[i]);
+	return (NULL);
 }

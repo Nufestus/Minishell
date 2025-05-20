@@ -3,14 +3,24 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/14 16:03:12 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 13:30:35 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+int	atoihelp(int *overflow, long long result, long long old_result)
+{
+	if (old_result != result / 10)
+	{
+		*overflow = 1;
+		return (0);
+	}
+	return (1);
+}
 
 long long	ft_atoi(char *str, int *overflow)
 {
@@ -34,20 +44,17 @@ long long	ft_atoi(char *str, int *overflow)
 	{
 		old_result = result;
 		result = result * 10 + str[i] - '0';
-		if (old_result != result / 10)
-		{
-			*overflow = 1;
+		if (!atoihelp(overflow, result, old_result))
 			return (0);
-		}
 		i++;
 	}
 	return (result * sign);
 }
 
-int isnotnum(char *str)
+int	isnotnum(char *str)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	while (str[i])
 	{
@@ -58,7 +65,17 @@ int isnotnum(char *str)
 	return (1);
 }
 
-void ft_exit(t_commandline *command)
+int	exithelp(int flag, t_commandline *command)
+{
+	if (flag)
+	{
+		printf("exit: %s: numeric argument required\n", command->args[1]);
+		return (0);
+	}
+	return (1);
+}
+
+void	ft_exit(t_commandline *command)
 {
 	long long	status;
 	int			flag;
@@ -74,11 +91,8 @@ void ft_exit(t_commandline *command)
 	if (command->args[1] && isnotnum(command->args[1]))
 	{
 		status = ft_atoi(command->args[1], &flag);
-		if (flag)
-		{
-			printf("exit: %s: numeric argument required\n", command->args[1]);
+		if (!exithelp(flag, command))
 			return ;
-		}
 	}
 	else if ((command->args[1] && !isnotnum(command->args[1])) || flag)
 	{

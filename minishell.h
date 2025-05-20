@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 20:42:44 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/19 16:16:31 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
-#include "utils/GNL/get_next_line.h"
+
 
 #define INPUT1 "\033[1;96;40mSHELL\033[0m"
 #define INPUT2 "\033[1;96;40m ✗ \033[0m"
@@ -181,5 +181,11 @@ int is_directory(char *path);
 void directoryerror(char *s);
 t_env *getenvnode(t_env *env, char *var);
 char *getstring(char *str);
+char	*ft_strchr(const char *s, int c);
+void heredochandle(int sig);
+void signalhandle(int sig);
+void quithandle(int sig);
+void callallsignals();
+int	ft_find(char *str, char *del);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 13:09:36 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 16:03:29 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -478,13 +478,7 @@ char *removequotes(int *flag, char *str)
         return (NULL);
     while (str[i])
     {
-        if (str[i] == '\'' && !indouble)
-		{
-            insingle = !insingle;
-			i++;
-			continue;
-		}
-        else if (str[i] == '"' && !insingle)
+        if (str[i] == '"' && !insingle)
 		{
             indouble = !indouble;
 			i++;
@@ -523,12 +517,12 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
         flag = 0;
         z = countword(&copy);
         while (str[i] && ft_strchr(" \t\n\r\v\f", str[i]))
-        i++;
+            i++;
         if (!str[i])
-        break ;
+            break ;
         token = malloc(z + 1);
         if (!token)
-        return ;
+            return ;
         k = 0;
         while (str[i] && !ft_strchr(" \t\n\r\v\f", str[i]))
         {
@@ -552,6 +546,7 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 token[k++] = str[i++];
         }
         token[k] = '\0';
+        // token = expand(&flag, token, mini);
         if (prev && (ft_strcmp(prev, "<<")  || !ft_strcmp(prev, "export") || exportcheck))
         {
             
@@ -560,7 +555,7 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
             else if (!ft_strcmp(token, "|") || !ft_strcmp(token, ">>") || !ft_strcmp(token, ">")
                     || !ft_strcmp(token, "<") || !ft_strcmp(token, "<"))
                 exportcheck = 0;
-            if (exportcheck)
+            if (exportcheck && !flag)
             {
                 char *newtoken = malloc(ft_strlen(token) + 3);
                 int x = 0;
@@ -573,7 +568,6 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                         newtoken[z++] = token[x++];
                         newtoken[z++] = '"';
                         sym = 1;
-                        continue;
                     }
                     newtoken[z++] = token[x++];
                 }
@@ -582,15 +576,17 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 free(token);
                 token = newtoken;
             }
+            // printf("%s\n", token);
             string = token;
             token = expand(&flag, token, mini);
             free(string);
+            // printf("%s\n", token);
         }
-        else if (prev && (!ft_strcmp(prev, "<<") || !ft_strcmp(prev, "export")))
+        if (prev && (!ft_strcmp(prev, "<<") || ft_strcmp(prev, "export")))
         {
-                string = token;
-                token = removequotes(&flag, token);
-                free(string);
+            string = token;
+            token = removequotes(&flag, token);
+            free(string);
         }
         else
         {
@@ -598,13 +594,13 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
             token = expand(&flag, token, mini);
             free(string);
         }
-        if (token[0] == '\0')
-        {
-            free(token);
-            continue;
-        }
-        else
-        {
+        // if (token[0] == '\0')
+        // {
+        //     free(token);
+        //     continue;
+        // }
+        // else
+        // {
             if (flag == 1)
             {
                 k = 0;
@@ -619,7 +615,7 @@ void    ft_reparse(int *check, char *str, t_minishell *mini)
                 handle(0, token, j++, &mini->tokens);
             if (prev)
                 free(prev);
-        }
+        // }
         prev = ft_strdup(token);
         free(token);
     }

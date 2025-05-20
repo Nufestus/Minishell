@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 19:45:54 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 15:41:06 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,7 @@ void setupenv(char **env, t_minishell *mini)
 		newenv[1] = shlvl;
 		newenv[2] = path;
 		newenv[3] = NULL;
+		free(cwd);
 		while(newenv[z])
 		{
 			int l = 0;
@@ -98,9 +99,9 @@ int	main(int ac, char **av, char **env)
 	mini.exitstatus = 0;
 	mini.check = 0;
 	mini.linecount = 0;
+	callallsignals();
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);
-	rl_on_new_line();
-	rl_redisplay();
+	rl_clear_history();
 }
