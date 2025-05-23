@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 18:25:23 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 22:57:11 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,11 +31,11 @@ int	ft_isalphaa(int c)
 		return (0); 
 }
 
-char *getvalue(char *str)
+char	*getvalue(char *str)
 {
-	int i;
-	char *value;
-	int start;
+	int		i;
+	char	*value;
+	int		start;
 
 	i = 0;
 	start = 0;
@@ -60,11 +60,11 @@ char *getvalue(char *str)
 		return (ft_strdup(""));
 }
 
-char *getvar(char *str)
+char	*getvar(char *str)
 {
-	int i;
-	char *var;
-	int start;
+	int		i;
+	char	*var;
+	int		start;
 
 	i = 0;
 	start = 0;
@@ -79,17 +79,15 @@ char *getvar(char *str)
 	return (var);
 }
 
-int checkvalid(char *str, t_minishell *mini)
+int	checkvalid(char *str, t_minishell *mini)
 {
-	int i;
-	char *var;
+	int		i;
+	char	*var;
 	
 	i = 0;
 	var = getvar(str);
 	if (ft_isalphaa(str[i]) || str[i] == '_')
 	{
-		if (ft_isalphaa(str[i]) && str[i + 1] == '\0')
-			return (5);
 		i++;
 		while (str[i] && ft_isalnummm(str[i]))
 			i++;
@@ -100,15 +98,17 @@ int checkvalid(char *str, t_minishell *mini)
 		else if (str[i] == '=' && ft_getenv(var, &mini))
 			return (free(var), 3);
 	}
+	if (str[i] == '\0')
+		return (free(var), 1);
 	return (free(var), 0);
 }
 
-char *getstring(char *str)
+char	*getstring(char *str)
 {
-	int i;
-	int j;
-	int skip;
-	char *string;
+	int		i;
+	int		j;
+	int		skip;
+	char	*string;
 
 	i = 0;
 	j = 0;
@@ -133,12 +133,12 @@ char *getstring(char *str)
 	return (string);
 }
 
-t_env *getenvnode(t_env *env, char *var)
+t_env	*getenvnode(t_env *env, char *var)
 {
-	t_env *tmp;
+	t_env	*tmp;
 
 	tmp = env;
-	while(tmp)
+	while (tmp)
 	{
 		if (!ft_strcmp(var, tmp->variable))
 			return (tmp);
@@ -149,16 +149,16 @@ t_env *getenvnode(t_env *env, char *var)
 
 void export(t_commandline *command)
 {
-	int i;
-	t_env *new;
-	size_t size;
-	int start;
-	char *var;
-	char *value;
-	char *string;
-	char *tmp;
-	int j;
-	char **str;
+	int		i;
+	t_env	*new;
+	size_t	size;
+	int		start;
+	char	*var;
+	char	*value;
+	char	*string;
+	char	*tmp;
+	int		j;
+	char	**str;
 	
 	i = 1;
 	j = 0;
@@ -175,6 +175,7 @@ void export(t_commandline *command)
 				printf("declare -x %s=\"%s\"\n", new->variable, new->value);
 				new = new->next;
 			}
+			command->mini->exitstatus = 0;
 			exit(0);
 		}
 		else
@@ -189,6 +190,7 @@ void export(t_commandline *command)
 				new = new->next;
 			}
 		}
+		command->mini->exitstatus = 0;
 		return ;
 	}
 	while (str[i])
@@ -202,6 +204,7 @@ void export(t_commandline *command)
 			new = ft_envnew(value, var, string);
 			new->isexported = false;
 			ft_envadd_back(&command->mini->env, new);
+			command->mini->exitstatus = 0;
 		}
 		else if (checkvalid(str[i], command->mini) == 2)
 		{
@@ -224,6 +227,7 @@ void export(t_commandline *command)
 				new->isexported = false;
 				ft_envadd_back(&command->mini->env, new);
 			}
+			command->mini->exitstatus = 0;
 		}
 		else if (checkvalid(str[i], command->mini) == 3)
 		{
@@ -232,11 +236,15 @@ void export(t_commandline *command)
 			new->value = ft_strdup(value);
 			free(tmp);
 			tmp = new->string;
-			new->string = getstring(str[i]);
+			new->string = getstring(str[i]);;
 			free(tmp);
+			command->mini->exitstatus = 0;
 		}
 		else if (checkvalid(str[i], command->mini) == 0)
+		{
 			printf("export: not a valid identifier: %s\n", str[i]);
+			command->mini->exitstatus = 1;
+		}
 		free(value);
 		free(string);
 		free(var);
@@ -246,4 +254,3 @@ void export(t_commandline *command)
 		exit(0);
 	return ;
 }
-

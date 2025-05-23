@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 21:37:17 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 18:06:52 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,10 @@ void signalhandle(int sig)
 {
     (void)sig;
     write(STDOUT_FILENO, "\n", 2);
+    rl_replace_line("", 0);
     rl_on_new_line();
     rl_redisplay();
+    g_sig = 130;
 }
 void quithandle(int sig)
 {

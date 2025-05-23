@@ -6,10 +6,9 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 21:28:23 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 19:52:44 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 #ifndef MINISHELL_H
 #define MINISHELL_H
@@ -52,6 +51,8 @@
 struct s_minishell;
 struct s_commandline;
 struct s_tokenize;
+
+extern int g_sig;
 
 typedef struct s_files
 {
@@ -104,6 +105,7 @@ typedef struct s_minishell
 	int	linecount;
 	int	**pipes;
 	int exitstatus;
+	int expanded;
 	int check;
 	char *input;
 	t_env *env;

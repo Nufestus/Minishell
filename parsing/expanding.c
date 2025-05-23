@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 22:04:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 20:11:42 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,22 +151,23 @@ char *expand(int *check, char *str, t_minishell *mini)
         return (NULL);
     while (str[i])
     {
-        if (str[i] == '\'' && !indouble)
+		if (str[i] == '"' && !insingle)
+		{
+			indouble = !indouble;
+			i++;
+			continue;
+		}
+        else if (str[i] == '\'' && !indouble)
 		{
             insingle = !insingle;
 			i++;
 			continue;
 		}
-        else if (str[i] == '"' && !insingle)
-		{
-            indouble = !indouble;
-			i++;
-			continue;
-		}
 		if (str[i] == '$' && !insingle && str[i + 1])
 		{
-			if (check && (indouble || insingle))
+			if (check && indouble)
 				*check = 2;
+			mini->expanded = 1;
 			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
 			{
 				i++;
@@ -180,14 +181,11 @@ char *expand(int *check, char *str, t_minishell *mini)
 					free(expanded);
 					return(NULL);
 				}
+				if (!indouble && check)
+					*check = 1;
 				expandedvar = ft_getenv(var, &mini);
 				if (expandedvar)
 				{
-					if (!indouble)
-					{
-						if (check && !*check)
-							*check = 1;
-					}
 					k = 0;
 					while (expandedvar[k])
 					{

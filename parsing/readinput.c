@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 21:40:17 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 19:58:36 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -156,13 +156,10 @@ void	setupcommandline(t_minishell *mini)
 	char *option;
 	int argcount;
 	int count;
-	// int i;
 	t_commandline *command;
 	t_commandline *copy;
 	t_tokenize *file;
 	t_tokenize *token;
-	// t_files *wtf;
-	// t_files *idk;
 
 	token = mini->tokens;
 	file = mini->tokens;
@@ -228,6 +225,9 @@ void	setupcommandline(t_minishell *mini)
 		}
 	}
 	addfile(file, mini->commandline);
+	// int i;
+	// t_files *wtf;
+	// t_files *idk;
 	// printf("\n\n\n");
 	// if (mini->commandline)
 	// {
@@ -301,8 +301,10 @@ void heredochandle(int sig)
 {
 	const char c = '\n';
     (void)sig;
-    g_sig = 130;
+	rl_on_new_line();
+    rl_redisplay();
     ioctl(0, TIOCSTI, &c);
+    g_sig = 130;
 }
 
 int getinput(int delflag, char *del, t_minishell *mini)
@@ -322,6 +324,7 @@ int getinput(int delflag, char *del, t_minishell *mini)
 			close(fd[0]);
 			close(fd[1]);
 			callallsignals();
+			mini->exitstatus = 130;
 			g_sig = 0;
 			free(line);
 			return (-4);
@@ -353,16 +356,18 @@ int getinput(int delflag, char *del, t_minishell *mini)
     return (fd[0]);
 }
 
-void openallfiles(t_minishell *mini)
+int	openallfiles(t_minishell *mini)
 {
 	t_commandline *command;
 
 	command = mini->commandline;
 	while(command)
 	{
-		openfiles(command, mini);
+		if (openfiles(command, mini))
+			return (1);
 		command = command->next;
 	}
+	return (0);
 }
 
 void checkheredocs(t_minishell *mini)
@@ -409,6 +414,11 @@ void readinput(t_minishell *mini)
     while(1)
 	{
 		mini->input = readline(INPUT1 INPUT2);
+		if (g_sig == 130)
+		{
+			g_sig = 0;
+			mini->exitstatus = 130;
+		}
 		mini->linecount++;
 		if (!mini->input)
 		{
@@ -425,6 +435,7 @@ void readinput(t_minishell *mini)
 		if (tokenize(mini) == -1)
 		{
 			freelisttokens(mini->tokens);
+			free(mini->input);
 			mini->exitstatus = 2;
 			continue ;
 		}
@@ -433,6 +444,7 @@ void readinput(t_minishell *mini)
 			parse(mini);
 		else
 		{
+			free(mini->input);
 			freelisttokens(mini->tokens);
 			exit(1);
 		}
@@ -442,11 +454,17 @@ void readinput(t_minishell *mini)
 			mini->check = 0;
 			mini->exitstatus = 2;
 			freelisttokens(mini->tokens);
+			free(mini->input);
 			continue ;
 		}
 		setupcommandline(mini);
 		freelisttokens(mini->tokens);
-		openallfiles(mini);
+		if (openallfiles(mini))
+		{
+			freelistcommandline(mini->commandline);
+			free(mini->input);
+			continue ;
+		}
 		execute(mini);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);

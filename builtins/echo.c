@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 05:02:34 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 19:17:21 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,8 +103,8 @@ void ft_echo(t_commandline *command)
     	    finishedoptions = 1;
     	    res = ft_join(res, command->args[i]);
 			if (copy)
-    	    	free(copy);
-    	    copy = res;
+				free(copy);
+			copy = res;
     	    i++;
     	}
     }

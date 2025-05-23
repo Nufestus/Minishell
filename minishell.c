@@ -6,11 +6,13 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 21:49:54 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 18:03:22 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int g_signal = 0;
 
 void setupenv(char **env, t_minishell *mini)
 {
@@ -99,9 +101,9 @@ int	main(int ac, char **av, char **env)
 	mini.exitstatus = 0;
 	mini.check = 0;
 	mini.linecount = 0;
+	callallsignals();
 	if (!isatty(0))
 		return (1);
-	callallsignals();
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);
