@@ -6,20 +6,21 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:14:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 18:52:26 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:02:02 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	setupnode(int split, int index, int category, int type, char *str, t_tokenize **tokens)
+void	setupnode(t_setupnode *setup,
+		int category, int type, t_tokenize **tokens)
 {
 	t_tokenize	*newnode;
 
 	newnode = ft_lstnew(ft_lstlast(*tokens), type);
-	newnode->split = split;
-	newnode->index = index;
-	newnode->str = ft_strdup(str);
+	newnode->split = setup->split;
+	newnode->index = setup->index;
+	newnode->str = ft_strdup(setup->str);
 	newnode->category = category;
 	ft_lstadd_back(tokens, newnode);
 }

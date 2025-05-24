@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 01:24:35 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:05:52 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@
 # include <errno.h>
 # include <sys/ioctl.h>
 # include <fcntl.h>
+# include <limits.h>
 
 # define INPUT1 "\033[1;96;40mSHELL\033[0m"
 # define INPUT2 "\033[1;96;40m ✗ \033[0m"
@@ -157,17 +158,17 @@ typedef struct s_parse
 
 typedef struct s_reparse
 {
-	int		flag;
-	int		i;
-	int		z;
-	int		j;
-	int		k;
-	char	q;
-	char	*token;
-	char	*copy;
-	char	*string;
-	char	*prev;
-	int		exportcheck;
+	int			flag;
+	int			i;
+	int			z;
+	int			j;
+	int			k;
+	char		q;
+	char		*token;
+	char		*copy;
+	char		*string;
+	char		*prev;
+	int			exportcheck;
 }	t_reparse;
 
 typedef struct s_env_setup
@@ -203,7 +204,13 @@ typedef struct s_handlefiles
 	char	*del;
 }	t_handlefiles;
 
-char			**ft_split(int *check, char *s, char *delims);
+typedef struct s_setupnode
+{
+	int			split;
+	int			index;
+	char		*str;
+}	t_setupnode;
+
 int				ft_strcmp(char *str, char *str1);
 int				tokenize(t_minishell *mini);
 char			**split(char const *s, char *delims);
@@ -245,8 +252,6 @@ void			ft_putstr_fd(char *s, int fd);
 void			ft_cd(t_commandline *commandline);
 int				checkcommand(char *cmd);
 char			**constructenv(t_env *env);
-void			handleiosingle(t_commandline *command);
-int				openfiles(t_commandline *command, t_minishell *mini);
 char			*ft_itoa(int n);
 char			*ft_getenv(char *str, t_minishell **mini);
 int				isanoption(char *str);
@@ -301,7 +306,8 @@ void			syntaxhere(int *check, char *flag, int print);
 void			syntax(int *check, char *flag, int print);
 int				parsepipe(t_tokenize *list);
 int				parseinput(t_tokenize *list);
-void			setupnode(int split, int index, int category, int type, char *str, t_tokenize **tokens);
+void			setupnode(t_setupnode *setup,
+					int category, int type, t_tokenize **tokens);
 int				parseoutput(t_tokenize *list);
 void			retokenize(t_minishell *mini);
 int				tokenizewordshelp(t_tokenize **list);
@@ -348,9 +354,37 @@ void			setupcommandline(t_minishell *mini);
 void			checkheredocs(t_minishell *mini);
 void			handlefiles(t_tokenize *token, t_commandline *command);
 void			getinputhelp(char *line, int fd);
-void			getinputhelp1(int delflag, char **line, char *copy, t_minishell *mini);
+void			getinputhelp1(int delflag, char **line,
+					char *copy, t_minishell *mini);
 void			getinputhelp2(int *fd, t_minishell **mini, char *line);
 int				getinputhelp3(char *line, t_minishell *mini, char *del);
 int				getinputhelp4(char *line, char *del);
+void			initializepipes(t_minishell *mini);
+void			childlabor(t_commandline **command);
+void			handleiosingle(t_commandline **command);
+void			closeallpipes(t_minishell *mini, int size);
+void			handlebuiltins(t_commandline **command);
+void			setupchilds(t_minishell *mini, int size);
+int				openfiles(t_commandline **command, t_minishell *mini);
+void			freestr(char **str);
+char			*my_getenv(t_minishell *mini, char *str);
+void			handleiolast(t_commandline **command);
+void			setup_io(t_commandline *command, int size);
+void			error_check(t_commandline *command);
+void			after_execve(t_commandline *command);
+void			closeallfiles(t_minishell *mini);
+void			error(char *str);
+int				ft_find(char *str, char *del);
+char			*checkfile(t_commandline *command);
+void			printerror(char *str);
+int				ft_atoi_custom(const char *str);
+void			handle_shlvl(t_commandline *command);
+void			setuplastcommand(t_commandline ***command);
+void			setupmiddlecommand(t_commandline ***command);
+void			tokenhelper(t_tokenize **list);
+void			file_helper(int flag, char *str,
+					t_commandline **command, int fd);
+void			startpipex(t_minishell *mini);
+void			setupenv(char **env, t_minishell *mini);
 
 #endif

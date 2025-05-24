@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 01:27:38 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:14:43 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,54 @@ int	getinput(int delflag, char *del, t_minishell *mini)
 	return (callallsignals(), close(fd[1]), fd[0]);
 }
 
+int	readinputhelp(t_minishell **mini)
+{
+	if (!(*mini)->input)
+	{
+		free((*mini)->input);
+		printf("%s\n", "exit");
+		exit(1);
+	}
+	if ((*mini)->input[0] == '\0')
+	{
+		free((*mini)->input);
+		return (1);
+	}
+	add_history((*mini)->input);
+	if (tokenize(*mini) == -1)
+	{
+		freelisttokens((*mini)->tokens);
+		free((*mini)->input);
+		(*mini)->exitstatus = 2;
+		return (1);
+	}
+	return (0);
+}
+
+int	readinputhelp1(t_minishell **mini)
+{
+	if ((*mini)->check != 2)
+		parse(*mini);
+	else
+	{
+		free((*mini)->input);
+		freelisttokens((*mini)->tokens);
+		exit(1);
+	}
+	reparse(*mini);
+	if ((*mini)->check == 1)
+	{
+		(*mini)->check = 0;
+		(*mini)->exitstatus = 2;
+		freelisttokens((*mini)->tokens);
+		free((*mini)->input);
+		return (1);
+	}
+	setupcommandline(*mini);
+	freelisttokens((*mini)->tokens);
+	return (0);
+}
+
 void	readinput(t_minishell *mini)
 {
 	while (1)
@@ -54,45 +102,11 @@ void	readinput(t_minishell *mini)
 			mini->exitstatus = 130;
 		}
 		mini->linecount++;
-		if (!mini->input)
-		{
-			free(mini->input);
-			printf("%s\n", "exit");
-			exit(1);
-		}
-		if (mini->input[0] == '\0')
-		{
-			free(mini->input);
+		if (readinputhelp(&mini))
 			continue ;
-		}
-		add_history(mini->input);
-		if (tokenize(mini) == -1)
-		{
-			freelisttokens(mini->tokens);
-			free(mini->input);
-			mini->exitstatus = 2;
-			continue ;
-		}
 		checkheredocs(mini);
-		if (mini->check != 2)
-			parse(mini);
-		else
-		{
-			free(mini->input);
-			freelisttokens(mini->tokens);
-			exit(1);
-		}
-		reparse(mini);
-		if (mini->check == 1)
-		{
-			mini->check = 0;
-			mini->exitstatus = 2;
-			freelisttokens(mini->tokens);
-			free(mini->input);
+		if (readinputhelp1(&mini))
 			continue ;
-		}
-		setupcommandline(mini);
-		freelisttokens(mini->tokens);
 		if (openallfiles(mini))
 		{
 			freelistcommandline(mini->commandline);

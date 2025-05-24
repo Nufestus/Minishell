@@ -6,7 +6,7 @@
 #    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/05/24 01:11:44 by rammisse         ###   ########.fr        #
+#    Updated: 2025/05/24 21:06:23 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g
+CFLAGS = -Wall -Wextra -Werror #-fsanitize=address -g
 
 SRCS = minishell.c parsing/readinput.c utils/utils.c builtins/export.c \
 		parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c \
@@ -28,7 +28,9 @@ SRCS = minishell.c parsing/readinput.c utils/utils.c builtins/export.c \
 		parsing/parsing_utils3.c parsing/parsing_utils4.c parsing/parsing_utils5.c \
 		parsing/expanding_utils.c parsing/expanding_utils1.c parsing/readinput_utils.c \
 		parsing/readinput_utils1.c parsing/readinput_utils2.c parsing/readinput_utils4.c \
-		parsing/readinput_utils5.c \
+		parsing/readinput_utils5.c execution/exec_utils.c execution/exec_utils_1.c \
+		execution/exec_utils_2.c execution/exec_utils_3.c execution/exec_utils_4.c execution/exec_utils_5.c \
+		main.c
 		
 
 OBJS = $(SRCS:.c=.o)

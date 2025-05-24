@@ -7,6 +7,8 @@
         "system_error": "c",
         "complex": "c",
         "source_location": "c",
-        "fstream": "c"
+        "fstream": "c",
+        "expected": "c",
+        "minishell.h": "c"
     }
 }

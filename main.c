@@ -1,43 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signals.c                                          :+:      :+:    :+:   */
+/*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 20:24:50 by rammisse         ###   ########.fr       */
+/*   Created: 2025/05/24 21:05:34 by rammisse          #+#    #+#             */
+/*   Updated: 2025/05/24 21:06:37 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../minishell.h"
+#include "minishell.h"
 
-void	signalhandle(int sig)
+int	main(int ac, char **av, char **env)
 {
-	const char	c = '\n';
+	t_minishell	mini;
 
-	(void)sig;
-	rl_redisplay();
+	(void)ac;
+	(void)av;
+	mini.env = NULL;
+	mini.commandline = NULL;
+	mini.input = NULL;
+	mini.tokens = NULL;
+	mini.envstate = 0;
+	mini.exitstatus = 0;
+	mini.check = 0;
+	mini.linecount = 0;
+	callallsignals();
+	setupenv(env, &mini);
+	readinput(&mini);
+	freelistenv(mini.env);
 	rl_on_new_line();
-	rl_replace_line("\n", 0);
-	ioctl(0, TIOCSTI, &c);
-	g_sig = 130;
-}
-
-void	quithandle(int sig)
-{
-	(void)sig;
-	printf("quit\n");
-}
-
-void	callallsignals(void)
-{
-	signal(SIGINT, signalhandle);
-	signal(SIGQUIT, SIG_IGN);
-}
-
-void	execute(t_minishell *mini)
-{
-	signal(SIGQUIT, signalhandle);
-	startpipex(mini);
+	rl_redisplay();
 }

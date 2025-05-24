@@ -6,13 +6,13 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:44:24 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:05:58 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	**create_default_env(void)
+char	**create_default_env(void)
 {
 	char	**newenv;
 	char	*str;
@@ -85,26 +85,4 @@ void	setupenv(char **env, t_minishell *mini)
 	}
 	else
 		process_env_array(env, mini);
-}
-
-int	main(int ac, char **av, char **env)
-{
-	t_minishell	mini;
-
-	(void)ac;
-	(void)av;
-	mini.env = NULL;
-	mini.commandline = NULL;
-	mini.input = NULL;
-	mini.tokens = NULL;
-	mini.envstate = 0;
-	mini.exitstatus = 0;
-	mini.check = 0;
-	mini.linecount = 0;
-	callallsignals();
-	setupenv(env, &mini);
-	readinput(&mini);
-	freelistenv(mini.env);
-	rl_on_new_line();
-	rl_redisplay();
 }

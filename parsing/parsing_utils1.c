@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:15:19 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 00:40:13 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 17:04:47 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,25 +44,7 @@ int	tokenizewordshelp(t_tokenize **list)
 		(*list) = (*list)->next;
 		return (1);
 	}
-	if ((*list)->prev && (*list)->prev->category
-		&& (*list)->type == WORD && (*list)->prev->type != HEDOC)
-		(*list)->type = FILE;
-	else if ((!(*list)->prev || (*list)->prev->type == PIPE || (*list)->prev->type == DEL
-			|| ((*list)->prev->type == FILE
-				&& (*list)->next && (*list)->next->type == PIPE))
-		&& (*list)->type == WORD)
-		(*list)->type = CMD;
-	else if ((*list)->prev && (*list)->prev->type == CMD && (*list)->type == WORD)
-		(*list)->type = ARG;
-	else if ((*list)->prev && (*list)->prev->type == HEDOC && (*list)->type == WORD)
-		(*list)->type = DEL;
-	else if ((*list)->prev && (*list)->prev->type == OPTION)
-		(*list)->type = ARG;
-	else if ((*list)->prev && (*list)->prev->type == ARG
-		&& (*list)->next && (*list)->next->category)
-		(*list)->type = ARG;
-	else
-		(*list)->type = ARG;
+	tokenhelper(list);
 	return (0);
 }
 

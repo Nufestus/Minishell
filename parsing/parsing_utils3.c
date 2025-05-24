@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:18:37 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:33:05 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 21:01:48 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,23 +112,28 @@ int	countword(char **str)
 
 void	handlenodes(int split, char *str, int i, t_tokenize **tokens)
 {
+	t_setupnode	setup;
+
+	setup.split = split;
+	setup.index = i;
+	setup.str = str;
 	if (!split || split == 2 || split == 3)
 	{
 		if (!ft_strcmp(str, "|"))
-			setupnode(split, i, 0, PIPE, str, tokens);
+			setupnode(&setup, 0, PIPE, tokens);
 		else if (!ft_strcmp(str, ">>"))
-			setupnode(split, i, 1, APPEND, str, tokens);
+			setupnode(&setup, 1, APPEND, tokens);
 		else if (!ft_strcmp(str, "<<"))
-			setupnode(split, i, 1, HEDOC, str, tokens);
+			setupnode(&setup, 1, HEDOC, tokens);
 		else if (!ft_strcmp(str, ">"))
-			setupnode(split, i, 1, REDOUT, str, tokens);
+			setupnode(&setup, 1, REDOUT, tokens);
 		else if (!ft_strcmp(str, "<"))
-			setupnode(split, i, 1, REDIN, str, tokens);
+			setupnode(&setup, 1, REDIN, tokens);
 		else if (isanoption(str))
-			setupnode(split, i, 0, OPTION, str, tokens);
+			setupnode(&setup, 0, OPTION, tokens);
 		else
-			setupnode(split, i, 0, WORD, str, tokens);
+			setupnode(&setup, 0, WORD, tokens);
 	}
 	else
-		setupnode(split, i, 0, WORD, str, tokens);
+		setupnode(&setup, 0, WORD, tokens);
 }

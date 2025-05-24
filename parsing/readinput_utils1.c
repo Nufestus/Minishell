@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 20:59:54 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 00:37:59 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 16:08:27 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ int	openallfiles(t_minishell *mini)
 	command = mini->commandline;
 	while (command)
 	{
-		if (openfiles(command, mini))
+		if (openfiles(&command, mini))
 			return (1);
 		command = command->next;
 	}

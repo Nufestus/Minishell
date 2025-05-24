@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:56:50 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 00:39:03 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 17:04:51 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,4 +75,30 @@ void	initreparse(t_reparse *reparse, char *str)
 	reparse->exportcheck = 0;
 	reparse->copy = str;
 	reparse->prev = NULL;
+}
+
+void	tokenhelper(t_tokenize **list)
+{
+	if ((*list)->prev && (*list)->prev->category
+		&& (*list)->type == WORD && (*list)->prev->type != HEDOC)
+		(*list)->type = FILE;
+	else if ((!(*list)->prev || (*list)->prev->type == PIPE
+			|| (*list)->prev->type == DEL
+			|| ((*list)->prev->type == FILE
+				&& (*list)->next && (*list)->next->type == PIPE))
+		&& (*list)->type == WORD)
+		(*list)->type = CMD;
+	else if ((*list)->prev && (*list)->prev->type == CMD
+		&& (*list)->type == WORD)
+		(*list)->type = ARG;
+	else if ((*list)->prev && (*list)->prev->type == HEDOC
+		&& (*list)->type == WORD)
+		(*list)->type = DEL;
+	else if ((*list)->prev && (*list)->prev->type == OPTION)
+		(*list)->type = ARG;
+	else if ((*list)->prev && (*list)->prev->type == ARG
+		&& (*list)->next && (*list)->next->category)
+		(*list)->type = ARG;
+	else
+		(*list)->type = ARG;
 }
