@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:17:00 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:44:41 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,11 +390,12 @@ void freelistenv(t_env *list)
 int	ft_commandsize(t_commandline *lst)
 {
 	int	i;
+	t_commandline *command;
 
 	if (!lst)
 		return (0);
 	i = 0;
-	t_commandline *command = lst;
+	command = lst;
 	while (command != NULL)
 	{
 		command = command->next;

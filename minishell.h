@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/22 19:52:44 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 21:08:51 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,6 @@
 #include <limits.h>
 #include <sys/ioctl.h>
 
-#define INPUT1 "\033[1;96;40mSHELL\033[0m"
-#define INPUT2 "\033[1;96;40m ✗ \033[0m"
 #define PIPE 1
 #define WORD 2
 #define REDOUT 3
@@ -156,8 +154,6 @@ void	ft_putstr_fd(char *s, int fd);
 void ft_cd(t_commandline *commandline);
 int checkcommand(char *cmd);
 char **constructenv(t_env *env);
-void handleiosingle(t_commandline *command);
-int openfiles(t_commandline *command, t_minishell *mini);
 char	*ft_itoa(int n);
 char *ft_getenv(char *str, t_minishell **mini);
 int isanoption(char *str);
@@ -190,5 +186,38 @@ void quithandle(int sig);
 void callallsignals();
 int	ft_find(char *str, char *del);
 void closeallpipes(t_minishell *mini, int size);
+void after_execve(t_commandline *command);
+void setup_io(t_commandline *command, int size);
+void error_check(t_commandline *command);
+int	ft_find(char *str, char *del);
+char	*my_getenv(t_minishell *mini, char *str);
+void	freestr(char **str);
+int	openfiles(t_commandline **command, t_minishell *mini);
+void	open_outfiles(t_commandline **command, int infd);
+int	command_loop(t_commandline **copy, t_minishell *mini, int size);
+void	setupchilds(t_minishell *mini, int size);
+void	closeallpipes(t_minishell *mini, int size);
+void	childlabor(t_commandline **command);
+void	setupfirstcommand(t_commandline ***command);
+void	after_execve(t_commandline *command);
+void	handleiosingle(t_commandline **command);
+void	setup_io(t_commandline *command, int size);
+void	error_check(t_commandline *command);
+void	handle_shlvl(t_commandline *command);
+int	ft_atoi_custom(const char *str);
+void	setuplastcommand(t_commandline ***command);
+void	handleiomiddle(t_commandline **command);
+void	setupmiddlecommand(t_commandline ***command);
+int	checkcommand(char *cmd);
+void	error(char *str);
+void	printerror(char *str);
+void	handlebuiltins(t_commandline **command);
+void	closeallfiles(t_minishell *mini);
+void	handleiolast(t_commandline **command);
+int	is_directory(char *path);
+void	directoryerror(char *s);
+char	*checkfile(t_commandline *command);
+char	**constructenv(t_env *env);
+void	initializepipes(t_minishell *mini);
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/20 22:57:11 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:01:28 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,7 @@ void export(t_commandline *command)
 	i = 1;
 	j = 0;
 	start = 0;
-	size = ft_commandsize(command->mini->commandline);
+	size = ft_commandsize((command->mini)->commandline);
 	str = command->args;
 	if (!str[1])
 	{

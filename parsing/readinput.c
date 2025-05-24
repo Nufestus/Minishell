@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/22 19:58:36 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 23:03:46 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -299,10 +299,10 @@ void heredocerror(char *str)
 
 void heredochandle(int sig)
 {
-	const char c = '\n';
+	const char  c = '\n';
     (void)sig;
-	rl_on_new_line();
-    rl_redisplay();
+    rl_replace_line("", 0);
+    rl_on_new_line();
     ioctl(0, TIOCSTI, &c);
     g_sig = 130;
 }
@@ -363,7 +363,7 @@ int	openallfiles(t_minishell *mini)
 	command = mini->commandline;
 	while(command)
 	{
-		if (openfiles(command, mini))
+		if (openfiles(&command, mini))
 			return (1);
 		command = command->next;
 	}
@@ -413,11 +413,13 @@ void readinput(t_minishell *mini)
 {
     while(1)
 	{
-		mini->input = readline(INPUT1 INPUT2);
+		mini->input = readline("MiniSUIIII ");
 		if (g_sig == 130)
 		{
 			g_sig = 0;
+			mini->linecount++;
 			mini->exitstatus = 130;
+			continue;
 		}
 		mini->linecount++;
 		if (!mini->input)
