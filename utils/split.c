@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:44:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:13:50 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 20:18:06 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ int	is_delim(char c, char *delims)
 	return (0);
 }
 
-static size_t	count_str(char *s, char *delims)
+size_t	count_str(char *s, char *delims)
 {
 	unsigned int	i;
 	size_t			word;
@@ -43,7 +43,7 @@ static size_t	count_str(char *s, char *delims)
 	return (word);
 }
 
-static size_t	str_length(char const *s, char *delims)
+size_t	str_length(char const *s, char *delims)
 {
 	size_t	i;
 
@@ -79,7 +79,7 @@ char	**split(char const *s, char *delims)
 	index = 0;
 	p = (char **) malloc((sizeof(char *)) * (k + 1));
 	if (!p)
-		return (NULL);
+		exit(1);
 	while (index < k)
 	{
 		while (is_delim(*s, delims))

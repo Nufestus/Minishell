@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:09:27 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/21 22:30:41 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,79 +26,89 @@ void	ft_putstr_fd(char *s, int fd)
 	}
 }
 
-void ft_pwd(t_minishell *mini)
+void	ft_pwdhelp(int size, char *path, t_minishell *mini)
 {
-    char *path;
-    int size;
-
-    path = NULL;
-    size = ft_commandsize(mini->commandline);
-    path = getcwd(NULL, 0);
-    if (size > 1)
-    {
-        if (path)
-            printf("%s\n", path);
-        else
-            perror("pwd");
-    }
-    else
-    {
-        if (path)
-        {
-            ft_putstr_fd(path, mini->commandline->outfd);
-            ft_putstr_fd("\n", mini->commandline->outfd);
-        }
-        else
-            perror("pwd");
-    }
-    if (path)
-        free(path);
-    if (size != 1)
-        exit(0);
-    mini->exitstatus = 0;
+	if (size > 1)
+	{
+		if (path)
+			printf("%s\n", path);
+		else
+			perror("pwd");
+	}
+	else
+	{
+		if (path)
+		{
+			ft_putstr_fd(path, mini->commandline->outfd);
+			ft_putstr_fd("\n", mini->commandline->outfd);
+		}
+		else
+			perror("pwd");
+	}
 }
 
-void ft_env(t_minishell *mini, char **args)
+void	ft_pwd(t_minishell *mini)
 {
-    t_env *env;
-    int size;
+	char	*path;
+	int		size;
 
-    size = ft_commandsize(mini->commandline);
-    if (args[1])
-    {
-        ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
-        if (size != 1)
-            exit(1);
-        mini->exitstatus = 1;
-        return ;
-    }
-    env = mini->env;
-    if (size > 1)
-    {
-        while(env)
-        {
-            if (!env->isexported)
-                printf("%s\n", env->string);
-            env = env->next;
-        }
-    }
-    else
-    {
-        while(env)
-        {
-            if (!env->isexported)
-            {
-                ft_putstr_fd(env->string, mini->commandline->outfd);
-                ft_putstr_fd("\n", mini->commandline->outfd);
-            }
-            env = env->next;
-        }
-    }
-    if (mini->commandline->infd != STDIN_FILENO)
-        close(mini->commandline->infd);
-    if (mini->commandline->outfd != STDOUT_FILENO)
-        close(mini->commandline->outfd);
-    if (size > 1)
-        exit(0);
-    return ;
+	path = NULL;
+	size = ft_commandsize(mini->commandline);
+	path = getcwd(NULL, 0);
+	ft_pwdhelp(size, path, mini);
+	if (path)
+		free(path);
+	if (size != 1)
+		exit(0);
+	mini->exitstatus = 0;
+}
+
+void	ft_envhelp(int size, t_env *env, t_minishell *mini)
+{
+	if (size > 1)
+	{
+		while (env)
+		{
+			if (!env->isexported)
+				printf("%s\n", env->string);
+			env = env->next;
+		}
+	}
+	else
+	{
+		while (env)
+		{
+			if (!env->isexported)
+			{
+				ft_putstr_fd(env->string, mini->commandline->outfd);
+				ft_putstr_fd("\n", mini->commandline->outfd);
+			}
+			env = env->next;
+		}
+	}
+}
+
+void	ft_env(t_minishell *mini, char **args)
+{
+	t_env	*env;
+	int		size;
+
+	size = ft_commandsize(mini->commandline);
+	if (args[1])
+	{
+		ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
+		if (size != 1)
+			exit(1);
+		mini->exitstatus = 1;
+		return ;
+	}
+	env = mini->env;
+	ft_envhelp(size, env, mini);
+	if (mini->commandline->infd != STDIN_FILENO)
+		close(mini->commandline->infd);
+	if (mini->commandline->outfd != STDOUT_FILENO)
+		close(mini->commandline->outfd);
+	if (size > 1)
+		exit(0);
+	return ;
 }

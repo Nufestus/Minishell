@@ -6,13 +6,13 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:09:11 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:39:48 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*handle(char *str, char *str1)
+char	*handle(char *str, char *str1)
 {
 	char	*string;
 
@@ -36,98 +36,58 @@ static char	*handle(char *str, char *str1)
 		return (NULL);
 }
 
-static void	fillfirst(const char *s1, char *join, int i)
+void	fillfirst(const char *s1, char *join, int i)
 {
 	while (s1[i] != '\0')
 	{
 		join[i] = s1[i];
 		i++;
 	}
-    join[i] = 32;
-    i++;
+	join[i] = 32;
+	i++;
 }
 
-char	*ft_join(const char *s1, const char *s2)
+void	helpecho(int size, int optioncheck, char *res, t_commandline *command)
 {
-	size_t	i;
-	size_t	j;
-	char	*join;
-	size_t	s1len;
-	size_t	s2len;
-
-	if (!s1 || !s2)
-		return (handle((char *)s1, (char *)s2));
-	s1len = ft_strlen(s1);
-	s2len = ft_strlen(s2);
-	i = 0;
-	j = 0;
-	join = (char *) malloc(s1len + s2len + 2);
-	if (join == NULL)
-		return (NULL);
-	fillfirst(s1, join, i);
-	i = s1len + 1;
-	while (s2[j] != '\0')
+	if (size > 1)
 	{
-		join[i] = s2[j];
-		j++;
-		i++;
+		if (optioncheck)
+			printf("%s\n", res);
+		else
+			printf("%s\n", res);
 	}
-	join[i] = '\0';
-	return (join);
-}
-
-void ft_echo(t_commandline *command)
-{
-    int i;
-    int optioncheck;
-	int finishedoptions;
-    char *res;
-    char *copy;
-    int size;
-
-    i = 1;
-    size = ft_commandsize(command->mini->commandline);
-    optioncheck = 0;
-	finishedoptions = 0;
-    res = NULL;
-    copy = NULL;
-    while(command->args[i])
-    {
-        if (isanoption(command->args[i]) && !finishedoptions)
-    	{
-    	    optioncheck = 1;
-    	    i++;
-    	}
-    	else
-    	{
-    	    finishedoptions = 1;
-    	    res = ft_join(res, command->args[i]);
-			if (copy)
-    	    	free(copy);
-    	    copy = res;
-    	    i++;
-    	}
-    }
-    if (size > 1)
-    {
-        if (optioncheck)
-            printf("%s\n", res);
-        else
-            printf("%s\n", res);
-    }
-    else
-    {
-        if (optioncheck)
-            ft_putstr_fd(res, command->outfd);
-        else
+	else
+	{
+		if (optioncheck)
+			ft_putstr_fd(res, command->outfd);
+		else
 		{
 			ft_putstr_fd(res, command->outfd);
 			ft_putstr_fd("\n", command->outfd);
 		}
-    }
-    free(copy);
-    if (size > 1)
+	}
+}
+
+void	initechovars(int *i, int *optioncheck, int *finishedoptions, char **res)
+{
+	*i = 1;
+	*optioncheck = 0;
+	*finishedoptions = 0;
+	*res = NULL;
+}
+
+void	ft_echo(t_commandline *command)
+{
+	t_echo	echo;
+
+	initechovars(&echo.i, &echo.optioncheck, &echo.finishedoptions, &echo.res);
+	echo.size = ft_commandsize(command->mini->commandline);
+	echo.copy = NULL;
+	echo_loop(command, &echo);
+	helpecho(echo.size, echo.optioncheck, echo.res, command);
+	free(echo.copy);
+	if (echo.size > 1)
 		exit(0);
 	command->mini->exitstatus = 0;
-    return ;
+	return ;
 }

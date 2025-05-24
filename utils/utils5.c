@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 23:01:53 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 23:03:12 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/22 13:46:59 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 int	ft_strcmp(char *str, char *str1)
 {
-	while (*str && *str1 && *str == *str1)
-	{
-		str++;
-		str1++;
-	}
-	return (*str - *str1);
+	int	i;
+
+	i = 0;
+	while (str[i] && str1[i] && str[i] == str1[i])
+		i++;
+	return (str[i] - str1[i]);
 }
 
 int	ft_isalpha(int c)

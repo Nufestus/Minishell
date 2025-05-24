@@ -6,43 +6,20 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:14:16 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:38:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*handle(char *str, char *str1)
+void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new)
 {
-	char	*string;
-
-	if (str1 != NULL && str == NULL)
-	{
-		string = malloc(ft_strlen(str1) + 1);
-		if (!string)
-			return (NULL);
-		ft_strlcpy(string, str1, ft_strlen(str1) + 1);
-		return (string);
-	}
-	else if (str != NULL && str1 == NULL)
-	{
-		string = malloc(ft_strlen(str) + 1);
-		if (!string)
-			return (NULL);
-		ft_strlcpy(string, str, ft_strlen(str) + 1);
-		return (string);
-	}
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		ft_lstlast(*lst)->next = new;
 	else
-		return (NULL);
-}
-
-static void	fillfirst(const char *s1, char *join, int i)
-{
-	while (s1[i] != '\0')
-	{
-		join[i] = s1[i];
-		i++;
-	}
+		*lst = new;
 }
 
 char	*ft_strjoin(const char *s1, const char *s2)

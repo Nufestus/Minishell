@@ -6,21 +6,11 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:17:06 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:37:47 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new)
-{
-	if (!lst || !new)
-		return ;
-	if (*lst)
-		ft_lstlast(*lst)->next = new;
-	else
-		*lst = new;
-}
 
 char	*ft_strdup(char *s1)
 {
@@ -32,7 +22,7 @@ char	*ft_strdup(char *s1)
 	str = (char *)s1;
 	copy = (char *) malloc(strlen(str) + 1);
 	if (copy == NULL)
-		return (NULL);
+		exit(1);
 	while (s1[i] != '\0')
 	{
 		copy[i] = str[i];

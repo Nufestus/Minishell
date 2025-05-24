@@ -6,224 +6,86 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:11:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:50:35 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char *ft_getenv(char *str, t_minishell **mini)
+void	expandhelp1(t_expanding *expand, char *str, t_minishell *mini)
 {
-	t_env *temp;
-	
-	temp = (*mini)->env;
-	while (temp)
+	expand->i++;
+	if (str[expand->i] == '?')
+		expand->expandedvar = ft_itoa(mini->exitstatus);
+	expand->i++;
+	expand->k = 0;
+	while (expand->expandedvar[expand->k])
 	{
-		if (ft_strcmp(str, temp->variable) == 0)
-			return (temp->value);
-		temp = temp->next;
+		expand->expanded[expand->j] = expand->expandedvar[expand->k];
+		expand->j++;
+		expand->k++;
 	}
-	return (NULL);
+	free(expand->expandedvar);
 }
 
-int	ft_isalnumm(int c)
+int	expandhelp2(t_expanding *expand, char *str, int *check)
 {
-	if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z')
-		|| (c >= '0' && c <= '9') || c == '_')
-		return (1);
-	else
-		return (0);
-}
-
-int varlen(char *str, t_minishell *mini)
-{
-	int i;
-	int insingle;
-	int indouble;
-	int finallen;
-	int start;
-	int len;
-	char *var;
-	char *expandedvar;
-
-	i = 0;
-	start = 0;
-	len = 0;
-	finallen = 0;
-	insingle = 0;
-	indouble = 0;
-	while (str[i])
+	if (str[expand->i] == '\'' && !expand->indouble)
 	{
-		if (str[i] == '$' && str[i + 1] != '\0')
-		{
-			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
-			{
-				i++;
-				start = i;
-				while (str[i] && ft_isalnumm(str[i]))
-					i++;
-				len = i - start;
-				var = ft_substr(str, start, len);
-				expandedvar = ft_getenv(var, &mini);
-				if (expandedvar)
-					finallen += ft_strlen(expandedvar);
-				free(var);
-			}
-			else if (str[i] == '$' && str[i + 1] == '?')
-			{
-				finallen += 12;
-				i += 2;
-			}
-			else
-			{
-				i++;
-				finallen++;
-			}
-		}
-		else
-			i++;
-	}
-	return (finallen);
-}
-
-int	ft_isdigit(int c)
-{
-	if (c >= '0' && c <= '9')
+		expand->insingle = !expand->insingle;
+		expand->i++;
 		return (1);
+	}
+	else if (str[expand->i] == '"' && !expand->insingle)
+	{
+		expand->indouble = !expand->indouble;
+		expand->i++;
+		return (1);
+	}
+	if (expand->indouble || expand->insingle)
+		if (check)
+			*check = 2;
 	return (0);
 }
 
-int quoted(char *str)
+int	expandhelp3(t_expanding *expand, char *str, t_minishell *mini, int *check)
 {
-	int i;
-	int len;
-	char quote;
-
-	i = 0;
-	len = 0;
-	while (str[i])
+	if (ft_isalpha(str[expand->i + 1]) || str[expand->i + 1] == '_')
 	{
-		if (str[i] == '\'' || str[i] == '"')
-		{
-			quote = str[i];
-			i++;
-			while (str[i] && str[i] != quote)
-			{
-				len++;
-				i++;
-			}
-			if (str[i] == quote)
-				i++;
-		}
-		else
-		{
-			len++;
-			i++;
-		}
+		if (!expandhelp(expand, str, check, mini))
+			return (0);
 	}
-	return (len);
+	else if (str[expand->i + 1] == '?')
+		expandhelp1(expand, str, mini);
+	else if (str[expand->i] == '$' && str[expand->i + 1] == '$')
+		expand->i += 2;
+	else if (str[expand->i] == '$' && ft_isdigit(str[expand->i + 1]))
+		expand->i += 2;
+	else
+		expand->expanded[expand->j++] = str[expand->i++];
+	return (1);
 }
 
-char *expand(int *check, char *str, t_minishell *mini)
+char	*expand(int *check, char *str, t_minishell *mini)
 {
-    int total;
-    int insingle;
-    int indouble;
-    int i;
-	int start;
-	int len;
-    int j;
-	char *expandedvar;
-    char *expanded;
-	size_t	k;
-	char *var;
+	t_expanding	expand;
 
-    total = varlen(str, mini) + ft_strlen(str);
-    insingle = 0;
-    indouble = 0;
-    i = 0;
-    j = 0;
-	start = 0;
-	len = 0;
-	k = 0;
-    expanded = malloc(total + 1);
-    if (!expanded)
-        return (NULL);
-    while (str[i])
-    {
-        if (str[i] == '\'' && !indouble)
+	initilizeexpand(mini, str, &expand);
+	if (!expand.expanded)
+		exit (1);
+	while (str[expand.i])
+	{
+		if (expandhelp2(&expand, str, check) == 1)
+			continue ;
+		if (str[expand.i] == '$' && !expand.insingle && str[expand.i + 1])
 		{
-            insingle = !insingle;
-			i++;
-			continue;
-		}
-        else if (str[i] == '"' && !insingle)
-		{
-            indouble = !indouble;
-			i++;
-			continue;
-		}
-		if (indouble || insingle)
-			if (check)
-				*check = 2;
-		if (str[i] == '$' && !insingle && str[i + 1])
-		{
-			if (ft_isalpha(str[i + 1]) || str[i + 1] == '_')
-			{
-				i++;
-				start = i;
-				while (str[i] && ft_isalnumm(str[i]))
-					i++;
-				len = i - start;
-				var = ft_substr(str, start, len);
-				if (!var)
-				{
-					free(expanded);
-					return(NULL);
-				}
-				expandedvar = ft_getenv(var, &mini);
-				if (expandedvar)
-				{
-					if (!indouble)
-					{
-						if (check)
-							*check = 1;
-					}
-					k = 0;
-					while (expandedvar[k])
-					{
-						expanded[j] = expandedvar[k];
-						j++;
-						k++;
-					}
-				}
-				free(var);
-			}
-			else if (str[i + 1] == '?')
-			{
-				i++;
-				if (str[i] == '?')
-					expandedvar = ft_itoa(mini->exitstatus);
-				i++;
-				k = 0;
-				while (expandedvar[k])
-				{
-					expanded[j] = expandedvar[k];
-					j++;
-					k++;
-				}
-				free(expandedvar);
-			}
-			else if (str[i] == '$' && str[i + 1] == '$')
-				i += 2;
-			else if (str[i] == '$' && ft_isdigit(str[i + 1]))
-				i += 2;
-			else
-				expanded[j++] = str[i++];
+			mini->expanded = 1;
+			if (!expandhelp3(&expand, str, mini, check))
+				return (NULL);
 		}
 		else
-			expanded[j++] = str[i++];
+			expand.expanded[expand.j++] = str[expand.i++];
 	}
-	expanded[j] = '\0';
-	return (expanded);
+	expand.expanded[expand.j] = '\0';
+	return (expand.expanded);
 }

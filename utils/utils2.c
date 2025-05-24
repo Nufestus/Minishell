@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 22:58:53 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 22:59:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/20 22:15:18 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ char	*ft_substr(char const *s, unsigned int start, size_t len)
 		len = i - start;
 	substr = (char *) malloc(len + 1);
 	if (!substr)
-		return (NULL);
+		exit (1);
 	i = 0;
 	while (i < len)
 	{

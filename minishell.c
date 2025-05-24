@@ -6,88 +6,90 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/19 14:11:26 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/23 19:44:24 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void setupenv(char **env, t_minishell *mini)
+static char	**create_default_env(void)
 {
-	char *var;
-	char *value;
-	char *string;
-	t_env *node;
-	int i;
-	int j;
-	int start;
+	char	**newenv;
+	char	*str;
+	char	*cwd;
+
+	cwd = getcwd(NULL, 0);
+	newenv = malloc(sizeof(char *) * 4);
+	str = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
+	if (!newenv)
+		return (NULL);
+	newenv[0] = ft_strjoin("PWD=", cwd);
+	newenv[1] = ft_strdup("SHLVL=1");
+	newenv[2] = ft_strdup(str);
+	newenv[3] = NULL;
+	free(cwd);
+	return (newenv);
+}
+
+static void	parse_env_string(char *env_str, t_env_setup *setup)
+{
+	setup->len = 0;
+	while (env_str[setup->len] && env_str[setup->len] != '=')
+		setup->len++;
+	setup->var = ft_substr(env_str, 0, setup->len);
+	setup->start = setup->len;
+	while (env_str[setup->len])
+		setup->len++;
+	setup->value = ft_substr(env_str, setup->start + 1, setup->len);
+	setup->string = ft_strdup(env_str);
+}
+
+static void	add_env_node(t_minishell *mini, t_env_setup *setup, char *path_ref)
+{
+	t_env	*node;
+
+	node = ft_envnew(setup->value, setup->var, setup->string);
+	if (!setup->value || !ft_strcmp(node->string, path_ref))
+		node->isexported = 1;
+	ft_envadd_back(&mini->env, node);
+	free(setup->var);
+	free(setup->value);
+	free(setup->string);
+}
+
+static void	process_env_array(char **env_array, t_minishell *mini)
+{
+	t_env_setup	setup;
+	int			i;
 
 	i = 0;
-	j = 0;
+	while (env_array[i])
+	{
+		parse_env_string(env_array[i], &setup);
+		add_env_node(mini, &setup, env_array[2]);
+		i++;
+	}
+}
+
+void	setupenv(char **env, t_minishell *mini)
+{
+	char	**env_array;
+
 	if (!*env)
 	{
-		int z = 0;
-		char *cwd = getcwd(NULL, 0);
-		char *path = ft_strdup("PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin");
-		char *shlvl = ft_strdup("SHLVL=1");
-		char *pwd = ft_strjoin("PWD=", cwd);
-		char **newenv = malloc(sizeof(char *) * (4));
-		newenv[0] = pwd;
-		newenv[1] = shlvl;
-		newenv[2] = path;
-		newenv[3] = NULL;
-		while(newenv[z])
-		{
-			int l = 0;
-			while(newenv[z][l] && newenv[z][l] != '=')
-				l++;
-			var = ft_substr(newenv[z], 0, l);
-			start = l;
-			while(newenv[z][l])
-				l++;
-			value = ft_substr(newenv[z], start + 1, l);
-			string = ft_strdup(newenv[z]);
-			node = ft_envnew(value, var, string);
-			if (!value)
-				node->isexported = 1;
-			if (!ft_strcmp(node->string, path))
-				node->isexported = 1;
-			ft_envadd_back(&mini->env, node);
-			free(var);
-			free(value);
-			free(string);
-			z++;
-		}
-		freedoublearray(newenv);
+		env_array = create_default_env();
+		if (!env_array)
+			return ;
+		process_env_array(env_array, mini);
+		freedoublearray(env_array);
 	}
 	else
-	{
-		while(env[i])
-		{
-			j = 0;
-			while(env[i][j] && env[i][j] != '=')
-				j++;
-			var = ft_substr(env[i], 0, j);
-			start = j;
-			while(env[i][j])
-				j++;
-			value = ft_substr(env[i], start + 1, j);
-			string = ft_strdup(env[i]);
-			node = ft_envnew(value, var, string);
-			if (!value)
-				node->isexported = 1;
-			ft_envadd_back(&mini->env, node);
-			free(var);
-			free(value);
-			free(string);
-			i++;
-		}
-	}
+		process_env_array(env, mini);
 }
 
 int	main(int ac, char **av, char **env)
 {
-	t_minishell mini;
+	t_minishell	mini;
 
 	(void)ac;
 	(void)av;
@@ -95,9 +97,11 @@ int	main(int ac, char **av, char **env)
 	mini.commandline = NULL;
 	mini.input = NULL;
 	mini.tokens = NULL;
+	mini.envstate = 0;
 	mini.exitstatus = 0;
 	mini.check = 0;
 	mini.linecount = 0;
+	callallsignals();
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);

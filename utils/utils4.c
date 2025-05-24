@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 23:00:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/17 23:00:26 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/21 16:41:28 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	freelisttokens(t_tokenize *list)
 	}
 }
 
-static int	handle(unsigned char c, unsigned char b)
+static int	handlereturn(unsigned char c, unsigned char b)
 {
 	if (c - b > 0)
 		return (1);
@@ -46,7 +46,7 @@ int	ft_strncmp(const char *s1, const char *s2, size_t n)
 	while ((str1[i] != '\0' || str2[i] != '\0') && i < n)
 	{
 		if (str1[i] != str2[i])
-			return (handle(str1[i], str2[i]));
+			return (handlereturn(str1[i], str2[i]));
 		i++;
 	}
 	return (0);
