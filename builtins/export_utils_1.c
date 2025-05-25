@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:29:19 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:47:59 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 18:31:16 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,10 +50,7 @@ char	*getvalue(char *str)
 			i++;
 		value = ft_substr(str, start, i - start);
 	}
-	if (value)
-		return (value);
-	else
-		return (ft_strdup(""));
+	return (value);
 }
 
 char	*getvar(char *str)
@@ -87,16 +84,16 @@ int	checkvalid(char *str, t_minishell *mini)
 		i++;
 		while (str[i] && ft_isalnummm(str[i]))
 			i++;
-		if (str[i] == '=' && !ft_getenv(var, &mini))
+		if (str[i] == '=' && !ft_getenvv(var, &mini))
 			return (free(var), 1);
 		else if (str[i] == '+' && str[i + 1] == '=')
 			return (free(var), 2);
-		else if (str[i] == '=' && ft_getenv(var, &mini))
+		else if (str[i] == '=' && ft_getenvv(var, &mini))
 			return (free(var), 3);
+		else if (str[i] == '\0' && !ft_getenvv(var, &mini))
+			return (free(var), 4);
+		else if (str[i] == '\0' && ft_getenvv(var, &mini))
+			return (free(var), 5);
 	}
-	if (str[i] == '\0' && !ft_getenv(var, &mini))
-		return (free(var), 4);
-	else if (str[i] == '\0' && ft_getenv(var, &mini))
-		return (free(var), 5);
 	return (free(var), 0);
 }

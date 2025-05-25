@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:03 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:34:29 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:42:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,6 @@ void	setupmiddlecommand(t_commandline ***command)
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
 		handleiomiddle(*command);
-		close(mini->pipes[cmd->index][0]);
 		setup_io(cmd, size);
 		error_check(cmd);
 		execve(cmd->cmd, cmd->args, cmd->env);

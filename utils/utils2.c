@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 22:58:53 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:39:28 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 16:35:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,7 +68,8 @@ t_env	*ft_envnew(char *value, char *var, char *string)
 		return (NULL);
 	new->isexported = false;
 	new->variable = ft_strdup(var);
-	new->value = ft_strdup(value);
+	if (value)
+		new->value = ft_strdup(value);
 	new->string = ft_strdup(string);
 	new->next = NULL;
 	return (new);

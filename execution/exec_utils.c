@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:42:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:54:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:51:23 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	open_outfiles(t_commandline **command, int infd)
 			outfd = open(outfiles->file, O_RDWR | O_CREAT | O_TRUNC, 0644);
 		else if (outfiles->type == APPEND)
 			outfd = open(outfiles->file, O_RDWR | O_CREAT | O_APPEND, 0644);
-		if (outfiles->next && outfd != -1)
+		if ((outfiles->next && outfd > 2) || !(*command)->cmd)
 			close(outfd);
 		if (outfd == -1)
 		{
@@ -61,7 +61,7 @@ int	openfiles(t_commandline **command, t_minishell *mini)
 		}
 		if (infd == -1)
 			return (perror(infiles->file), (*command)->infd = infd, 0);
-		if (infiles->next && infd > 2)
+		if ((infiles->next && infd > 2) || !(*command)->cmd)
 			close(infd);
 		infiles = infiles->next;
 	}

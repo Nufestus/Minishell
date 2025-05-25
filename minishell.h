@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:29:15 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 18:31:53 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,6 +111,7 @@ typedef struct s_minishell
 typedef struct s_builtin
 {
 	int		i;
+	int		isexported;
 	t_env	*new;
 	size_t	size;
 	char	*var;
@@ -295,6 +296,7 @@ char			**create_default_env(void);
 char			*ft_itoa(int n);
 char			*alloc(char *str);
 char			*removequotes(int *flag, char *str);
+char			*ft_getenvv(char *str, t_minishell **mini);
 bool			is_token(char c);
 void			directory_free(t_commandline *command);
 void			echo_loop(t_commandline *command, t_echo *echo);
@@ -405,6 +407,7 @@ void			ft_commandadd_back(t_commandline **lst, t_commandline *new);
 void			initializetonone(char **str, int len);
 void			setupenv(char **env, t_minishell *mini);
 void			freelisttokens(t_tokenize *list);
+void			exporthelp5(t_commandline *command, t_builtin *export);
 t_env			*getenvnode(t_env *env, char *var);
 t_env			*ft_envlast(t_env *lst);
 t_env			*ft_envnew(char *value, char *var, char *string);

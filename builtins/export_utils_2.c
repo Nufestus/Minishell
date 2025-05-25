@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:31:14 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:48:38 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 18:30:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	exportutil(t_builtin *export, t_commandline *command)
 	{
 		ft_putstr_fd("declare -x ", command->outfd);
 		ft_putstr_fd(export->new->variable, command->outfd);
-		if (export->new->value[0] != '\0')
+		if (export->new->value)
 		{
 			ft_putstr_fd("=\"", command->outfd);
 			ft_putstr_fd(export->new->value, command->outfd);
@@ -51,7 +51,7 @@ void	exporthelp(t_commandline *command, t_builtin *export)
 	{
 		while (export->new)
 		{
-			if (export->new->value[0] != '\0')
+			if (!export->new->value)
 				printf("declare -x %s=\"%s\"\n", export->new->variable,
 					export->new->value);
 			else

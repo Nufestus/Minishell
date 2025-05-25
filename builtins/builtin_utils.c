@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:35:30 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:45:03 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 18:31:24 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -99,4 +99,18 @@ void	echo_loop(t_commandline *command, t_echo *echo)
 			echo->i++;
 		}
 	}
+}
+
+char	*ft_getenvv(char *str, t_minishell **mini)
+{
+	t_env	*temp;
+
+	temp = (*mini)->env;
+	while (temp)
+	{
+		if (ft_strcmp(str, temp->variable) == 0)
+			return (temp->variable);
+		temp = temp->next;
+	}
+	return (NULL);
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:47:03 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:18:50 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ void	ft_envhelp(int size, t_env *env, t_minishell *mini)
 	{
 		while (env)
 		{
-			if (env->value[0])
+			if (env->value)
 				printf("%s\n", env->string);
 			env = env->next;
 		}
@@ -78,7 +78,7 @@ void	ft_envhelp(int size, t_env *env, t_minishell *mini)
 	{
 		while (env)
 		{
-			if (env->value[0])
+			if (env->value)
 			{
 				ft_putstr_fd(env->string, mini->commandline->outfd);
 				ft_putstr_fd("\n", mini->commandline->outfd);

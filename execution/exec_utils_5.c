@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:37:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:47:24 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,6 @@ void	setupchilds(t_minishell *mini, int size)
 	while (waitpid(-1, &status, 0) != -1)
 		;
 	copy = mini->commandline;
-	while (copy)
-	{
-		if (copy->outfd != -1 && copy->outfd != -2)
-			close(copy->outfd);
-		if (copy->infd != -1 && copy->infd != -2 && copy->infd != -4)
-			close(copy->infd);
-		copy = copy->next;
-	}
+	closeallfiles(mini);
 	setexit(WEXITSTATUS(status), 0);
 }
