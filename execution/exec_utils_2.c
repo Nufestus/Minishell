@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:44:19 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:22:11 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:34:38 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,9 +76,10 @@ void	handleiolast(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);
-		else if (cmd->infd > 2)
+		if (cmd->infd > 2)
 			close(cmd->infd);
 		exit(1);
 	}

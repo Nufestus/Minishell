@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:23:34 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:37:31 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,8 @@ void	setupfirstcommand(t_commandline ***command)
 		handle_shlvl(cmd);
 		execve(cmd->cmd, cmd->args, cmd->env);
 		after_execve(cmd);
-		free(cmd->cmd);
-		freedoublearray(cmd->args);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 		exit(1);
 	}
 }
@@ -85,30 +85,3 @@ void	setupchilds(t_minishell *mini, int size)
 	}
 	setexit(WEXITSTATUS(status), 0);
 }
-
-// int	command_loop(t_commandline **copy, t_minishell *mini, int size)
-// {
-// 	if (size > 1 || !checkcommand((*copy)->cmd))
-// 	{
-// 		if ((*copy)->infd == -4)
-// 		{
-// 			(*copy) = (*copy)->next;
-// 			return (1);
-// 		}
-// 		childlabor(copy);
-// 	}
-// 	else if (size == 1)
-// 	{
-// 		if ((*copy)->infd == -1)
-// 		{
-// 			(*copy) = (*copy)->next;
-// 			return (1);
-// 		}
-// 		handleiosingle(copy);
-// 		closeallpipes(mini, size);
-// 		(*copy)->env = constructenv(mini->env);
-// 		handlebuiltins(copy);
-// 		return (0);
-// 	}
-// 	return (-1);
-// }

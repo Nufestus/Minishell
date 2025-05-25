@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:22:59 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:30:57 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,12 @@ void	handleiosingle(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);
-		else if (cmd->infd > 2)
+		if (cmd->infd > 2)
 			close(cmd->infd);
+		freelistcommandline(mini->commandline);
 		exit(1);
 	}
 	if (cmd->infd == -2)
@@ -55,13 +57,14 @@ void	setup_io(t_commandline *command, int size)
 	if (command->cmd && command->cmd[0] == '\0')
 	{
 		error("\'\'");
-		freedoublearray(command->args);
-		free(command->cmd);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
 		exit(127);
 	}
 	else if (!command->cmd)
 	{
-		freedoublearray(command->args);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
 		exit(0);
 	}
 }
@@ -81,11 +84,15 @@ void	error_check(t_commandline *command)
 	}
 	if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1
 		&& !is_directory(command->cmd))
+	{
+		freelistcommandline(command->mini->commandline);
+		freedoubleint(command->mini);
 		printerror(command->cmd);
+	}
 	else if ((is_directory(command->cmd)) && ((ft_find(command->args[0], ".")
 				&& ft_find(command->args[0], "/"))
 			|| ft_find(command->args[0], "/")))
-		directoryerror(command->cmd);
+		directory_free(command);
 	handlebuiltins(&command);
 }
 
@@ -114,16 +121,21 @@ void	handle_shlvl(t_commandline *command)
 
 void	after_execve(t_commandline *command)
 {
+	t_minishell	*mini;
+
+	mini = command->mini;
 	if (command->args && !ft_find(command->args[0], "/"))
 	{
 		error(command->args[0]);
-		free(command->cmd);
-		freedoublearray(command->args);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 		exit(127);
 	}
 	else if (command->args)
 	{
 		perror(command->args[0]);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 		exit(127);
 	}
 }

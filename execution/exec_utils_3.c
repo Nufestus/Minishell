@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:03 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:22:36 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:34:29 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	setuplastcommand(t_commandline ***command)
 		error_check(cmd);
 		execve(cmd->cmd, cmd->args, cmd->env);
 		after_execve(cmd);
-		free(cmd->cmd);
-		freedoublearray(cmd->args);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 		exit(1);
 	}
 }
@@ -51,9 +51,10 @@ void	handleiomiddle(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);
-		else if (cmd->infd > 2)
+		if (cmd->infd > 2)
 			close(cmd->infd);
 		exit(1);
 	}
@@ -85,8 +86,8 @@ void	setupmiddlecommand(t_commandline ***command)
 		error_check(cmd);
 		execve(cmd->cmd, cmd->args, cmd->env);
 		after_execve(cmd);
-		free(cmd->cmd);
-		freedoublearray(cmd->args);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 		exit(1);
 	}
 }

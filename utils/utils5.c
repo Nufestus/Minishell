@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 23:01:53 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/22 13:46:59 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:28:52 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,20 +29,6 @@ int	ft_isalpha(int c)
 	return (0);
 }
 
-int	iscommand(char *str)
-{
-	int	i;
-
-	i = 0;
-	while (str[i])
-	{
-		if (!ft_isalpha(str[i]))
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
 t_tokenize	*ft_lstlast(t_tokenize *lst)
 {
 	if (!lst)
@@ -63,4 +49,11 @@ t_tokenize	*ft_lstnew(t_tokenize *prev, int cntnt)
 	new->next = NULL;
 	new->prev = prev;
 	return (new);
+}
+
+void	directory_free(t_commandline *command)
+{
+	freelistcommandline(command->mini->commandline);
+	freedoubleint(command->mini);
+	directoryerror(command->cmd);
 }

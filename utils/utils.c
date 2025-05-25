@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:37:47 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 15:21:36 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,8 @@ void	freelistcommandline(t_commandline *list)
 			freedoublearray(list->env);
 		freelistfiles(list->infile);
 		freelistfiles(list->outfile);
-		free(list->cmd);
+		if (list->cmd)
+			free(list->cmd);
 		free(list);
 		list = copy;
 	}
