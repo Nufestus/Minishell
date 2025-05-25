@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:03 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 00:41:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:10:40 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	setuplastcommand(t_commandline ***command)
 	pid = fork();
 	if (!pid)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		handleiolast(*command);
 		setup_io(cmd, size);
 		error_check(cmd);
@@ -75,6 +77,8 @@ void	setupmiddlecommand(t_commandline ***command)
 	pid = fork();
 	if (!pid)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		handleiomiddle(*command);
 		close(mini->pipes[cmd->index][0]);
 		setup_io(cmd, size);

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 20:01:47 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:57:30 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void ft_cd(t_commandline *commandline)
     free(pwd);
     if (size != 1)
         exit(0);
-    command->mini->exitstatus = 0;
+    setexit(0, 0);
     return ;
 }
 

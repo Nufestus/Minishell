@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 17:49:57 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:53:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 
 void	signalhandle(int sig)
 {
-	const char	c = '\n';
-
 	(void)sig;
-	rl_redisplay();
+	write(1, "\n", 2);
 	rl_on_new_line();
-	rl_replace_line("\n", 0);
-	ioctl(0, TIOCSTI, &c);
+	rl_replace_line("", 0);
+	rl_redisplay();
 	g_sig = 130;
 }
 
@@ -34,4 +32,11 @@ void	callallsignals(void)
 {
 	signal(SIGINT, signalhandle);
 	signal(SIGQUIT, SIG_IGN);
+}
+
+void	normalhande(int sig)
+{
+	(void)sig;
+	write(1, "\n", 2);
+	g_sig = 130;
 }

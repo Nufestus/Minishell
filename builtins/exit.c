@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 20:02:16 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:57:58 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ void	ft_exit(t_commandline *command)
 	long long	status;
 	int			flag;
 
-	status = command->mini->exitstatus;
+	status = setexit(0, 1);;
 	flag = 0;
 	printf("exit\n");
 	if (command->args[1] && command->args[2])

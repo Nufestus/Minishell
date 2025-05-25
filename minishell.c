@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 17:09:22 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 23:00:01 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,12 +98,18 @@ int	main(int ac, char **av, char **env)
 	mini.commandline = NULL;
 	mini.input = NULL;
 	mini.tokens = NULL;
-	mini.exitstatus = 0;
+	setexit(0, 0);
 	mini.check = 0;
 	mini.linecount = 0;
-	callallsignals();
 	if (!isatty(0))
 		return (1);
+	printf("\
+▗▖  ▗▖▗▄▄▄▖▗▖  ▗▖▗▄▄▄▖ ▗▄▄▖▗▖ ▗▖▗▄▄▄▖▗▖   ▗▖   \n\
+▐▛▚▞▜▌  █  ▐▛▚▖▐▌  █  ▐▌   ▐▌ ▐▌▐▌   ▐▌   ▐▌   \n\
+▐▌  ▐▌  █  ▐▌ ▝▜▌  █   ▝▀▚▖▐▛▀▜▌▐▛▀▀▘▐▌   ▐▌   \n\
+▐▌  ▐▌▗▄█▄▖▐▌  ▐▌▗▄█▄▖▗▄▄▞▘▐▌ ▐▌▐▙▄▄▖▐▙▄▄▖▐▙▄▄▖\n\
+                                               \n\
+");
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);

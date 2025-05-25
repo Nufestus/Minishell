@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/18 19:33:50 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:57:43 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void ft_pwd(t_minishell *mini)
         free(path);
     if (size != 1)
         exit(0);
-    mini->exitstatus = 0;
+    setexit(0, 0);
 }
 
 void ft_env(t_minishell *mini, char **args)
@@ -69,7 +69,7 @@ void ft_env(t_minishell *mini, char **args)
         ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
         if (size != 1)
             exit(1);
-        mini->exitstatus = 1;
+        setexit(0, 0);
         return ;
     }
     env = mini->env;

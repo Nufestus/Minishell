@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 20:01:28 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:58:23 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,7 +175,7 @@ void export(t_commandline *command)
 				printf("declare -x %s=\"%s\"\n", new->variable, new->value);
 				new = new->next;
 			}
-			command->mini->exitstatus = 0;
+			setexit(0, 0);
 			exit(0);
 		}
 		else
@@ -190,7 +190,7 @@ void export(t_commandline *command)
 				new = new->next;
 			}
 		}
-		command->mini->exitstatus = 0;
+		setexit(0, 0);
 		return ;
 	}
 	while (str[i])
@@ -204,7 +204,7 @@ void export(t_commandline *command)
 			new = ft_envnew(value, var, string);
 			new->isexported = false;
 			ft_envadd_back(&command->mini->env, new);
-			command->mini->exitstatus = 0;
+			setexit(0, 0);
 		}
 		else if (checkvalid(str[i], command->mini) == 2)
 		{
@@ -227,7 +227,7 @@ void export(t_commandline *command)
 				new->isexported = false;
 				ft_envadd_back(&command->mini->env, new);
 			}
-			command->mini->exitstatus = 0;
+			setexit(0, 0);
 		}
 		else if (checkvalid(str[i], command->mini) == 3)
 		{
@@ -238,12 +238,12 @@ void export(t_commandline *command)
 			tmp = new->string;
 			new->string = getstring(str[i]);;
 			free(tmp);
-			command->mini->exitstatus = 0;
+			setexit(0, 0);;
 		}
 		else if (checkvalid(str[i], command->mini) == 0)
 		{
 			printf("export: not a valid identifier: %s\n", str[i]);
-			command->mini->exitstatus = 1;
+			setexit(1, 0);
 		}
 		free(value);
 		free(string);

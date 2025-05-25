@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 21:08:51 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:57:09 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -102,7 +102,6 @@ typedef struct s_minishell
 	bool envstate;
 	int	linecount;
 	int	**pipes;
-	int exitstatus;
 	int expanded;
 	int check;
 	char *input;
@@ -218,6 +217,8 @@ int	is_directory(char *path);
 void	directoryerror(char *s);
 char	*checkfile(t_commandline *command);
 char	**constructenv(t_env *env);
+void	normalhande(int sig);
 void	initializepipes(t_minishell *mini);
+int	setexit(int exitstatus, int flag);
 
 #endif

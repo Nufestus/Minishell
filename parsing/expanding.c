@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 15:09:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:58:51 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -200,7 +200,7 @@ char *expand(int *check, char *str, t_minishell *mini)
 			{
 				i++;
 				if (str[i] == '?')
-					expandedvar = ft_itoa(mini->exitstatus);
+					expandedvar = ft_itoa(setexit(0, 1));
 				i++;
 				k = 0;
 				while (expandedvar[k])

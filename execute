@@ -1,5 +1,5 @@
 #!/bin/bash
 make
 make clean
-valgrind --track-fds=yes ./minishell
-# ./minishell
+# valgrind --track-fds=yes ./minishell
+./minishell

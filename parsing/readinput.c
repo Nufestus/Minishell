@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 23:03:46 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 23:05:15 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -324,7 +324,7 @@ int getinput(int delflag, char *del, t_minishell *mini)
 			close(fd[0]);
 			close(fd[1]);
 			callallsignals();
-			mini->exitstatus = 130;
+			setexit(130, 0);
 			g_sig = 0;
 			free(line);
 			return (-4);
@@ -413,13 +413,12 @@ void readinput(t_minishell *mini)
 {
     while(1)
 	{
-		mini->input = readline("MiniSUIIII ");
+		callallsignals();
+		mini->input = readline("Minishell ➤ ");
 		if (g_sig == 130)
 		{
+			setexit(130, 0);
 			g_sig = 0;
-			mini->linecount++;
-			mini->exitstatus = 130;
-			continue;
 		}
 		mini->linecount++;
 		if (!mini->input)
@@ -438,7 +437,7 @@ void readinput(t_minishell *mini)
 		{
 			freelisttokens(mini->tokens);
 			free(mini->input);
-			mini->exitstatus = 2;
+			setexit(2, 0);
 			continue ;
 		}
 		checkheredocs(mini);
@@ -454,7 +453,7 @@ void readinput(t_minishell *mini)
 		if (mini->check == 1)
 		{
 			mini->check = 0;
-			mini->exitstatus = 2;
+			setexit(2, 0);
 			freelisttokens(mini->tokens);
 			free(mini->input);
 			continue ;

@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 21:06:17 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:58:38 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@ void	setupfirstcommand(t_commandline ***command)
 	pid = fork();
 	if (!pid)
 	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
 		handleiosingle(*command);
 		setup_io(cmd, size);
 		error_check(cmd);
@@ -81,7 +83,7 @@ void	setupchilds(t_minishell *mini, int size)
 			close(copy->infd);
 		copy = copy->next;
 	}
-	mini->exitstatus = WEXITSTATUS(status);
+	setexit(WEXITSTATUS(status), 0);
 }
 
 // int	command_loop(t_commandline **copy, t_minishell *mini, int size)

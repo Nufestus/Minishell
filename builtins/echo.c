@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 20:02:01 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 22:57:46 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,6 +128,6 @@ void ft_echo(t_commandline *command)
     free(copy);
     if (size > 1)
 		exit(0);
-	command->mini->exitstatus = 0;
+	setexit(0, 0);
     return ;
 }

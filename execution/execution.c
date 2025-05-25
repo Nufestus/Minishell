@@ -6,11 +6,34 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 22:58:10 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/24 23:04:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+static int	skip_command(t_commandline **copy)
+{
+	if ((*copy)->infd == -4 || (*copy)->infd == -1)
+	{
+		*copy = (*copy)->next;
+		return (1);
+	}
+	return (0);
+}
+
+static int	is_single_builtin(t_commandline *copy, int size)
+{
+	return (size == 1 && checkcommand(copy->cmd));
+}
+
+static void	handle_single_builtin(t_commandline **copy, t_minishell *mini, int size)
+{
+	handleiosingle(copy);
+	closeallpipes(mini, size);
+	(*copy)->env = constructenv(mini->env);
+	handlebuiltins(copy);
+}
 
 void	startpipex(t_minishell *mini)
 {
@@ -18,37 +41,35 @@ void	startpipex(t_minishell *mini)
 	int				size;
 	t_commandline	*copy;
 
-	i = -1;
 	copy = mini->commandline;
 	initializepipes(mini);
 	size = ft_commandsize(copy);
-	while (++i < size)
+	i = -1;
+	while (++i < size && copy)
 	{
-		if (size > 1 || !checkcommand(copy->cmd))
+		if (is_single_builtin(copy, size))
 		{
-			if (copy->infd == -4)
-			{
-				copy = copy->next;
+			if (skip_command(&copy))
 				continue;
-			}
-			childlabor(&copy);
-		}
-		else if (size == 1)
-		{
-			if (copy->infd == -1)
-			{
-				copy = copy->next;
-				continue;
-			}
-			handleiosingle(&copy);
-			closeallpipes(mini, size);
-			copy->env = constructenv(mini->env);
-			handlebuiltins(&copy);
+			handle_single_builtin(&copy, mini, size);
 			return ;
 		}
+		if (skip_command(&copy))
+			continue;
+		childlabor(&copy);
+		signal(SIGINT, normalhande);
 		copy = copy->next;
 	}
 	setupchilds(mini, size);
+}
+
+int	setexit(int exitstatus, int flag)
+{
+	static int res;
+
+	if (flag == 0)
+		res = exitstatus;
+	return (res);
 }
 
 void	execute(t_minishell *mini)
