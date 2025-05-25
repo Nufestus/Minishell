@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 23:01:53 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:31:15 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:34:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ t_tokenize	*ft_lstnew(t_tokenize *prev, int cntnt)
 
 void	directory_free(t_commandline *command)
 {
-	char *str;
+	char	*str;
 
 	str = ft_strdup(command->cmd);
 	freedoubleint(command->mini);

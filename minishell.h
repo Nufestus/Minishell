@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 18:31:53 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:48:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,8 @@
 # include <fcntl.h>
 # include <limits.h>
 
-# define INPUT1 "\033[1;96;40mSHELL\033[0m"
-# define INPUT2 "\033[1;96;40m ✗ \033[0m"
+# define INPUT1 "SHELL"
+# define INPUT2 " ✗ "
 # define PIPE 1
 # define WORD 2
 # define REDOUT 3

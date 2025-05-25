@@ -1,5 +1,0 @@
-#!/bin/bash
-make re
-make clean
-#valgrind --track-fds=yes --leak-check=full --show-leak-kinds=all
-./minishell
