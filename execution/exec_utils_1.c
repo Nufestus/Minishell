@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:43:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:50:04 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:31:02 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,7 @@ void	directoryerror(char *s)
 {
 	write(2, s, ft_strlen(s));
 	write(2, ": Is a directory\n", 18);
+	free(s);
 	exit(126);
 }
 

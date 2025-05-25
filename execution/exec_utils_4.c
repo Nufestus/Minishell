@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:30:57 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:32:58 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,10 @@ void	error_check(t_commandline *command)
 	if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1
 		&& !is_directory(command->cmd))
 	{
-		freelistcommandline(command->mini->commandline);
-		freedoubleint(command->mini);
 		printerror(command->cmd);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
+		exit(127);
 	}
 	else if ((is_directory(command->cmd)) && ((ft_find(command->args[0], ".")
 				&& ft_find(command->args[0], "/"))

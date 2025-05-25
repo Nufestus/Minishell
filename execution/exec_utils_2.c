@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:44:19 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:47:12 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 19:32:26 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,6 @@ void	printerror(char *str)
 {
 	write(2, str, ft_strlen(str));
 	write(2, ": Permission denied\n", 21);
-	exit(126);
 }
 
 void	error(char *str)
