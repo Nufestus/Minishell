@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 23:57:44 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:40:57 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,8 @@ void	ft_reparse(int *check, char *str, t_minishell *mini)
 		reparse.k = 0;
 		if (!ft_reparsehelp(&reparse, str, check))
 			return ;
-		ft_reparsehelp1(&reparse, mini);
+		if (ft_reparsehelp1(&reparse, mini) == 2)
+			continue ;
 		ft_reparsehelp2(&reparse, s, mini);
 	}
 	free(reparse.prev);

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 18:31:09 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:07:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,6 @@ void	ft_cd(t_commandline *commandline)
 	ft_setenv("PWD", pwd, mini);
 	ft_setenv("OLDPWD", oldcwd, mini);
 	ft_cdhelp6(size, pwd, oldcwd);
-	mini->exitstatus = 0;
+	setexit(0, 0);
 	return ;
 }

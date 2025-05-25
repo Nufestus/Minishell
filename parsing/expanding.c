@@ -6,17 +6,17 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:50:35 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:12:40 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	expandhelp1(t_expanding *expand, char *str, t_minishell *mini)
+void	expandhelp1(t_expanding *expand, char *str)
 {
 	expand->i++;
 	if (str[expand->i] == '?')
-		expand->expandedvar = ft_itoa(mini->exitstatus);
+		expand->expandedvar = ft_itoa(setexit(0, 1));
 	expand->i++;
 	expand->k = 0;
 	while (expand->expandedvar[expand->k])
@@ -56,7 +56,7 @@ int	expandhelp3(t_expanding *expand, char *str, t_minishell *mini, int *check)
 			return (0);
 	}
 	else if (str[expand->i + 1] == '?')
-		expandhelp1(expand, str, mini);
+		expandhelp1(expand, str);
 	else if (str[expand->i] == '$' && str[expand->i + 1] == '$')
 		expand->i += 2;
 	else if (str[expand->i] == '$' && ft_isdigit(str[expand->i + 1]))

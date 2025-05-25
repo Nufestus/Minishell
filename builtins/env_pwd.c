@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/21 22:30:41 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:08:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	ft_pwd(t_minishell *mini)
 		free(path);
 	if (size != 1)
 		exit(0);
-	mini->exitstatus = 0;
+	setexit(0, 0);
 }
 
 void	ft_envhelp(int size, t_env *env, t_minishell *mini)
@@ -69,7 +69,7 @@ void	ft_envhelp(int size, t_env *env, t_minishell *mini)
 	{
 		while (env)
 		{
-			if (!env->isexported)
+			if (env->value[0])
 				printf("%s\n", env->string);
 			env = env->next;
 		}
@@ -78,7 +78,7 @@ void	ft_envhelp(int size, t_env *env, t_minishell *mini)
 	{
 		while (env)
 		{
-			if (!env->isexported)
+			if (env->value[0])
 			{
 				ft_putstr_fd(env->string, mini->commandline->outfd);
 				ft_putstr_fd("\n", mini->commandline->outfd);
@@ -99,7 +99,7 @@ void	ft_env(t_minishell *mini, char **args)
 		ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
 		if (size != 1)
 			exit(1);
-		mini->exitstatus = 1;
+		setexit(0, 0);
 		return ;
 	}
 	env = mini->env;

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 21:05:52 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:18:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -386,5 +386,7 @@ void			file_helper(int flag, char *str,
 					t_commandline **command, int fd);
 void			startpipex(t_minishell *mini);
 void			setupenv(char **env, t_minishell *mini);
+void			normalhande(int sig);
+int				setexit(int exitstatus, int flag);
 
 #endif

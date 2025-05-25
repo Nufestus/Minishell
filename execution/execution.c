@@ -6,20 +6,11 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 20:27:43 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:24:41 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	file_helper(int flag, char *str, t_commandline **command, int fd)
-{
-	perror(str);
-	if (flag == 1)
-		(*command)->outfd = fd;
-	else
-		(*command)->infd = fd;
-}
 
 static int	skip_command(t_commandline **copy)
 {
@@ -36,7 +27,7 @@ static int	is_single_builtin(t_commandline *copy, int size)
 	return (size == 1 && checkcommand(copy->cmd));
 }
 
-static void	single_builtin(t_commandline **copy, t_minishell *mini, int size)
+static void	handle_single(t_commandline **copy, t_minishell *mini, int size)
 {
 	handleiosingle(copy);
 	closeallpipes(mini, size);
@@ -60,13 +51,20 @@ void	startpipex(t_minishell *mini)
 		{
 			if (skip_command(&copy))
 				continue ;
-			single_builtin(&copy, mini, size);
+			handle_single(&copy, mini, size);
 			return ;
 		}
 		if (skip_command(&copy))
 			continue ;
 		childlabor(&copy);
+		signal(SIGINT, normalhande);
 		copy = copy->next;
 	}
 	setupchilds(mini, size);
+}
+
+void	execute(t_minishell *mini)
+{
+	signal(SIGQUIT, signalhandle);
+	startpipex(mini);
 }

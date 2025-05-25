@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 16:20:51 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:22:59 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	handleiosingle(t_commandline **command)
 	t_minishell		*mini;
 
 	cmd = *command;
-	mini = cmd->mini;
+	mini = (*command)->mini;
 	size = ft_commandsize(mini->commandline);
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{

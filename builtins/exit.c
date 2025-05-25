@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/21 21:55:44 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:10:56 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ int	exithelp2(t_commandline *command)
 	if (command->args[1] && command->args[2])
 	{
 		printf("exit: too many arguments\n");
-		command->mini->exitstatus = 1;
+		setexit(1, 0);
 		if (size > 1)
 			exit(1);
 		return (0);
@@ -58,7 +58,7 @@ void	ft_exit(t_commandline *command)
 	long long	status;
 	int			flag;
 
-	status = command->mini->exitstatus;
+	status = setexit(0, 1);
 	size = ft_commandsize(command->mini->commandline);
 	flag = 0;
 	if (size == 1)

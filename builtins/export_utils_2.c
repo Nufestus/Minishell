@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:31:14 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:36:51 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:09:54 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,13 @@ void	exporthelp(t_commandline *command, t_builtin *export)
 				printf("declare -x %s\n", export->new->variable);
 			export->new = export->new->next;
 		}
-		command->mini->exitstatus = 0;
+		setexit(0, 0);
 		exit(0);
 	}
 	else
 	{
 		exportutil(export, command);
-		command->mini->exitstatus = 0;
+		setexit(0, 0);
 	}
 }
 
@@ -73,7 +73,7 @@ void	exporthelp2(t_commandline *command, t_builtin *export)
 	export->new = ft_envnew(export->value, export->var, export->string);
 	ft_envadd_back(&command->mini->env, export->new);
 	export->new->isexported = false;
-	command->mini->exitstatus = 0;
+	setexit(0, 0);
 }
 
 void	exporthelp3(t_commandline *command, t_builtin *export)
@@ -97,5 +97,5 @@ void	exporthelp3(t_commandline *command, t_builtin *export)
 		export->new->isexported = false;
 		ft_envadd_back(&command->mini->env, export->new);
 	}
-	command->mini->exitstatus = 0;
+	setexit(0, 0);
 }

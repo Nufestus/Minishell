@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/23 19:36:58 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:10:17 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	exporthelp4(t_commandline *command, t_builtin *export)
 	export->tmp = export->new->string;
 	export->new->string = getstring(export->str[export->i]);
 	free(export->tmp);
-	command->mini->exitstatus = 0;
+	setexit(0, 0);
 }
 
 void	exportstatements(t_commandline *command, t_builtin *export)
@@ -63,10 +63,10 @@ void	exportstatements(t_commandline *command, t_builtin *export)
 	else if (checkvalid(export->str[export->i], command->mini) == 0)
 	{
 		printf("export: not a valid identifier: %s\n", export->str[export->i]);
-		command->mini->exitstatus = 1;
+		setexit(1, 0);
 	}
 	else if (checkvalid(export->str[export->i], command->mini) == 4)
-		exporthelp3(command, export);
+		exporthelp2(command, export);
 }
 
 void	export(t_commandline *command)

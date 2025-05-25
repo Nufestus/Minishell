@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 20:24:50 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:24:52 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,13 +14,11 @@
 
 void	signalhandle(int sig)
 {
-	const char	c = '\n';
-
 	(void)sig;
-	rl_redisplay();
+	write(1, "\n", 2);
 	rl_on_new_line();
-	rl_replace_line("\n", 0);
-	ioctl(0, TIOCSTI, &c);
+	rl_replace_line("", 0);
+	rl_redisplay();
 	g_sig = 130;
 }
 
@@ -36,8 +34,18 @@ void	callallsignals(void)
 	signal(SIGQUIT, SIG_IGN);
 }
 
-void	execute(t_minishell *mini)
+void	normalhande(int sig)
 {
-	signal(SIGQUIT, signalhandle);
-	startpipex(mini);
+	(void)sig;
+	write(1, "\n", 2);
+	g_sig = 130;
+}
+
+int	setexit(int exitstatus, int flag)
+{
+	static int	res;
+
+	if (flag == 0)
+		res = exitstatus;
+	return (res);
 }

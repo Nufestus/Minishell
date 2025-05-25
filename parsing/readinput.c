@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 21:14:43 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:26:47 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,22 @@ int	readinputhelp1(t_minishell **mini)
 	return (0);
 }
 
+void	readinputhelp2(t_minishell *mini)
+{
+	freelistcommandline(mini->commandline);
+	free(mini->input);
+}
+
 void	readinput(t_minishell *mini)
 {
 	while (1)
 	{
+		callallsignals();
 		mini->input = readline(INPUT1 INPUT2);
 		if (g_sig == 130)
 		{
+			setexit(130, 0);
 			g_sig = 0;
-			mini->exitstatus = 130;
 		}
 		mini->linecount++;
 		if (readinputhelp(&mini))
@@ -109,8 +116,7 @@ void	readinput(t_minishell *mini)
 			continue ;
 		if (openallfiles(mini))
 		{
-			freelistcommandline(mini->commandline);
-			free(mini->input);
+			readinputhelp2(mini);
 			continue ;
 		}
 		execute(mini);

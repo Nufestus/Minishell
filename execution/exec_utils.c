@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:42:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/24 20:24:07 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 01:21:50 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,8 @@ void	open_outfiles(t_commandline **command, int infd)
 			close(outfd);
 		if (outfd == -1)
 		{
-			file_helper(1, outfiles->file, command, outfd);
+			perror(outfiles->file);
+			(*command)->outfd = outfd;
 			return ;
 		}
 		outfiles = outfiles->next;
@@ -59,7 +60,7 @@ int	openfiles(t_commandline **command, t_minishell *mini)
 				return (1);
 		}
 		if (infd == -1)
-			return (file_helper(0, infiles->file, command, infd), 0);
+			return (perror(infiles->file), (*command)->infd = infd, 0);
 		if (infiles->next && infd > 2)
 			close(infd);
 		infiles = infiles->next;
