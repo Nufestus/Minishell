@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:56:50 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:13:32 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:28:48 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,4 +77,5 @@ void	initreparse(t_reparse *reparse, char *str)
 	reparse->exportcheck = 0;
 	reparse->copy = str;
 	reparse->prev = NULL;
+	reparse->s = NULL;
 }

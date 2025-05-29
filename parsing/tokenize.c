@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:22:22 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:28:56 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 {
 	t_tokenize	*last;
 
-	s = NULL;
 	if (reparse->flag == 1 && !mini->flag)
 	{
 		reparse->k = 0;
@@ -89,7 +88,6 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 void	ft_reparse(int *check, char *str, t_minishell *mini)
 {
 	t_reparse	reparse;
-	char		**s;
 
 	initreparse(&reparse, str);
 	while (str[reparse.i])
@@ -110,7 +108,7 @@ void	ft_reparse(int *check, char *str, t_minishell *mini)
 			return ;
 		if (ft_reparsehelp1(&reparse, mini) == 2)
 			continue ;
-		ft_reparsehelp2(&reparse, s, mini);
+		ft_reparsehelp2(&reparse, reparse.s, mini);
 	}
 	free(reparse.prev);
 }

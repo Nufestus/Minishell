@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 08:35:01 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:30:21 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ void	ft_exit(t_commandline *command)
 	long long	status;
 	int			flag;
 
-	status = setexit(0, 1);
 	size = ft_commandsize(command->mini->commandline);
 	flag = 0;
 	if (size == 1)
@@ -102,5 +101,6 @@ void	ft_exit(t_commandline *command)
 	}
 	freelistenv(command->mini->env);
 	freelistcommandline(command->mini->commandline);
+	status = setexit(0, 1);
 	exit(status);
 }

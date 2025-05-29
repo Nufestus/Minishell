@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:25:05 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:28:30 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,11 @@ struct		s_tokenize;
 
 typedef struct s_setupchild
 {
-	int				i;
-	int				sig;
-	int				skip;
-	int				status;
-	t_commandline	*copy;
+	int						i;
+	int						sig;
+	int						skip;
+	int						status;
+	struct s_commandline	*copy;
 }			t_setupchild;
 
 typedef struct s_tokenexpect
@@ -192,6 +192,7 @@ typedef struct s_reparse
 	char		*copy;
 	char		*string;
 	char		*prev;
+	char		**s;
 	int			exportcheck;
 }	t_reparse;
 
