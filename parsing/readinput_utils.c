@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readinput_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 20:48:07 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:32:09 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/25 22:05:13 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,40 +59,40 @@ int	addfilehelp(t_tokenize **copy, t_commandline **command)
 {
 	if ((*copy)->index == 0)
 	{
-		while (*copy && *command && (*copy)->type != PIPE)
+		while (*copy && (*copy)->type != PIPE)
 		{
 			if ((*copy)->category)
-				handlefiles(*copy, *command);
+				if (handlefiles(*copy, *command))
+					return (0);
 			*copy = (*copy)->next;
 		}
-		*command = (*command)->next;
 	}
 	else if ((*copy)->type == PIPE)
 	{
 		*copy = (*copy)->next;
-		if (!*copy)
-			return (0);
-		while (*copy && *command && (*copy)->type != PIPE)
+		while (*copy && (*copy)->type != PIPE)
 		{
 			if ((*copy)->category)
-				handlefiles(*copy, *command);
+				if (handlefiles(*copy, *command))
+					return (0);
 			*copy = (*copy)->next;
 		}
-		*command = (*command)->next;
 	}
 	return (1);
 }
 
-void	addfile(t_tokenize *token, t_commandline *commandline)
+int	addfile(t_tokenize *token, t_commandline *commandline)
 {
 	t_tokenize		*copy;
 	t_commandline	*command;
 
 	copy = token;
 	command = commandline;
-	while (copy)
+	while (copy && command)
 	{
 		if (!addfilehelp(&copy, &command))
-			break ;
+			return (1);
+		command = command->next;
 	}
+	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 23:24:27 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:33:19 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:47:38 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,11 @@ void	commandlinehelp(t_commandline_setup *setup)
 	while (setup->token && setup->token->type != PIPE)
 	{
 		if (setup->token->type == CMD)
+		{
+			if (setup->token->flag)
+				setup->cmdcheck = 1;
 			setup->cmd = setup->token->str;
+		}
 		else if (setup->token->type == ARG)
 			setup->arg[setup->argcount++] = ft_strdup(setup->token->str);
 		else if (setup->token->type == OPTION)
@@ -30,6 +34,8 @@ void	commandlinehelp1(t_commandline_setup *setup, t_minishell *mini)
 {
 	setup->arg[setup->argcount] = NULL;
 	setup->command = ft_commandnew(setup->cmd, setup->arg);
+	if (setup->cmdcheck)
+		setup->command->iscmdexpand = 1;
 	setup->command->index = setup->index;
 	setup->command->mini = mini;
 	setup->command->argcount = setup->argcount;
@@ -55,9 +61,10 @@ void	settozero(t_commandline_setup *setup)
 	setup->arg = NULL;
 	setup->option = NULL;
 	setup->argcount = 0;
+	setup->cmdcheck = 0;
 }
 
-void	setupcommandline(t_minishell *mini)
+int	setupcommandline(t_minishell *mini)
 {
 	t_commandline_setup	setup;
 
@@ -75,13 +82,13 @@ void	setupcommandline(t_minishell *mini)
 		else if (setup.token->type == PIPE)
 		{
 			setup.token = setup.token->next;
-			if (!setup.token)
-				break ;
 			setup.count = getarguments(setup.token);
 			setup.arg = malloc(sizeof(char *) * (setup.count + 3));
 			commandlinehelp(&setup);
 			commandlinehelp1(&setup, mini);
 		}
 	}
-	addfile(setup.file, mini->commandline);
+	if (addfile(setup.file, mini->commandline))
+		return (1);
+	return (0);
 }

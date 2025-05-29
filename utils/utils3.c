@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 22:59:30 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:40:10 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 14:20:03 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,11 +51,12 @@ t_commandline	*ft_commandnew(char *cmd, char **arg)
 		new->cmd = NULL;
 	else
 		new->cmd = ft_strdup(cmd);
-	new->infile = NULL;
-	new->outfile = NULL;
+	new->file = NULL;
 	new->infd = -2;
 	new->outfd = -2;
 	new->argcount = 0;
+	new->pid = 0;
+	new->iscmdexpand = 0;
 	new->env = NULL;
 	new->next = NULL;
 	return (new);
@@ -88,14 +89,16 @@ t_files	*ft_filenew(char *file, char *del, int type)
 	if (!new)
 		return (NULL);
 	new->type = type;
+	new->fd = -2;
+	new->hedoc = -2;
 	if (file)
 		new->file = ft_strdup(file);
 	else
-		new->file = ft_strdup("NONE");
+		new->file = NULL;
 	if (del)
 		new->delimiter = ft_strdup(del);
 	else
-		new->delimiter = ft_strdup("NONE");
+		new->delimiter = NULL;
 	new->next = NULL;
 	return (new);
 }

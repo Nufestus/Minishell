@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:43:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:31:02 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 12:08:01 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,6 @@ char	*checkfile(t_commandline *command)
 char	**constructenv(t_env *env)
 {
 	int		i;
-	int		len;
 	int		size;
 	char	**res;
 	t_env	*copy;
@@ -69,14 +68,11 @@ char	**constructenv(t_env *env)
 	res = malloc(sizeof(char *) * (size + 1));
 	while (i < size)
 	{
-		len = ft_strlen(copy->string) + 1;
-		res[i] = malloc(len);
-		strcpy(res[i], copy->string);
-		res[i][len - 1] = '\0';
+		res[i] = ft_strdup(copy->string);
 		copy = copy->next;
 		i++;
 	}
-	res[size] = NULL;
+	res[i] = NULL;
 	return (res);
 }
 

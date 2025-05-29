@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:14:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:27:08 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:36:53 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ void	setupnode(t_setupnode *setup,
 
 	newnode = ft_lstnew(ft_lstlast(*tokens), type);
 	newnode->split = setup->split;
+	newnode->flag = 0;
 	newnode->index = setup->index;
 	newnode->str = ft_strdup(setup->str);
 	newnode->category = category;

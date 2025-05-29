@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:56:50 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:30:53 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:13:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,18 +26,22 @@ int	in_set(char c, char *set)
 	return (0);
 }
 
-int	removequoteshelp(t_parse *parse, char *str)
+int	removequoteshelp(int *flag, t_parse *parse, char *str)
 {
 	if (str[parse->i] == '\'' && !parse->indouble)
 	{
 		parse->insingle = !parse->insingle;
 		parse->i++;
+		if (flag && *flag == 0)
+			*flag = 3;
 		return (1);
 	}
 	else if (str[parse->i] == '"' && !parse->insingle)
 	{
 		parse->indouble = !parse->indouble;
 		parse->i++;
+		if (flag && *flag == 0)
+			*flag = 3;
 		return (1);
 	}
 	else
@@ -59,10 +63,8 @@ char	*removequotes(int *flag, char *str)
 		return (NULL);
 	while (str[parse.i])
 	{
-		if (removequoteshelp(&parse, str))
+		if (removequoteshelp(flag, &parse, str))
 			continue ;
-		if (flag && *flag == 0 && (parse.insingle || parse.indouble))
-			*flag = 3;
 	}
 	parse.expanded[parse.j] = '\0';
 	return (parse.expanded);
@@ -75,30 +77,4 @@ void	initreparse(t_reparse *reparse, char *str)
 	reparse->exportcheck = 0;
 	reparse->copy = str;
 	reparse->prev = NULL;
-}
-
-void	tokenhelper(t_tokenize **list)
-{
-	if ((*list)->prev && (*list)->prev->category
-		&& (*list)->type == WORD && (*list)->prev->type != HEDOC)
-		(*list)->type = FILE;
-	else if ((!(*list)->prev || (*list)->prev->type == PIPE
-			|| (*list)->prev->type == DEL
-			|| ((*list)->prev->type == FILE
-				&& (*list)->next && (*list)->next->type == PIPE))
-		&& (*list)->type == WORD)
-		(*list)->type = CMD;
-	else if ((*list)->prev && (*list)->prev->type == CMD
-		&& (*list)->type == WORD)
-		(*list)->type = ARG;
-	else if ((*list)->prev && (*list)->prev->type == HEDOC
-		&& (*list)->type == WORD)
-		(*list)->type = DEL;
-	else if ((*list)->prev && (*list)->prev->type == OPTION)
-		(*list)->type = ARG;
-	else if ((*list)->prev && (*list)->prev->type == ARG
-		&& (*list)->next && (*list)->next->category)
-		(*list)->type = ARG;
-	else
-		(*list)->type = ARG;
 }

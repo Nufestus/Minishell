@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expanding_utils1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:50:38 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:25:48 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:25:13 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	expandhelp(t_expanding *expand, char *str, int *check, t_minishell *mini)
 		return (free(expand->expanded), 0);
 	if (!expand->indouble && check)
 		*check = 1;
-	expand->expandedvar = ft_getenv(expand->var, &mini);
+	expand->expandedvar = ft_getenv(expand->var, mini);
 	if (expand->expandedvar)
 	{
 		expand->k = 0;

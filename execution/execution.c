@@ -6,19 +6,37 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/26 00:13:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:54:15 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 17:03:46 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static int	skip_command(t_commandline **copy)
+int	handleiosinglebuiltin(t_commandline **command)
 {
-	if ((*copy)->infd == -4 || (*copy)->infd == -1)
+	int				size;
+	t_commandline	*cmd;
+	t_minishell		*mini;
+
+	cmd = *command;
+	mini = (*command)->mini;
+	size = ft_commandsize(mini->commandline);
+	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
-		*copy = (*copy)->next;
+		closeallpipes(mini, size);
+		closeallfiles(mini);
+		if (cmd->outfd > 2)
+			close(cmd->outfd);
+		if (cmd->infd > 2)
+			close(cmd->infd);
 		return (1);
 	}
+	if (cmd->infd == -2)
+		cmd->infd = 0;
+	if (cmd->outfd == -2 && cmd->next)
+		cmd->outfd = mini->pipes[cmd->index][1];
+	else if (cmd->outfd == -2 && !cmd->next)
+		cmd->outfd = 1;
 	return (0);
 }
 
@@ -29,10 +47,12 @@ static int	is_single_builtin(t_commandline *copy, int size)
 
 static void	handle_single(t_commandline **copy, t_minishell *mini, int size)
 {
-	handleiosingle(copy);
-	closeallpipes(mini, size);
+	if (handleiosinglebuiltin(copy))
+		return ;
 	(*copy)->env = constructenv(mini->env);
 	handlebuiltins(copy);
+	closeallfiles(mini);
+	closeallpipes(mini, size);
 }
 
 void	startpipex(t_minishell *mini)
@@ -47,15 +67,16 @@ void	startpipex(t_minishell *mini)
 	i = -1;
 	while (++i < size && copy)
 	{
+		if (copy->iscmdexpand)
+		{
+			copy = copy->next;
+			continue ;
+		}
 		if (is_single_builtin(copy, size))
 		{
-			if (skip_command(&copy))
-				continue ;
 			handle_single(&copy, mini, size);
 			return ;
 		}
-		if (skip_command(&copy))
-			continue ;
 		childlabor(&copy);
 		signal(SIGINT, normalhande);
 		copy = copy->next;
@@ -65,6 +86,6 @@ void	startpipex(t_minishell *mini)
 
 void	execute(t_minishell *mini)
 {
-	signal(SIGQUIT, signalhandle);
+	free(mini->input);
 	startpipex(mini);
 }

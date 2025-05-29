@@ -3,14 +3,39 @@
 /*                                                        :::      ::::::::   */
 /*   readinput_utils3.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 23:29:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:33:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 01:04:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	closeallheredocs(t_minishell *mini)
+{
+	t_commandline	*cmd;
+
+	cmd = mini->commandline;
+	while (cmd)
+	{
+		closeheredocs(cmd->file);
+		cmd = cmd->next;
+	}
+}
+
+void	closeheredocs(t_files *files)
+{
+	t_files	*file;
+
+	file = files;
+	while (file)
+	{
+		if (file->hedoc > 2)
+			close(file->hedoc);
+		file = file->next;
+	}
+}
 
 void	heredocsnorm(t_tokenize **list, int *count, int *check)
 {
@@ -50,9 +75,9 @@ void	checkheredocs(t_minishell *mini)
 			break ;
 		list = list->next;
 	}
-	if (count > 16 && check)
+	if ((count > 16 && check) || (count > 16 && !check))
 	{
 		mini->check = 2;
-		printf("shell: maximum here-document count exceeded\n");
+		write(2, "shell: maximum here-document count exceeded\n", 45);
 	}
 }

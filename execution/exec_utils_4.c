@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:32:58 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:14:20 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,7 @@ void	handleiosingle(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		closeallfiles(mini);
 		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);
@@ -40,55 +41,54 @@ void	handleiosingle(t_commandline **command)
 		cmd->outfd = 1;
 }
 
-void	setup_io(t_commandline *command, int size)
+void	setup_io(t_commandline **command, int size)
 {
-	if (command->infd != STDIN_FILENO)
+	if ((*command)->infd != STDIN_FILENO)
 	{
-		dup2(command->infd, STDIN_FILENO);
-		close(command->infd);
+		dup2((*command)->infd, STDIN_FILENO);
+		close((*command)->infd);
 	}
-	if (command->outfd != STDOUT_FILENO)
+	if ((*command)->outfd != STDOUT_FILENO)
 	{
-		dup2(command->outfd, STDOUT_FILENO);
-		close(command->outfd);
+		dup2((*command)->outfd, STDOUT_FILENO);
+		close((*command)->outfd);
 	}
-	closeallfiles(command->mini);
-	closeallpipes(command->mini, size);
-	if (command->cmd && command->cmd[0] == '\0')
+	closeallfiles((*command)->mini);
+	closeallpipes((*command)->mini, size);
+	if ((*command)->cmd && (*command)->cmd[0] == '\0')
 	{
 		error("\'\'");
-		freedoubleint(command->mini);
-		freelistcommandline(command->mini->commandline);
+		freedoubleint((*command)->mini);
+		freelistcommandline((*command)->mini->commandline);
 		exit(127);
 	}
-	else if (!command->cmd)
+	else if (!(*command)->cmd)
 	{
-		freedoubleint(command->mini);
-		freelistcommandline(command->mini->commandline);
+		freedoubleint((*command)->mini);
+		freelistcommandline((*command)->mini->commandline);
 		exit(0);
 	}
 }
 
 void	error_check(t_commandline *command)
 {
+	if (!ft_strcmp(command->args[0], ".") || !ft_strcmp(command->args[0], ".."))
+		handlepoint(command);
 	if (!ft_find(command->args[0], "/") && !ft_find(command->args[0], ".")
 		&& !checkcommand(command->cmd))
 	{
 		free(command->cmd);
 		command->cmd = checkfile(command);
 	}
-	else
-	{
-		free(command->cmd);
-		command->cmd = ft_strdup(command->args[0]);
-	}
-	if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1
+	if (!command->cmd)
+		command->cmd = no_file(command->args[0], command);
+	else if (access(command->cmd, F_OK) == 0 && access(command->cmd, X_OK) == -1
 		&& !is_directory(command->cmd))
 	{
 		printerror(command->cmd);
 		freedoubleint(command->mini);
 		freelistcommandline(command->mini->commandline);
-		exit(127);
+		exit(126);
 	}
 	else if ((is_directory(command->cmd)) && ((ft_find(command->args[0], ".")
 				&& ft_find(command->args[0], "/"))
@@ -125,18 +125,19 @@ void	after_execve(t_commandline *command)
 	t_minishell	*mini;
 
 	mini = command->mini;
-	if (command->args && !ft_find(command->args[0], "/"))
+	if (command->args && !ft_find(command->args[0], "/")
+		&& !ft_find(command->args[0], "."))
 	{
 		error(command->args[0]);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		exit(127);
 	}
-	else if (command->args)
+	else if (command->args && (access(command->args[0], F_OK)))
 	{
-		perror(command->args[0]);
+		write(2, command->args[0], ft_strlen(command->args[0]));
+		write(2, ": No such file or directory\n", 29);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		exit(127);
 	}
+	exit(127);
 }

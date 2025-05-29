@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_pwd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:18:50 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 00:49:01 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,8 @@ void	ft_pwd(t_minishell *mini)
 	path = NULL;
 	size = ft_commandsize(mini->commandline);
 	path = getcwd(NULL, 0);
+	if (!path && mini->pwd)
+		path = ft_strdup(mini->pwd);
 	ft_pwdhelp(size, path, mini);
 	if (path)
 		free(path);

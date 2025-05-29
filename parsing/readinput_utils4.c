@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readinput_utils4.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 00:28:50 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:34:02 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/28 12:55:18 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,22 @@ void	handlefileshelp(t_handlefiles *files, t_tokenize **token)
 	}
 }
 
-void	handlefiles(t_tokenize *token, t_commandline *command)
+void	helperhandle(t_tokenize *token, t_handlefiles *files)
+{
+	if (token->type == REDOUT || token->type == APPEND)
+		files->new->redir = OUT;
+}
+
+void	freeextra(char *str, char *s)
+{
+	setexit(130, 0);
+	if (s)
+		free(s);
+	if (str)
+		free(str);
+}
+
+int	handlefiles(t_tokenize *token, t_commandline *command)
 {
 	t_handlefiles	files;
 
@@ -45,10 +60,18 @@ void	handlefiles(t_tokenize *token, t_commandline *command)
 	handlefileshelp(&files, &token);
 	files.new = ft_filenew(files.file, files.del, files.type);
 	files.new->delinquotes = files.delquotes;
+	ft_fileadd_back(&command->file, files.new);
 	if (token->type == REDIN || token->type == HEDOC)
-		ft_fileadd_back(&command->infile, files.new);
-	if (token->type == REDOUT || token->type == APPEND)
-		ft_fileadd_back(&command->outfile, files.new);
-	free(files.file);
-	free(files.del);
+	{
+		if (token->type == HEDOC)
+		{
+			files.new->hedoc = getinput(files.new->delinquotes,
+					files.del, command->mini);
+			if (files.new->hedoc == -4)
+				return (freeextra(files.file, files.del), 1);
+		}
+		files.new->redir = IN;
+	}
+	helperhandle(token, &files);
+	return (free(files.file), free(files.del), 0);
 }

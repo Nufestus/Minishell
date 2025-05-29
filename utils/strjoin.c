@@ -3,14 +3,32 @@
 /*                                                        :::      ::::::::   */
 /*   strjoin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:37:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 08:29:12 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	handlepoint(t_commandline *command)
+{
+	if (!ft_strcmp(command->args[0], "."))
+	{
+		write(2, ".: usage: . filename [arguments]\n", 34);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
+		exit(2);
+	}
+	else if (!ft_strcmp(command->args[0], ".."))
+	{
+		write(2, "..: command not found\n", 23);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
+		exit(127);
+	}
+}
 
 void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:45:57 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 19:52:08 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,40 @@ void	ft_cdhelp6(int size, char *pwd, char *oldcwd)
 	free(pwd);
 	if (size != 1)
 		exit(0);
+	return ;
+}
+
+void	add_to_env(char *str, char *s, t_minishell *mini)
+{
+	char	*copy;
+	char	*full;
+	char	*string;
+	t_env	*new;
+
+	string = ft_getenv(str, mini);
+	if (!string)
+	{
+		full = ft_strjoin(str, "=");
+		copy = full;
+		full = ft_strjoin(full, s);
+		free(copy);
+		new = ft_envnew(s, str, full);
+		ft_envadd_back(&mini->env, new);
+		free(full);
+	}
+	else
+		ft_setenv(str, s, mini);
+}
+
+int	ft_cdhelper(int size, char *oldcwd, t_minishell *mini, char *pwd)
+{
+	if (!ft_cdhelp5(pwd, size, oldcwd))
+		return (0);
+	add_to_env("PWD", pwd, mini);
+	add_to_env("OLDPWD", oldcwd, mini);
+	ft_cdhelp6(size, pwd, oldcwd);
+	setexit(0, 0);
+	return (1);
 }
 
 void	ft_cd(t_commandline *commandline)
@@ -57,20 +91,20 @@ void	ft_cd(t_commandline *commandline)
 	size = ft_commandsize(commandline->mini->commandline);
 	mini = commandline->mini;
 	oldcwd = getcwd(0, 0);
-	if (!ft_cdhelp(oldcwd, size))
+	pwd = NULL;
+	if (!ft_cdhelp(oldcwd, size, commandline, mini))
 		return ;
 	if (!ft_cdhelp2(size, commandline, oldcwd))
 		return ;
-	if (!hel(commandline->args[1], mini, size, oldcwd))
+	if (commandline->args[1])
+		pwd = ft_strdup(commandline->args[1]);
+	if (!hel(&pwd, mini, size, oldcwd))
 		return ;
-	if (!ft_cdhelp4(commandline->args[1], size, oldcwd))
+	if (!ft_cdhelp4(pwd, size, oldcwd))
 		return ;
+	free(pwd);
 	pwd = getcwd(0, 0);
-	if (!ft_cdhelp5(pwd, size, oldcwd))
+	if (!ft_cdhelper(size, oldcwd, mini, pwd))
 		return ;
-	ft_setenv("PWD", pwd, mini);
-	ft_setenv("OLDPWD", oldcwd, mini);
-	ft_cdhelp6(size, pwd, oldcwd);
-	setexit(0, 0);
 	return ;
 }

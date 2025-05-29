@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/02 22:18:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 23:12:40 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 01:03:41 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	reparsehelp(t_tokenize *list, int *check, t_minishell *mini, char *del)
 		syntax(check, "';'", 0);
 	else if (list->type == HEDOC && list->next && list->next->type == DEL)
 	{
-		del = ft_strdup(list->str);
+		del = ft_strdup(list->next->str);
 		close(getinput(0, del, mini));
 		free(del);
 	}
@@ -108,5 +108,8 @@ void	parse(t_minishell *mini)
 		list = list->next;
 	}
 	if (check == 1)
+	{
+		setexit(1, 0);
 		mini->check = 1;
+	}
 }

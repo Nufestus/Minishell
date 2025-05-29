@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:15:19 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:54:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:20:51 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,43 +21,68 @@ int	parseoutput(t_tokenize *list)
 	return (1);
 }
 
+void	retokenizehelp(t_tokenize *tok, t_tokenexpect *token)
+{
+	if (tok->type == PIPE)
+	{
+		token->expect_cmd = 1;
+		token->expect_file = 0;
+		token->expect_delim = 0;
+	}
+	else if (tok->category && tok->type != HEDOC)
+	{
+		token->expect_file = 1;
+		token->expect_cmd = 0;
+		token->expect_delim = 0;
+	}
+	else if (tok->type == HEDOC)
+	{
+		token->expect_delim = 1;
+		token->expect_file = 0;
+		token->expect_cmd = 0;
+	}
+}
+
+void	retokenizehelp2(t_tokenize **tok, t_tokenexpect *token)
+{
+	if (token->expect_delim)
+	{
+		(*tok)->type = DEL;
+		token->expect_delim = 0;
+		token->expect_cmd = 1;
+	}
+	else if (token->expect_file)
+	{
+		(*tok)->type = FILE;
+		token->expect_file = 0;
+		token->expect_cmd = 1;
+	}
+	else if (token->expect_cmd)
+	{
+		(*tok)->type = CMD;
+		token->expect_cmd = 0;
+	}
+	else if ((*tok)->str && (*tok)->str[0] == '-')
+		(*tok)->type = OPTION;
+	else
+		(*tok)->type = ARG;
+}
+
 void	retokenize(t_minishell *mini)
 {
-	t_tokenize	*list;
+	t_tokenize		*tok;
+	t_tokenexpect	token;
 
-	list = mini->tokens;
-	while (list)
+	token.expect_cmd = 1;
+	token.expect_file = 0;
+	token.expect_delim = 0;
+	tok = mini->tokens;
+	while (tok)
 	{
-		if (list->type == ARG && list->prev
-			&& (list->prev->type == FILE || list->prev->type == PIPE)
-			&& ((list->next && (list->next->type == ARG
-						|| list->next->category)) || !list->next))
-			list->type = CMD;
-		list = list->next;
-	}
-}
-
-int	tokenizewordshelp(t_tokenize **list)
-{
-	if ((*list)->type != WORD)
-	{
-		(*list) = (*list)->next;
-		return (1);
-	}
-	tokenhelper(list);
-	return (0);
-}
-
-void	tokenizewords(t_minishell *mini)
-{
-	t_tokenize	*list;
-
-	list = mini->tokens;
-	while (list)
-	{
-		if (tokenizewordshelp(&list))
-			continue ;
-		list = list->next;
+		retokenizehelp(tok, &token);
+		if (tok->type == WORD)
+			retokenizehelp2(&tok, &token);
+		tok = tok->next;
 	}
 }
 

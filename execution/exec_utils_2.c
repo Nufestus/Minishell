@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils_2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:44:19 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:32:26 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/28 11:40:06 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ void	handleiolast(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		closeallfiles(mini);
 		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);

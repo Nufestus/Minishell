@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:21:36 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 12:13:12 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@ char	*ft_strdup(char *s1)
 	char	*str;
 
 	i = 0;
+	if (!s1)
+		return (NULL);
 	str = (char *)s1;
 	copy = (char *) malloc(strlen(str) + 1);
 	if (copy == NULL)
@@ -60,8 +62,7 @@ void	freelistcommandline(t_commandline *list)
 			freedoublearray(list->args);
 		if (list->env)
 			freedoublearray(list->env);
-		freelistfiles(list->infile);
-		freelistfiles(list->outfile);
+		freelistfiles(list->file);
 		if (list->cmd)
 			free(list->cmd);
 		free(list);

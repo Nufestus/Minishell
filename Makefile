@@ -6,7 +6,7 @@
 #    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/05/25 19:47:47 by rammisse         ###   ########.fr        #
+#    Updated: 2025/05/29 18:15:11 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,7 +30,7 @@ SRCS = minishell.c parsing/readinput.c utils/utils.c builtins/export.c \
 		parsing/readinput_utils1.c parsing/readinput_utils2.c parsing/readinput_utils4.c \
 		parsing/readinput_utils5.c execution/exec_utils.c execution/exec_utils_1.c \
 		execution/exec_utils_2.c execution/exec_utils_3.c execution/exec_utils_4.c execution/exec_utils_5.c \
-		main.c
+		main.c builtins/export_stuff.c execution/exec_utils_6.c
 		
 
 OBJS = $(SRCS:.c=.o)

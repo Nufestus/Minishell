@@ -6,16 +6,44 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:47:24 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:23:58 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
+void	handleforksingle(t_commandline **command, pid_t pid, int size)
+{
+	t_minishell		*mini;
+	t_commandline	*cmd;
+
+	cmd = *command;
+	mini = cmd->mini;
+	if (pid == -1)
+	{
+		perror("fork");
+		return ;
+	}
+	else if (!pid)
+	{
+		signal(SIGINT, SIG_DFL);
+		signal(SIGQUIT, SIG_DFL);
+		handleiosingle(command);
+		setup_io(command, size);
+		error_check(cmd);
+		handle_shlvl(cmd);
+		execve(cmd->cmd, cmd->args, cmd->env);
+		after_execve(cmd);
+		closeheredocs(cmd->file);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
+		exit(1);
+	}
+}
+
 void	setupfirstcommand(t_commandline ***command)
 {
 	int				size;
-	pid_t			pid;
 	t_commandline	*cmd;
 	t_minishell		*mini;
 
@@ -23,21 +51,8 @@ void	setupfirstcommand(t_commandline ***command)
 	mini = cmd->mini;
 	size = ft_commandsize(mini->commandline);
 	cmd->env = constructenv(mini->env);
-	pid = fork();
-	if (!pid)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		handleiosingle(*command);
-		setup_io(cmd, size);
-		error_check(cmd);
-		handle_shlvl(cmd);
-		execve(cmd->cmd, cmd->args, cmd->env);
-		after_execve(cmd);
-		freedoubleint(mini);
-		freelistcommandline(mini->commandline);
-		exit(1);
-	}
+	cmd->pid = fork();
+	handleforksingle(*command, cmd->pid, size);
 }
 
 void	childlabor(t_commandline **command)
@@ -68,13 +83,28 @@ void	closeallpipes(t_minishell *mini, int size)
 
 void	setupchilds(t_minishell *mini, int size)
 {
-	int				status;
-	t_commandline	*copy;
+	t_setupchild	child;
 
-	closeallpipes(mini, size);
-	while (waitpid(-1, &status, 0) != -1)
-		;
-	copy = mini->commandline;
+	initializechild(&child, size, mini);
+	while (child.copy)
+	{
+		if (child.copy->pid)
+		{
+			waitpid(child.copy->pid, &child.status, 0);
+			if (WIFSIGNALED(child.status))
+			{
+				child.sig = WTERMSIG(child.status);
+				if (child.sig == SIGINT)
+				{
+					setexit(130, 0);
+					if (!child.copy->next)
+						child.skip = 1;
+				}
+			}
+		}
+		child.copy = child.copy->next;
+	}
+	if (child.skip != 1)
+		setexit(WEXITSTATUS(child.status), 0);
 	closeallfiles(mini);
-	setexit(WEXITSTATUS(status), 0);
 }

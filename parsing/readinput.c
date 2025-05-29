@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:35:19 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 17:59:51 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	readinputhelp1(t_minishell **mini)
 	{
 		free((*mini)->input);
 		freelisttokens((*mini)->tokens);
-		exit(1);
+		return (closeallfiles(*mini), closeallheredocs(*mini), exit(1), 0);
 	}
 	reparse(*mini);
 	if ((*mini)->check == 1)
@@ -86,15 +86,14 @@ int	readinputhelp1(t_minishell **mini)
 		free((*mini)->input);
 		return (1);
 	}
-	setupcommandline(*mini);
+	if (setupcommandline(*mini))
+	{
+		freelistcommandline((*mini)->commandline);
+		freelisttokens((*mini)->tokens);
+		return (free((*mini)->input), 1);
+	}
 	freelisttokens((*mini)->tokens);
 	return (0);
-}
-
-void	readinputhelp2(t_minishell *mini)
-{
-	freelistcommandline(mini->commandline);
-	free(mini->input);
 }
 
 void	readinput(t_minishell *mini)
@@ -102,7 +101,7 @@ void	readinput(t_minishell *mini)
 	while (1)
 	{
 		callallsignals();
-		mini->input = readline(INPUT1 INPUT2);
+		mini->input = readline(INPUT1);
 		if (g_sig == 130)
 		{
 			setexit(130, 0);
@@ -114,14 +113,10 @@ void	readinput(t_minishell *mini)
 		checkheredocs(mini);
 		if (readinputhelp1(&mini))
 			continue ;
-		if (openallfiles(mini))
-		{
-			readinputhelp2(mini);
-			continue ;
-		}
+		openallfiles(mini);
 		execute(mini);
+		closeallheredocs(mini);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		free(mini->input);
 	}
 }

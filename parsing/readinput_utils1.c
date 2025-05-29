@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   readinput_utils1.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 20:59:54 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:07:34 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/28 10:00:10 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,8 @@ int	getarguments(t_tokenize *tokens)
 
 	res = 0;
 	token = tokens;
-	while (token && token->type != PIPE)
+	while (token && token->type != PIPE
+		&& !token->category && token->type != FILE)
 	{
 		res++;
 		token = token->next;
@@ -61,7 +62,10 @@ int	openallfiles(t_minishell *mini)
 	while (command)
 	{
 		if (openfiles(&command, mini))
-			return (1);
+		{
+			command = command->next;
+			continue ;
+		}
 		command = command->next;
 	}
 	return (0);

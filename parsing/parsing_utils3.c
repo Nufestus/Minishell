@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:18:37 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:29:30 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 13:23:05 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ int	countword(char **str)
 	return (k);
 }
 
-void	handlenodes(int split, char *str, int i, t_tokenize **tokens)
+void	handlenodes(int split, char *str, int i, t_minishell *mini)
 {
 	t_setupnode	setup;
 
@@ -120,20 +120,20 @@ void	handlenodes(int split, char *str, int i, t_tokenize **tokens)
 	if (!split || split == 2 || split == 3)
 	{
 		if (!ft_strcmp(str, "|"))
-			setupnode(&setup, 0, PIPE, tokens);
+			setupnode(&setup, 0, PIPE, &mini->tokens);
 		else if (!ft_strcmp(str, ">>"))
-			setupnode(&setup, 1, APPEND, tokens);
+			setupnode(&setup, 1, APPEND, &mini->tokens);
 		else if (!ft_strcmp(str, "<<"))
-			setupnode(&setup, 1, HEDOC, tokens);
+			setupnode(&setup, 1, HEDOC, &mini->tokens);
 		else if (!ft_strcmp(str, ">"))
-			setupnode(&setup, 1, REDOUT, tokens);
+			setupnode(&setup, 1, REDOUT, &mini->tokens);
 		else if (!ft_strcmp(str, "<"))
-			setupnode(&setup, 1, REDIN, tokens);
+			setupnode(&setup, 1, REDIN, &mini->tokens);
 		else if (isanoption(str))
-			setupnode(&setup, 0, OPTION, tokens);
+			setupnode(&setup, 0, OPTION, &mini->tokens);
 		else
-			setupnode(&setup, 0, WORD, tokens);
+			setupnode(&setup, 0, WORD, &mini->tokens);
 	}
 	else
-		setupnode(&setup, 0, WORD, tokens);
+		setupnode(&setup, 0, WORD, &mini->tokens);
 }

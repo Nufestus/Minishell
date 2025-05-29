@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:36:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:22:22 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,29 +54,34 @@ int	ft_reparsehelp1(t_reparse *reparse, t_minishell *mini)
 		free(reparse->string);
 	}
 	if (reparse->flag == 1 && mini->expanded && reparse->token[0] == '\0')
-	{
-		free(reparse->token);
-		return (2);
-	}
+		mini->flag = 1;
 	return (0);
 }
 
 void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 {
-	if (reparse->flag == 1)
+	t_tokenize	*last;
+
+	s = NULL;
+	if (reparse->flag == 1 && !mini->flag)
 	{
 		reparse->k = 0;
 		s = split(reparse->token, " \t\n\r\v\f");
 		while (s[reparse->k])
-			handlenodes(1, s[reparse->k++], reparse->j++, &mini->tokens);
+			handlenodes(1, s[reparse->k++], reparse->j++, mini);
 		freedoublearray(s);
 	}
-	else if (reparse->flag == 2 || reparse->flag == 3)
-		handlenodes(reparse->flag, reparse->token, reparse->j++, &mini->tokens);
+	if (reparse->flag == 2 || reparse->flag == 3)
+		handlenodes(reparse->flag, reparse->token, reparse->j++, mini);
 	else
-		handlenodes(0, reparse->token, reparse->j++, &mini->tokens);
+		handlenodes(0, reparse->token, reparse->j++, mini);
 	if (reparse->prev)
 		free(reparse->prev);
+	if (mini->flag)
+	{
+		last = ft_lstlast(mini->tokens);
+		last->flag = 1;
+	}
 	reparse->prev = ft_strdup(reparse->token);
 	free(reparse->token);
 }
@@ -87,9 +92,9 @@ void	ft_reparse(int *check, char *str, t_minishell *mini)
 	char		**s;
 
 	initreparse(&reparse, str);
-	s = NULL;
 	while (str[reparse.i])
 	{
+		mini->flag = 0;
 		reparse.flag = 0;
 		mini->expanded = 0;
 		reparse.z = countword(&reparse.copy);
@@ -123,17 +128,11 @@ int	tokenize(t_minishell *mini)
 	if (addspaces == NULL)
 		return (-1);
 	ft_reparse(&check, addspaces, mini);
-	if (check)
+	if (check == 1)
 	{
-		if (check == 2)
-			return (-1);
-		else if (check == 1)
-		{
-			syntax(NULL, "'quotes'", 1);
-			return (-1);
-		}
+		syntax(NULL, "'quotes'", 1);
+		return (-1);
 	}
-	tokenizewords(mini);
 	retokenize(mini);
 	free(addspaces);
 	return (0);

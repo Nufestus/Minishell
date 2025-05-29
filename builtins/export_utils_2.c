@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:31:14 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 18:30:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 20:14:26 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,45 +26,28 @@ t_env	*getenvnode(t_env *env, char *var)
 	return (NULL);
 }
 
-void	exportutil(t_builtin *export, t_commandline *command)
-{
-	while (export->new)
-	{
-		ft_putstr_fd("declare -x ", command->outfd);
-		ft_putstr_fd(export->new->variable, command->outfd);
-		if (export->new->value)
-		{
-			ft_putstr_fd("=\"", command->outfd);
-			ft_putstr_fd(export->new->value, command->outfd);
-			ft_putstr_fd("\"\n", command->outfd);
-		}
-		else
-			ft_putstr_fd("\n", command->outfd);
-		export->new = export->new->next;
-	}
-}
-
 void	exporthelp(t_commandline *command, t_builtin *export)
 {
+	char	**array;
+	int		i;
+
 	export->new = command->mini->env;
+	array = NULL;
+	array = tosortarray(command);
+	array = sortarray(array);
+	i = 0;
 	if (export->size > 1)
 	{
-		while (export->new)
-		{
-			if (!export->new->value)
-				printf("declare -x %s=\"%s\"\n", export->new->variable,
-					export->new->value);
-			else
-				printf("declare -x %s\n", export->new->variable);
-			export->new = export->new->next;
-		}
+		printarray(array);
 		setexit(0, 0);
+		freedoublearray(array);
 		exit(0);
 	}
 	else
 	{
-		exportutil(export, command);
+		printarray(array);
 		setexit(0, 0);
+		freedoublearray(array);
 	}
 }
 

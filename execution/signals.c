@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/29 09:56:20 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:54:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:24:35 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,13 +19,7 @@ void	signalhandle(int sig)
 	rl_on_new_line();
 	rl_replace_line("", 0);
 	rl_redisplay();
-	g_sig = 130;
-}
-
-void	quithandle(int sig)
-{
-	(void)sig;
-	printf("quit\n");
+	setexit(130, 0);
 }
 
 void	callallsignals(void)
@@ -38,7 +32,8 @@ void	normalhande(int sig)
 {
 	(void)sig;
 	write(1, "\n", 2);
-	g_sig = 130;
+	g_sig = 140;
+	setexit(130, 0);
 }
 
 int	setexit(int exitstatus, int flag)
@@ -48,4 +43,12 @@ int	setexit(int exitstatus, int flag)
 	if (flag == 0)
 		res = exitstatus;
 	return (res);
+}
+
+void	initializechild(t_setupchild *child, int size, t_minishell *mini)
+{
+	child->i = -1;
+	child->skip = 0;
+	child->copy = mini->commandline;
+	closeallpipes(mini, size);
 }

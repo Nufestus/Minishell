@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 01:09:56 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:34:33 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 14:46:21 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ void	getinputhelp1(int delflag, char **line, char *copy, t_minishell *mini)
 {
 	if (!delflag)
 	{
-		*line = expand(NULL, *line, mini);
+		*line = expandinheredoc(NULL, *line, mini);
 		free(copy);
 	}
 }
@@ -33,6 +33,7 @@ void	getinputhelp2(int *fd, t_minishell **mini, char *line)
 	close(fd[0]);
 	close(fd[1]);
 	callallsignals();
+	setexit(130, 0);
 	(*mini)->exitstatus = 130;
 	free(line);
 }

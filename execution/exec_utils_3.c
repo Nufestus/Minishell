@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:03 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:42:13 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 14:20:41 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 void	setuplastcommand(t_commandline ***command)
 {
 	int				size;
-	pid_t			pid;
 	t_commandline	*cmd;
 	t_minishell		*mini;
 
@@ -23,20 +22,8 @@ void	setuplastcommand(t_commandline ***command)
 	mini = cmd->mini;
 	size = ft_commandsize(mini->commandline);
 	cmd->env = constructenv(mini->env);
-	pid = fork();
-	if (!pid)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		handleiolast(*command);
-		setup_io(cmd, size);
-		error_check(cmd);
-		execve(cmd->cmd, cmd->args, cmd->env);
-		after_execve(cmd);
-		freedoubleint(mini);
-		freelistcommandline(mini->commandline);
-		exit(1);
-	}
+	cmd->pid = fork();
+	handleforklast(*command, cmd->pid, size);
 }
 
 void	handleiomiddle(t_commandline **command)
@@ -51,6 +38,7 @@ void	handleiomiddle(t_commandline **command)
 	if (cmd->infd == -1 || cmd->outfd == -1)
 	{
 		closeallpipes(mini, size);
+		closeallfiles(mini);
 		freedoubleint(mini);
 		if (cmd->outfd > 2)
 			close(cmd->outfd);
@@ -67,7 +55,6 @@ void	handleiomiddle(t_commandline **command)
 void	setupmiddlecommand(t_commandline ***command)
 {
 	int				size;
-	pid_t			pid;
 	t_commandline	*cmd;
 	t_minishell		*mini;
 
@@ -75,20 +62,8 @@ void	setupmiddlecommand(t_commandline ***command)
 	mini = cmd->mini;
 	size = ft_commandsize(mini->commandline);
 	cmd->env = constructenv(mini->env);
-	pid = fork();
-	if (!pid)
-	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
-		handleiomiddle(*command);
-		setup_io(cmd, size);
-		error_check(cmd);
-		execve(cmd->cmd, cmd->args, cmd->env);
-		after_execve(cmd);
-		freedoubleint(mini);
-		freelistcommandline(mini->commandline);
-		exit(1);
-	}
+	cmd->pid = fork();
+	handleforkmiddle(*command, cmd->pid, size);
 }
 
 int	checkcommand(char *cmd)
@@ -103,9 +78,8 @@ int	checkcommand(char *cmd)
 			|| !ft_strcmp(cmd, "unset")
 			|| !ft_strcmp(cmd, "exit"))
 			return (1);
-		return (0);
 	}
-	return (15);
+	return (0);
 }
 
 int	ft_atoi_custom(const char *str)

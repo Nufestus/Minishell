@@ -3,14 +3,38 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 01:47:28 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 08:35:01 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+char	*no_file(char *str, t_commandline *command)
+{
+	char	*path;
+	char	*copy;
+	char	*res;
+
+	copy = NULL;
+	if (!access(str, F_OK | X_OK) && !is_directory(str))
+	{
+		res = ft_strdup(str);
+		path = getcwd(NULL, 0);
+		copy = path;
+		path = ft_strjoin(path, "/");
+		free(copy);
+		copy = res;
+		res = ft_strjoin(path, res);
+		return (free(copy), res);
+	}
+	if ((is_directory(str) && ft_find(str, "/"))
+		|| (!ft_getenv("PATH", command->mini) && !ft_find(str, "/")))
+		handlesuchfile(str, command);
+	return (NULL);
+}
 
 int	isnotnum(char *str)
 {

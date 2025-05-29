@@ -3,41 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:17:41 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:54:43 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 01:04:33 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char	*handletypes(int i)
-{
-	if (i == WORD)
-		return ("WORD");
-	else if (i == OPTION)
-		return ("OPTION");
-	else if (i == CMD)
-		return ("CMD");
-	else if (i == REDOUT)
-		return ("REDOUT");
-	else if (i == REDIN)
-		return ("REDIN");
-	else if (i == APPEND)
-		return ("APPEND");
-	else if (i == HEDOC)
-		return ("HEDOC");
-	else if (i == PIPE)
-		return ("PIPE");
-	else if (i == FILE)
-		return ("FILE");
-	else if (i == ARG)
-		return ("ARG");
-	else if (i == DEL)
-		return ("DEL");
-	return ("NULL");
-}
 
 void	fillspacehelp(int *j, int *i, const char *input, char *out)
 {

@@ -6,66 +6,55 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:42:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 15:51:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 11:54:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	open_outfiles(t_commandline **command, int infd)
+void	help_openfile(t_commandline *command, t_files *file)
 {
-	int			outfd;
-	t_files		*outfiles;
-
-	outfd = -2;
-	(*command)->infd = infd;
-	outfiles = (*command)->outfile;
-	while (outfiles)
+	if (file->type == REDIN || file->type == HEDOC)
 	{
-		if (outfiles->type == REDOUT)
-			outfd = open(outfiles->file, O_RDWR | O_CREAT | O_TRUNC, 0644);
-		else if (outfiles->type == APPEND)
-			outfd = open(outfiles->file, O_RDWR | O_CREAT | O_APPEND, 0644);
-		if ((outfiles->next && outfd > 2) || !(*command)->cmd)
-			close(outfd);
-		if (outfd == -1)
-		{
-			perror(outfiles->file);
-			(*command)->outfd = outfd;
-			return ;
-		}
-		outfiles = outfiles->next;
+		if (command->infd > 2)
+			close(command->infd);
+		command->infd = dup(file->fd);
 	}
-	(*command)->outfd = outfd;
+	else if (file->type == REDOUT || file->type == APPEND)
+	{
+		if (command->outfd > 2)
+			close(command->outfd);
+		command->outfd = dup(file->fd);
+	}
 }
 
 int	openfiles(t_commandline **command, t_minishell *mini)
 {
-	int			infd;
-	char		*del;
-	t_files		*infiles;
+	t_files		*files;
 
-	infd = -2;
-	infiles = (*command)->infile;
-	while (infiles)
+	(void)mini;
+	files = (*command)->file;
+	while (files)
 	{
-		if (infiles->type != HEDOC)
-			infd = open(infiles->file, O_RDONLY);
-		else if (infiles->type == HEDOC)
+		if (files->type == REDIN)
+			files->fd = open(files->file, O_RDONLY);
+		else if (files->type == HEDOC)
+			files->fd = files->hedoc;
+		if (files->type == REDOUT)
+			files->fd = open(files->file, O_RDWR | O_CREAT | O_TRUNC, 0644);
+		else if (files->type == APPEND)
+			files->fd = open(files->file, O_RDWR | O_CREAT | O_APPEND, 0644);
+		if (files->fd == -1)
 		{
-			del = ft_strdup(infiles->delimiter);
-			infd = getinput(infiles->delinquotes, del, mini);
-			free(del);
-			if (infd == -4)
-				return (1);
+			perror(files->file);
+			help_openfile(*command, files);
+			return (setexit(1, 0), 1);
 		}
-		if (infd == -1)
-			return (perror(infiles->file), (*command)->infd = infd, 0);
-		if ((infiles->next && infd > 2) || !(*command)->cmd)
-			close(infd);
-		infiles = infiles->next;
+		help_openfile(*command, files);
+		close(files->fd);
+		files = files->next;
 	}
-	return (open_outfiles(command, infd), 0);
+	return (0);
 }
 
 void	freestr(char **str)

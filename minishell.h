@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 19:48:33 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/29 18:25:05 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,7 @@
 # include <fcntl.h>
 # include <limits.h>
 
-# define INPUT1 "SHELL"
-# define INPUT2 " ✗ "
+# define INPUT1 "SHELL ✗ "
 # define PIPE 1
 # define WORD 2
 # define REDOUT 3
@@ -40,6 +39,8 @@
 # define CMD 9
 # define ARG 10
 # define DEL 11
+# define OUT 12
+# define IN 13
 
 extern int	g_sig;
 
@@ -47,8 +48,27 @@ struct		s_minishell;
 struct		s_commandline;
 struct		s_tokenize;
 
+typedef struct s_setupchild
+{
+	int				i;
+	int				sig;
+	int				skip;
+	int				status;
+	t_commandline	*copy;
+}			t_setupchild;
+
+typedef struct s_tokenexpect
+{
+	int		expect_cmd;
+	int		expect_file;
+	int		expect_delim;
+}			t_tokenexpect;
+
 typedef struct s_files
 {
+	int				fd;
+	int				hedoc;
+	int				redir;
 	int				delinquotes;
 	int				type;
 	char			*file;
@@ -58,6 +78,7 @@ typedef struct s_files
 
 typedef struct s_tokenize
 {
+	int					flag;
 	int					split;
 	int					type;
 	int					category;
@@ -70,6 +91,8 @@ typedef struct s_tokenize
 
 typedef struct s_commandline
 {
+	pid_t					pid;
+	int						iscmdexpand;
 	int						infd;
 	int						outfd;
 	int						index;
@@ -77,8 +100,7 @@ typedef struct s_commandline
 	char					*cmd;
 	char					**args;
 	char					**env;
-	t_files					*outfile;
-	t_files					*infile;
+	t_files					*file;
 	struct s_minishell		*mini;
 	struct s_commandline	*next;
 }	t_commandline;
@@ -96,11 +118,13 @@ typedef struct s_minishell
 {
 	bool			envstate;
 	int				linecount;
+	int				flag;
 	int				**pipes;
 	int				exitstatus;
 	int				expanded;
 	int				insingle;
 	int				check;
+	char			*pwd;
 	char			*input;
 	t_env			*env;
 	t_tokenize		*tokens;
@@ -144,7 +168,6 @@ typedef struct s_expanding
 	char	*expanded;
 	size_t	k;
 	char	*var;
-
 }	t_expanding;
 
 typedef struct s_parse
@@ -183,6 +206,7 @@ typedef struct s_env_setup
 
 typedef struct s_commandline_setup
 {
+	int				cmdcheck;
 	char			*cmd;
 	int				index;
 	char			**arg;
@@ -232,9 +256,11 @@ int				addfilehelp(t_tokenize **copy, t_commandline **command);
 int				getarguments(t_tokenize *tokens);
 int				openallfiles(t_minishell *mini);
 int				atoihelp(int *overflow, long long result, long long old_result);
-int				ft_cdhelp(char *oldcwd, int size);
+int				ft_cdhelp(char *oldcwd, int size,
+					t_commandline *command, t_minishell *mini);
 int				ft_cdhelp2(int size, t_commandline *command, char *oldcwd);
-int				hel(char *targetdir, t_minishell *mini, int size, char *oldcwd);
+int				hel(char **targetdir, t_minishell *mini,
+					int size, char *oldcwd);
 int				isnotnum(char *str);
 int				exithelp(int flag, t_commandline *command);
 int				exithelp2(t_commandline *command);
@@ -262,19 +288,22 @@ int				parsepipe(t_tokenize *list);
 int				parseinput(t_tokenize *list);
 int				parseoutput(t_tokenize *list);
 int				isanoption(char *str);
-int				tokenizewordshelp(t_tokenize **list);
 int				ft_isalnum(int c);
 int				ft_strncmp(const char *s1, const char *s2, size_t n);
 int				countdouble(char *str, char *delims);
 int				countword(char **str);
+int				addfile(t_tokenize *token, t_commandline *commandline);
 int				count_len(int n);
 int				in_set(char c, char *set);
-int				removequoteshelp(t_parse *parse, char *str);
+int				removequoteshelp(int *flag, t_parse *parse, char *str);
 int				ft_cdhelp4(char *targetdir, int size, char *oldcwd);
 int				ft_cdhelp5(char *pwd, int size, char *oldcwd);
-char			*ft_getenv(char *str, t_minishell **mini);
+int				handlefiles(t_tokenize *token, t_commandline *command);
+int				setupcommandline(t_minishell *mini);
+int				exportsorted(t_commandline *command);
+int				printarrayhelp(char **array, int *i, int *j);
+char			*ft_getenv(char *str, t_minishell *mini);
 char			*expand(int *check, char *str, t_minishell *mini);
-char			*handletypes(int i);
 char			*fillspace(const char *input);
 char			*ft_strtrim(char *s1, char *set);
 char			*rtrn(int n, char *num, size_t len);
@@ -286,6 +315,9 @@ char			*getstring(char *str);
 char			*checkfile(t_commandline *command);
 char			**constructenv(t_env *env);
 char			*my_getenv(t_minishell *mini, char *str);
+char			**tosortarray(t_commandline *command);
+char			**sortarray(char **str);
+char			*expandinheredoc(int *check, char *str, t_minishell *mini);
 char			**split(char const *s, char *delims);
 char			*ft_strjoin(const char *s1, const char *s2);
 char			*ft_strdup(char *s1);
@@ -297,6 +329,7 @@ char			*ft_itoa(int n);
 char			*alloc(char *str);
 char			*removequotes(int *flag, char *str);
 char			*ft_getenvv(char *str, t_minishell **mini);
+char			*no_file(char *str, t_commandline *command);
 bool			is_token(char c);
 void			directory_free(t_commandline *command);
 void			echo_loop(t_commandline *command, t_echo *echo);
@@ -315,7 +348,6 @@ void			ft_pwd(t_minishell *mini);
 void			ft_envhelp(int size, t_env *env, t_minishell *mini);
 void			ft_env(t_minishell *mini, char **args);
 void			ft_exit(t_commandline *command);
-void			exportutil(t_builtin *export, t_commandline *command);
 void			exporthelp(t_commandline *command, t_builtin *export);
 void			exporthelp2(t_commandline *command, t_builtin *export);
 void			exporthelp3(t_commandline *command, t_builtin *export);
@@ -329,6 +361,7 @@ void			directoryerror(char *s);
 void			initializepipes(t_minishell *mini);
 void			printerror(char *str);
 void			error(char *str);
+void			handlepoint(t_commandline *command);
 void			handlebuiltins(t_commandline **command);
 void			closeallfiles(t_minishell *mini);
 void			handleiolast(t_commandline **command);
@@ -336,7 +369,7 @@ void			setuplastcommand(t_commandline ***command);
 void			handleiomiddle(t_commandline **command);
 void			setupmiddlecommand(t_commandline ***command);
 void			handleiosingle(t_commandline **command);
-void			setup_io(t_commandline *command, int size);
+void			setup_io(t_commandline **command, int size);
 void			error_check(t_commandline *command);
 void			handle_shlvl(t_commandline *command);
 void			after_execve(t_commandline *command);
@@ -344,7 +377,6 @@ void			setupfirstcommand(t_commandline ***command);
 void			childlabor(t_commandline **command);
 void			closeallpipes(t_minishell *mini, int size);
 void			setupchilds(t_minishell *mini, int size);
-void			open_outfiles(t_commandline **command, int infd);
 void			freestr(char **str);
 void			startpipex(t_minishell *mini);
 void			execute(t_minishell *mini);
@@ -361,52 +393,56 @@ void			setupnode(t_setupnode *setup,
 void			syntaxhere(int *check, char *flag, int print);
 void			syntax(int *check, char *flag, int print);
 void			retokenize(t_minishell *mini);
-void			tokenizewords(t_minishell *mini);
 void			fillspacehelp(int *j, int *i, const char *input, char *out);
 void			fillspacehelp2(int *j, int *i, char *out, const char *input);
 void			countwordhelp(int *i, char *s, char q, int *k);
-void			handlenodes(int split, char *str, int i, t_tokenize **tokens);
+void			handlenodes(int split, char *str, int i, t_minishell *mini);
 void			initreparse(t_reparse *reparse, char *str);
-void			tokenhelper(t_tokenize **list);
 void			reparsehelp(t_tokenize *list, int *check,
 					t_minishell *mini, char *del);
 void			reparse(t_minishell *mini);
 void			parsehelp(t_tokenize *list, int *check);
 void			parse(t_minishell *mini);
 void			countargshelp(char *args, int *i, int *count, int *in_word);
-void			addfile(t_tokenize *token, t_commandline *commandline);
 void			freedoubleint(t_minishell *mini);
 void			heredochandle(int sig);
 void			commandlinehelp(t_commandline_setup *setup);
 void			commandlinehelp1(t_commandline_setup *setup, t_minishell *mini);
 void			initvarscmd(t_commandline_setup *setup, t_minishell *mini);
 void			settozero(t_commandline_setup *setup);
-void			setupcommandline(t_minishell *mini);
 void			heredocsnorm(t_tokenize **list, int *count, int *check);
 void			checkheredocs(t_minishell *mini);
 void			handlefileshelp(t_handlefiles *files, t_tokenize **token);
-void			handlefiles(t_tokenize *token, t_commandline *command);
 void			getinputhelp(char *line, int fd);
+void			initializechild(t_setupchild *child,
+					int size, t_minishell *mini);
 void			getinputhelp1(int delflag, char **line,
 					char *copy, t_minishell *mini);
 void			getinputhelp2(int *fd, t_minishell **mini, char *line);
-void			readinputhelp2(t_minishell *mini);
+void			handlesuchfile(char *str, t_commandline *command);
 void			readinput(t_minishell *mini);
 void			ft_reparsehelp2(t_reparse *reparse,
 					char **s, t_minishell *mini);
 void			ft_reparse(int *check, char *str, t_minishell *mini);
 void			ft_lstadd_back(t_tokenize **lst, t_tokenize *new);
+void			closeheredocs(t_files *files);
+void			closeallheredocs(t_minishell *mini);
 void			freedoublearray(char **str);
 void			freelistcommandline(t_commandline *list);
 void			freelistfiles(t_files *list);
 void			freelistenv(t_env *list);
 void			ft_bzero(void *s, size_t n);
 void			ft_fileadd_back(t_files **lst, t_files *new);
+void			handlesuchfile(char *str, t_commandline *command);
 void			ft_envadd_back(t_env **lst, t_env *new);
 void			ft_commandadd_back(t_commandline **lst, t_commandline *new);
 void			initializetonone(char **str, int len);
 void			setupenv(char **env, t_minishell *mini);
+void			handleforkmiddle(t_commandline **command, pid_t pid, int size);
+void			handleforklast(t_commandline **command, pid_t pid, int size);
 void			freelisttokens(t_tokenize *list);
+void			closeheredocs(t_files *files);
+void			printarray(char **array);
 void			exporthelp5(t_commandline *command, t_builtin *export);
 t_env			*getenvnode(t_env *env, char *var);
 t_env			*ft_envlast(t_env *lst);

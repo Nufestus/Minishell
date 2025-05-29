@@ -3,20 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   expanding_utils.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 19:45:41 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 18:27:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/27 16:30:41 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-char	*ft_getenv(char *str, t_minishell **mini)
+char	*ft_getenv(char *str, t_minishell *mini)
 {
 	t_env	*temp;
 
-	temp = (*mini)->env;
+	temp = mini->env;
 	while (temp)
 	{
 		if (ft_strcmp(str, temp->variable) == 0)
@@ -48,7 +48,7 @@ int	handle_variable_expansion(char *str, int *i, t_minishell *mini)
 	while (str[*i] && ft_isalnumm(str[*i]))
 		(*i)++;
 	var = ft_substr(str, start, *i - start);
-	expandedvar = ft_getenv(var, &mini);
+	expandedvar = ft_getenv(var, mini);
 	if (expandedvar)
 		len = ft_strlen(expandedvar);
 	free(var);
