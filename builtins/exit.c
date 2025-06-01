@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:48:12 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:28:47 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	exithelp2(t_commandline *command)
 		printf("exit: too many arguments\n");
 		setexit(1, 0);
 		if (size > 1)
-			exit(1);
+			safe_exit(1);
 		return (0);
 	}
 	return (1);
@@ -95,14 +95,14 @@ void	ft_exit(t_commandline *command)
 	{
 		status = ft_atoi(command->args[1], &flag);
 		if (!exithelp(flag, command))
-			exit(2);
+			safe_exit(2);
 	}
 	else if ((command->args[1] && !isnotnum(command->args[1])) || flag)
 	{
 		printf("exit: %s: numeric argument required\n", command->args[1]);
-		exit(2);
+		safe_exit(2);
 	}
 	freelistenv(command->mini->env);
 	freelistcommandline(command->mini->commandline);
-	exit(status);
+	safe_exit(status);
 }

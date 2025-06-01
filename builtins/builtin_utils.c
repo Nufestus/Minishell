@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:35:30 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:45:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:26:09 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,6 @@ long long	ft_atoi(char *str, int *overflow)
 		i++;
 	}
 	return (result * sign);
-	
 }
 
 char	*ft_join(const char *s1, const char *s2)

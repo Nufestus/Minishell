@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/30 14:35:36 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/28 10:09:19 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:29:20 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,13 +58,12 @@ void	unset(t_commandline *commandline)
 	i = 1;
 	size = ft_commandsize(commandline->mini->commandline);
 	str = commandline->args;
-	setexit(0, 1);
 	while (str[i])
 	{
 		lstremoveif(&commandline->mini->env, str[i]);
 		i++;
 	}
 	if (size > 1)
-		exit(0);
-	setexit(1, 0);
+		safe_exit(0);
+	setexit(0, 0);
 }

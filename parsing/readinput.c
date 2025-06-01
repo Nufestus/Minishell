@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 17:59:51 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:12:26 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	readinputhelp(t_minishell **mini)
 	{
 		free((*mini)->input);
 		printf("%s\n", "exit");
-		exit(1);
+		safe_exit(1);
 	}
 	if ((*mini)->input[0] == '\0')
 	{
@@ -60,6 +60,7 @@ int	readinputhelp(t_minishell **mini)
 	if (tokenize(*mini) == -1)
 	{
 		freelisttokens((*mini)->tokens);
+		(*mini)->tokens = NULL;
 		free((*mini)->input);
 		(*mini)->exitstatus = 2;
 		return (1);
@@ -75,6 +76,7 @@ int	readinputhelp1(t_minishell **mini)
 	{
 		free((*mini)->input);
 		freelisttokens((*mini)->tokens);
+		(*mini)->tokens = NULL;
 		return (closeallfiles(*mini), closeallheredocs(*mini), exit(1), 0);
 	}
 	reparse(*mini);
@@ -83,17 +85,16 @@ int	readinputhelp1(t_minishell **mini)
 		(*mini)->check = 0;
 		(*mini)->exitstatus = 2;
 		freelisttokens((*mini)->tokens);
-		free((*mini)->input);
-		return (1);
+		return ((*mini)->tokens = NULL, free((*mini)->input), 1);
 	}
 	if (setupcommandline(*mini))
 	{
 		freelistcommandline((*mini)->commandline);
 		freelisttokens((*mini)->tokens);
-		return (free((*mini)->input), 1);
+		return ((*mini)->tokens = NULL, free((*mini)->input), 1);
 	}
 	freelisttokens((*mini)->tokens);
-	return (0);
+	return ((*mini)->tokens = NULL, 0);
 }
 
 void	readinput(t_minishell *mini)

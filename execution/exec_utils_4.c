@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:21:46 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:55:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void	handleiosingle(t_commandline **command)
 		if (cmd->infd > 2)
 			close(cmd->infd);
 		freelistcommandline(mini->commandline);
-		exit(1);
+		safe_exit(1);
 	}
 	if (cmd->infd == -2)
 		cmd->infd = 0;
@@ -60,13 +60,13 @@ void	setup_io(t_commandline **command, int size)
 		error("\'\'");
 		freedoubleint((*command)->mini);
 		freelistcommandline((*command)->mini->commandline);
-		exit(127);
+		safe_exit(127);
 	}
 	else if (!(*command)->cmd)
 	{
 		freedoubleint((*command)->mini);
 		freelistcommandline((*command)->mini->commandline);
-		exit(0);
+		safe_exit(0);
 	}
 }
 
@@ -88,7 +88,7 @@ void	error_check(t_commandline *command)
 		printerror(command->cmd);
 		freedoubleint(command->mini);
 		freelistcommandline(command->mini->commandline);
-		exit(126);
+		safe_exit(126);
 	}
 	else if ((is_directory(command->cmd)) && ((ft_find(command->args[0], ".")
 				&& ft_find(command->args[0], "/"))
@@ -104,7 +104,8 @@ void	handle_shlvl(t_commandline *command)
 	char	*value;
 	t_env	*node;
 
-	if (!ft_strcmp(command->args[0], "./minishell"))
+	if (my_getenv(command->mini, "SHLVL")
+		&& !ft_strcmp(command->args[0], "./minishell"))
 	{
 		node = getenvnode(command->mini->env, "SHLVL");
 		num = ft_atoi_custom(node->value);
@@ -139,5 +140,5 @@ void	after_execve(t_commandline *command)
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
 	}
-	exit(127);
+	safe_exit(127);
 }

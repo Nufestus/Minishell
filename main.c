@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 21:05:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 16:15:58 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 13:59:53 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ void	handlesuchfile(char *str, t_commandline *command)
 	write(2, ": No such file or directory\n", 29);
 	freedoubleint(command->mini);
 	freelistcommandline(command->mini->commandline);
+	clear_history();
 	exit(127);
 }
 
@@ -49,6 +50,8 @@ int	main(int ac, char **av, char **env)
 	if (!isatty(0))
 		exit(1);
 	setupenv(env, &mini);
+	if (my_getenv(&mini, "PWD"))
+		mini.pwd = ft_strdup(my_getenv(&mini, "PWD"));
 	readinput(&mini);
 	freelistenv(mini.env);
 	rl_clear_history();

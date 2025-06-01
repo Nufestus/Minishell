@@ -6,25 +6,11 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 16:41:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:46:11 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-void	ft_putstr_fd(char *s, int fd)
-{
-	size_t	i;
-
-	i = 0;
-	if (!s)
-		return ;
-	while (s[i] != '\0')
-	{
-		write(fd, &s[i], 1);
-		i++;
-	}
-}
 
 void	ft_pwdhelp(int size, char *path, t_minishell *mini)
 {
@@ -47,9 +33,9 @@ void	ft_pwdhelp(int size, char *path, t_minishell *mini)
 	}
 }
 
-int anoption(char *str)
+int	anoption(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	if (str[i] == '-')
@@ -72,7 +58,8 @@ void	ft_pwd(t_minishell *mini, t_commandline *command)
 	{
 		write(2, "pwd: invalid option\n", 21);
 		if (size != 1)
-			exit(2);
+			safe_exit(2);
+		setexit(2, 0);
 		return ;
 	}
 	path = getcwd(NULL, 0);
@@ -82,7 +69,7 @@ void	ft_pwd(t_minishell *mini, t_commandline *command)
 	if (path)
 		free(path);
 	if (size != 1)
-		exit(0);
+		safe_exit(0);
 	setexit(0, 0);
 }
 
@@ -119,19 +106,22 @@ void	ft_env(t_minishell *mini, char **args)
 	size = ft_commandsize(mini->commandline);
 	if (args[1])
 	{
-		ft_putstr_fd("env: too many arguments\n", STDERR_FILENO);
+		if (anoption(args[1]))
+		{
+			ft_putstr_fd("env: invalid option\n", STDERR_FILENO);
+			if (size != 1)
+				safe_exit(125);
+			setexit(125, 0);
+			return ;
+		}
+		ft_putstr_fd("env: no such file or directory\n", STDERR_FILENO);
 		if (size != 1)
-			exit(1);
-		setexit(0, 0);
+			safe_exit(127);
+		setexit(127, 0);
 		return ;
 	}
 	env = mini->env;
 	ft_envhelp(size, env, mini);
-	if (mini->commandline->infd != STDIN_FILENO)
-		close(mini->commandline->infd);
-	if (mini->commandline->outfd != STDOUT_FILENO)
-		close(mini->commandline->outfd);
-	if (size > 1)
-		exit(0);
+	envhelp(size, mini);
 	return ;
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 16:11:20 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:04:21 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void	exporthelp5(t_commandline *command, t_builtin *export)
 	free(export->new->value);
 	export->new->value = NULL;
 	ft_envadd_back(&command->mini->env, export->new);
-	setexit(0, 0);
 }
 
 void	export(t_commandline *command)
@@ -102,5 +101,6 @@ void	export(t_commandline *command)
 		export.i++;
 	}
 	if (export.size > 1)
-		exit(0);
+		safe_exit(0);
+	setexit(0, 0);
 }

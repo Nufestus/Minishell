@@ -6,21 +6,11 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 15:57:34 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:44:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
-
-char	*handle(char *str, char *str1)
-{
-	if (str1 != NULL && str == NULL)
-		return (ft_strdup(str1));
-	else if (str != NULL && str1 == NULL)
-		return (ft_strdup(str));
-	else
-		return (NULL);
-}
 
 void	fillfirst(const char *s1, char *join, int i)
 {
@@ -35,14 +25,9 @@ void	fillfirst(const char *s1, char *join, int i)
 
 void	helpecho(int size, int optioncheck, char *res, t_commandline *command)
 {
-	int check;
+	int	check;
 
-	check = 0;
-	if (!res)
-	{
-		res = ft_strdup("");
-		check = 1;
-	}
+	checkset(res, &check);
 	if (size > 1)
 	{
 		if (optioncheck)
@@ -72,6 +57,12 @@ void	initechovars(int *i, int *optioncheck, int *finishedoptions, char **res)
 	*res = NULL;
 }
 
+void	safe_exit(int status)
+{
+	clear_history();
+	exit(status);
+}
+
 void	ft_echo(t_commandline *command)
 {
 	t_echo	echo;
@@ -83,7 +74,7 @@ void	ft_echo(t_commandline *command)
 	helpecho(echo.size, echo.optioncheck, echo.res, command);
 	free(echo.res);
 	if (echo.size > 1)
-		exit(0);
+		safe_exit(0);
 	setexit(0, 0);
 	return ;
 }

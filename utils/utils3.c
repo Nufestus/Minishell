@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/17 22:59:30 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:21:55 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:42:19 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**ft_strdupdouble(char *cmd, char **str)
 		i++;
 	res = malloc(sizeof(char *) * (i + 3));
 	if (!res)
-		exit(1);
+		return (NULL);
 	i = 0;
 	if (cmd)
 	{

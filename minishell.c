@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:43:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:17:59 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,9 @@ char	**create_default_env(void)
 
 	cwd = getcwd(NULL, 0);
 	newenv = malloc(sizeof(char *) * 4);
-	str = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 	if (!newenv)
-		return (NULL);
+		return (exit(1), NULL);
+	str = "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin";
 	newenv[0] = ft_strjoin("PWD=", cwd);
 	newenv[1] = ft_strdup("SHLVL=1");
 	newenv[2] = ft_strdup(str);
@@ -49,7 +49,7 @@ static void	add_env_node(t_minishell *mini, t_env_setup *setup, char *path_ref)
 	t_env	*node;
 
 	node = ft_envnew(setup->value, setup->var, setup->string);
-	if (!setup->value || !ft_strcmp(node->string, path_ref))
+	if (node && (!setup->value || !ft_strcmp(node->string, path_ref)))
 		node->isexported = 1;
 	ft_envadd_back(&mini->env, node);
 	free(setup->var);
@@ -66,7 +66,7 @@ static void	process_env_array(char **env_array, t_minishell *mini)
 	while (env_array[i])
 	{
 		parse_env_string(env_array[i], &setup);
-		add_env_node(mini, &setup, env_array[2]);
+		add_env_node(mini, &setup, env_array[i]);
 		i++;
 	}
 }

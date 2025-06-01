@@ -6,11 +6,17 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 19:10:04 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:52:19 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 19:59:23 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
+
+void	sigdfl(void)
+{
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
+}
 
 void	handleforkmiddle(t_commandline **command, pid_t pid, int size)
 {
@@ -26,8 +32,7 @@ void	handleforkmiddle(t_commandline **command, pid_t pid, int size)
 	}
 	else if (!pid)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		sigdfl();
 		clear_history();
 		handleiomiddle(command);
 		setup_io(command, size);
@@ -38,7 +43,7 @@ void	handleforkmiddle(t_commandline **command, pid_t pid, int size)
 		closeheredocs(cmd->file);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		exit(1);
+		safe_exit(1);
 	}
 }
 
@@ -56,8 +61,7 @@ void	handleforklast(t_commandline **command, pid_t pid, int size)
 	}
 	else if (!pid)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		sigdfl();
 		clear_history();
 		handleiolast(command);
 		setup_io(command, size);
@@ -68,6 +72,22 @@ void	handleforklast(t_commandline **command, pid_t pid, int size)
 		closeheredocs(cmd->file);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		exit(1);
+		safe_exit(1);
+	}
+}
+
+void	handlesig(t_setupchild *child)
+{
+	if (child->sig == SIGINT)
+	{
+		setexit(130, 0);
+		if (!child->copy->next)
+			child->skip = 1;
+	}
+	else if (child->sig == SIGQUIT)
+	{
+		setexit(131, 0);
+		if (!child->copy->next)
+			child->skip = 1;
 	}
 }

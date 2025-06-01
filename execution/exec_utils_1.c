@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:43:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 12:08:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:17:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	directoryerror(char *s)
 	write(2, s, ft_strlen(s));
 	write(2, ": Is a directory\n", 18);
 	free(s);
-	exit(126);
+	safe_exit(126);
 }
 
 char	*checkfile(t_commandline *command)
@@ -66,6 +66,8 @@ char	**constructenv(t_env *env)
 	copy = env;
 	size = ft_envsize(env);
 	res = malloc(sizeof(char *) * (size + 1));
+	if (!res)
+		return (exit(1), NULL);
 	while (i < size)
 	{
 		res[i] = ft_strdup(copy->string);
@@ -90,7 +92,7 @@ void	initializepipes(t_minishell *mini)
 		if (pipe(mini->pipes[i]) == -1)
 		{
 			perror("pipe");
-			exit(1);
+			safe_exit(1);
 		}
 		i++;
 	}

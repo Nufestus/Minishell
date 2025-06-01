@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:15:19 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 18:27:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:09:14 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,76 +75,23 @@ void	retokenize(t_minishell *mini)
 	int			next_is_file;
 	int			next_is_delim;
 
-	seen_cmd     = 0;
+	seen_cmd = 0;
 	next_is_file = 0;
 	next_is_delim = 0;
 	tok = mini->tokens;
 	while (tok)
 	{
-		/* 1) PIPE resets “have we seen a command?” */
-		if (tok->type == PIPE)
-		{
-			seen_cmd = 0;
-			tok = tok->next;
-			continue;
-		}
-
-		/* 2) If category ≠ 0 and not HEDOC, treat as redirection operator: */
-		else if (tok->category && tok->type != HEDOC)
-		{
-			/* classify the operator itself */
-			if (ft_strcmp(tok->str, ">") == 0)
-				tok->type = REDOUT;
-			else if (ft_strcmp(tok->str, ">>") == 0)
-				tok->type = APPEND;
-			else if (ft_strcmp(tok->str, "<") == 0)
-				tok->type = REDIN;
-			/* since we excluded HEDOC here, the only “<</<” that reaches this branch is "<" */
-			/* set next_is_file for single “>”, “>>”, or “<” */
-			next_is_file = 1;
-			tok = tok->next;
-			continue;
-		}
-
-		/* 3) If HEDOC token (“<<”), convert it to DEL and set next_is_delim */
-		else if (tok->type == HEDOC)
-		{
-			next_is_delim = 1;
-			tok = tok->next;
-			continue;
-		}
-
-		/* 4) If this is a WORD, decide among CMD / FILE / DEL / OPTION / ARG */
+		if (retokhelp(&seen_cmd, &next_is_file, &next_is_delim, &tok))
+			continue ;
 		else if (tok->type == WORD)
 		{
-			if (next_is_file)
-			{
-				tok->type = FILE;
-				next_is_file = 0;
-			}
-			else if (next_is_delim)
-			{
-				tok->type = DEL;
-				next_is_delim = 0;
-			}
-			else if (!seen_cmd)
-			{
-				tok->type = CMD;
-				seen_cmd = 1;
-			}
-			else if (isanoption(tok->str))
-				tok->type = OPTION;
-			else
-				tok->type = ARG;
-			tok = tok->next;
-			continue;
+			checkthenext(&seen_cmd, &next_is_delim, &next_is_file, &tok);
+			continue ;
 		}
-
-		/* 5) Anything else (e.g. already‐converted PIPE, or future special tokens) → skip */
 		else
 		{
 			tok = tok->next;
-			continue;
+			continue ;
 		}
 	}
 }

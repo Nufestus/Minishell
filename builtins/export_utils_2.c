@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils_2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/21 16:31:14 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/27 20:14:26 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:29:01 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ void	exporthelp(t_commandline *command, t_builtin *export)
 		printarray(array);
 		setexit(0, 0);
 		freedoublearray(array);
-		exit(0);
+		safe_exit(0);
 	}
 	else
 	{

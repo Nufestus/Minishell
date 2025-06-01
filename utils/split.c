@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:44:09 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 14:37:00 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:42:33 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ char	**split(char const *s, char *delims)
 	index = 0;
 	p = (char **) malloc((sizeof(char *)) * (k + 1));
 	if (!p)
-		exit(1);
+		return (NULL);
 	while (index < k)
 	{
 		while (is_delim(*s, delims))

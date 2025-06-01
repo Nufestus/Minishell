@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 13:32:45 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:00:06 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,7 @@ void	handleforksingle(t_commandline **command, pid_t pid, int size)
 	}
 	else if (!pid)
 	{
-		signal(SIGINT, SIG_DFL);
-		signal(SIGQUIT, SIG_DFL);
+		sigdfl();
 		clear_history();
 		handleiosingle(command);
 		setup_io(command, size);
@@ -38,7 +37,7 @@ void	handleforksingle(t_commandline **command, pid_t pid, int size)
 		closeheredocs(cmd->file);
 		freedoubleint(mini);
 		freelistcommandline(mini->commandline);
-		exit(1);
+		safe_exit(1);
 	}
 }
 
@@ -95,18 +94,7 @@ void	setupchilds(t_minishell *mini, int size)
 			if (WIFSIGNALED(child.status))
 			{
 				child.sig = WTERMSIG(child.status);
-				if (child.sig == SIGINT)
-				{
-					setexit(130, 0);
-					if (!child.copy->next)
-						child.skip = 1;
-				}
-				else if (child.sig == SIGQUIT)
-				{
-					setexit(131, 0);
-					if (!child.copy->next)
-						child.skip = 1;
-				}
+				handlesig(&child);
 			}
 		}
 		child.copy = child.copy->next;

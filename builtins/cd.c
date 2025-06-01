@@ -5,123 +5,101 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:25:32 by rammisse         ###   ########.fr       */
+/*   Created: 2025/06/01 18:22:22 by rammisse          #+#    #+#             */
+/*   Updated: 2025/06/01 20:02:17 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void	ft_setenv(char *envname, char *newvalue, t_minishell *mini)
+int	change_dir(char *dir, int size)
 {
-	t_env	*env;
-	char	*fullstring;
-	char	*copy;
-
-	env = mini->env;
-	while (env)
+	if (chdir(dir) == -1)
 	{
-		if (!ft_strcmp(env->variable, envname))
-		{
-			if (env->value)
-				free(env->value);
-			env->value = ft_strdup(newvalue);
-			fullstring = ft_strjoin(env->variable, "=");
-			copy = fullstring;
-			fullstring = ft_strjoin(fullstring, env->value);
-			free(copy);
-			free(env->string);
-			env->string = ft_strdup(fullstring);
-			free(fullstring);
-			return ;
-		}
-		env = env->next;
+		perror(dir);
+		if (size != 1)
+			safe_exit(1);
+		setexit(1, 0);
+		return (1);
 	}
+	return (0);
 }
 
-void	ft_cdhelp6(int size, char *pwd, char *oldcwd)
+int	handle_error(t_commandline *command, int size)
 {
-	free(oldcwd);
-	free(pwd);
-	if (size != 1)
-		exit(0);
+	if (!command->args[1])
+	{
+		write(2, "cd: invalid arguments\n", 23);
+		if (size > 1)
+			safe_exit(1);
+		return (setexit(1, 0), 1);
+	}
+	else if (command->args[1] && command->args[1][0] == '\0'
+		&& command->argcount == 1)
+	{
+		if (size > 1)
+			safe_exit(0);
+		return (setexit(0, 0), 1);
+	}
+	else if (command->argcount > 1)
+	{
+		write(2, "cd: too many arguments\n", 24);
+		if (size > 1)
+			safe_exit(1);
+		return (setexit(1, 0), 1);
+	}
+	return (0);
+}
+
+void	go_to_root(int size)
+{
+	if (chdir("/") == -1)
+	{
+		perror("/");
+		if (size != 1)
+			safe_exit(1);
+		setexit(1, 0);
+		return ;
+	}
 	return ;
 }
 
-void	add_to_env(char *str, char *s, t_minishell *mini)
+int	cd_init(t_commandline *command, int size, char **oldpwd, t_minishell *mini)
 {
-	char	*copy;
-	char	*full;
-	char	*string;
-	t_env	*new;
-
-	string = ft_getenv(str, mini);
-	if (!string)
-	{
-		full = ft_strjoin(str, "=");
-		copy = full;
-		full = ft_strjoin(full, s);
-		free(copy);
-		new = ft_envnew(s, str, full);
-		ft_envadd_back(&mini->env, new);
-		free(full);
-	}
-	else
-		ft_setenv(str, s, mini);
+	if (handle_error(command, size))
+		return (1);
+	if (my_getenv(mini, "PWD"))
+		*oldpwd = ft_strdup(my_getenv(mini, "PWD"));
+	if (change_dir(command->args[1], size))
+		return (free(*oldpwd), 1);
+	return (0);
 }
 
-int	ft_cdhelper(int size, char *oldcwd, t_minishell *mini, char *pwd)
+int	ft_cd(t_commandline *command)
 {
-	if (!ft_cdhelp5(pwd, size, oldcwd))
-		return (0);
-	add_to_env("PWD", pwd, mini);
-	add_to_env("OLDPWD", oldcwd, mini);
-	ft_cdhelp6(size, pwd, oldcwd);
-	setexit(0, 0);
-	return (1);
-}
+	int			size;
+	char		*pwd;
+	char		*oldpwd;
+	t_minishell	*mini;
 
-void	ft_cd(t_commandline *commandline)
-{
-	int				size;
-	t_minishell		*mini;
-	char			*oldcwd;
-	char			*pwd;
-
-	size = ft_commandsize(commandline->mini->commandline);
-	mini = commandline->mini;
-	if (commandline->args[1] && anoption(commandline->args[1]))
-	{
-		write(2, "cd: invalid option\n", 20);
-		if (size > 1)
-			exit(2);
-		setexit(2, 0);
-		return ;
-	}
-	if (commandline->args[1] && commandline->args[1][0] == '\0'
-		&& commandline->argcount == 1)
-	{
-		if (size > 1)
-			exit(0);
-		return ;
-	}
-	oldcwd = getcwd(0, 0);
+	mini = command->mini;
 	pwd = NULL;
-	if (!ft_cdhelp(oldcwd, size, commandline, mini))
-		return ;
-	if (!ft_cdhelp2(size, commandline, oldcwd))
-		return ;
-	if (commandline->args[1])
-		pwd = ft_strdup(commandline->args[1]);
-	if (!hel(&pwd, mini, size, oldcwd))
-		return ;
-	if (!ft_cdhelp4(pwd, size, oldcwd))
-		return ;
-	free(pwd);
+	oldpwd = NULL;
+	size = ft_commandsize(mini->commandline);
+	if (cd_init(command, size, &oldpwd, mini))
+		return (1);
 	pwd = getcwd(0, 0);
-	if (!ft_cdhelper(size, oldcwd, mini, pwd))
-		return ;
+	if (!pwd && oldpwd)
+		handle_dir_error(command->args[1], oldpwd, mini);
+	else if (pwd)
+		ft_setenv("PWD", pwd, mini);
+	else if (!pwd && !oldpwd)
+		return (go_to_root(size), 0);
+	if (pwd)
+		free(pwd);
+	if (oldpwd)
+		free(oldpwd);
 	if (size > 1)
-		exit(0);
-	return ;
+		safe_exit(0);
+	return (setexit(0, 0), 0);
 }

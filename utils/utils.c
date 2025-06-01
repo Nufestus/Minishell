@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 17:28:40 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 16:41:48 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ char	*ft_strdup(char *s1)
 	str = (char *)s1;
 	copy = (char *) malloc(strlen(str) + 1);
 	if (copy == NULL)
-		exit(1);
+		return (NULL);
 	while (s1[i] != '\0')
 	{
 		copy[i] = str[i];

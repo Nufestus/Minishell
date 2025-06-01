@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 16:38:31 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:11:42 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -276,9 +276,12 @@ int				ft_find(char *str, char *del);
 int				setexit(int exitstatus, int flag);
 int				ft_isalnumm(int c);
 int				handle_variable_expansion(char *str, int *i, t_minishell *mini);
+int				ft_cd(t_commandline *command);
 int				handle_dollar_sign(char *str, int *i, t_minishell *mini);
 int				varlen(char *str, t_minishell *mini);
 int				ft_isdigit(int c);
+int				retokhelp(int *seen_cmd, int *next_is_file,
+					int *next_is_delim, t_tokenize **tok);
 int				quoted(char *str);
 int				anoption(char *str);
 int				expandhelp(t_expanding *expand, char *str,
@@ -298,8 +301,6 @@ int				addfile(t_tokenize *token, t_commandline *commandline);
 int				count_len(int n);
 int				in_set(char c, char *set);
 int				removequoteshelp(int *flag, t_parse *parse, char *str);
-int				ft_cdhelp4(char *targetdir, int size, char *oldcwd);
-int				ft_cdhelp5(char *pwd, int size, char *oldcwd);
 int				handlefiles(t_tokenize *token, t_commandline *command);
 int				setupcommandline(t_minishell *mini);
 int				exportsorted(t_commandline *command);
@@ -316,6 +317,7 @@ char			*getvar(char *str);
 char			*getstring(char *str);
 char			*checkfile(t_commandline *command);
 char			**constructenv(t_env *env);
+char			*handle(char *str, char *str1);
 char			*my_getenv(t_minishell *mini, char *str);
 char			**tosortarray(t_commandline *command);
 char			**sortarray(char **str);
@@ -337,7 +339,6 @@ void			directory_free(t_commandline *command);
 void			echo_loop(t_commandline *command, t_echo *echo);
 void			ft_setenv(char *envname, char *newvalue, t_minishell *mini);
 void			ft_cdhelp6(int size, char *pwd, char *oldcwd);
-void			ft_cd(t_commandline *commandline);
 void			fillfirst(const char *s1, char *join, int i);
 void			helpecho(int size, int optioncheck,
 					char *res, t_commandline *command);
@@ -357,18 +358,22 @@ void			exporthelp4(t_commandline *command, t_builtin *export);
 void			exportstatements(t_commandline *command, t_builtin *export);
 void			export(t_commandline *command);
 void			freeunset(t_env *curr);
+void			checkset(char *res, int *check);
 void			lstremoveif(t_env **env, char *value);
 void			unset(t_commandline *commandline);
 void			directoryerror(char *s);
 void			initializepipes(t_minishell *mini);
 void			printerror(char *str);
 void			error(char *str);
+void			checkthenext(int *seen_cmd, int *next_is_delim,
+					int *next_is_file, t_tokenize **tok);
 void			handlepoint(t_commandline *command);
 void			handlebuiltins(t_commandline **command);
 void			closeallfiles(t_minishell *mini);
 void			handleiolast(t_commandline **command);
 void			setuplastcommand(t_commandline ***command);
 void			handleiomiddle(t_commandline **command);
+void			envhelp(int size, t_minishell *mini);
 void			setupmiddlecommand(t_commandline ***command);
 void			handleiosingle(t_commandline **command);
 void			setup_io(t_commandline **command, int size);
@@ -380,11 +385,15 @@ void			childlabor(t_commandline **command);
 void			closeallpipes(t_minishell *mini, int size);
 void			setupchilds(t_minishell *mini, int size);
 void			freestr(char **str);
+void			add_to_env(char *str, char *s, t_minishell *mini);
 void			startpipex(t_minishell *mini);
 void			execute(t_minishell *mini);
+void			handle_dir_error(char *arg, char *oldpwd, t_minishell *mini);
+void			safe_exit(int status);
+void			handlesig(t_setupchild *child);
 void			signalhandle(int sig);
-void			quithandle(int sig);
 void			callallsignals(void);
+void			sigdfl(void);
 void			normalhande(int sig);
 void			quotedhelper(char quote, char *str, int *i, int *len);
 void			initilizeexpand(t_minishell *mini,
@@ -423,6 +432,7 @@ void			getinputhelp1(int delflag, char **line,
 void			getinputhelp2(int *fd, t_minishell **mini, char *line);
 void			handlesuchfile(char *str, t_commandline *command);
 void			readinput(t_minishell *mini);
+void			free_exit(t_minishell *mini, int stat);
 void			ft_reparsehelp2(t_reparse *reparse,
 					char **s, t_minishell *mini);
 void			ft_reparse(int *check, char *str, t_minishell *mini);

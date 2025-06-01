@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   strjoin.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 08:29:12 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:16:45 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,14 @@ void	handlepoint(t_commandline *command)
 		write(2, ".: usage: . filename [arguments]\n", 34);
 		freedoubleint(command->mini);
 		freelistcommandline(command->mini->commandline);
-		exit(2);
+		safe_exit(2);
 	}
 	else if (!ft_strcmp(command->args[0], ".."))
 	{
 		write(2, "..: command not found\n", 23);
 		freedoubleint(command->mini);
 		freelistcommandline(command->mini->commandline);
-		exit(127);
+		safe_exit(127);
 	}
 }
 

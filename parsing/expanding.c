@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 20:22:50 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:24:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:00:55 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ char	*expand(int *check, char *str, t_minishell *mini)
 
 	initilizeexpand(mini, str, &expand);
 	if (!expand.expanded)
-		exit (1);
+		return (NULL);
 	while (str[expand.i])
 	{
 		if (expandhelp2(&expand, str, check) == 1)
@@ -96,7 +96,7 @@ char	*expandinheredoc(int *check, char *str, t_minishell *mini)
 
 	initilizeexpand(mini, str, &expand);
 	if (!expand.expanded)
-		exit (1);
+		return (NULL);
 	while (str[expand.i])
 	{
 		if (str[expand.i] == '$' && str[expand.i + 1])
