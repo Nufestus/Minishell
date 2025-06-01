@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 20:11:42 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:35:17 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -394,6 +394,7 @@ void			handlesig(t_setupchild *child);
 void			signalhandle(int sig);
 void			callallsignals(void);
 void			sigdfl(void);
+void			setpwds(char *pwd, char *oldpwd, t_minishell *mini);
 void			normalhande(int sig);
 void			quotedhelper(char quote, char *str, int *i, int *len);
 void			initilizeexpand(t_minishell *mini,

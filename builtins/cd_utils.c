@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 19:46:51 by rammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 19:48:01 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:35:36 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,12 @@ void	handle_dir_error(char *arg, char *oldpwd, t_minishell *mini)
 	newpwd = ft_strjoin(newpwd, arg);
 	free(copy);
 	add_to_env("PWD", newpwd, mini);
+	add_to_env("OLDPWD", oldpwd, mini);
 	free(newpwd);
+}
+
+void	setpwds(char *pwd, char *oldpwd, t_minishell *mini)
+{
+	ft_setenv("PWD", pwd, mini);
+	ft_setenv("OLDPWD", oldpwd, mini);
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 18:22:22 by rammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 20:02:17 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:35:23 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,8 +91,8 @@ int	ft_cd(t_commandline *command)
 	pwd = getcwd(0, 0);
 	if (!pwd && oldpwd)
 		handle_dir_error(command->args[1], oldpwd, mini);
-	else if (pwd)
-		ft_setenv("PWD", pwd, mini);
+	else if (pwd && oldpwd)
+		setpwds(pwd, oldpwd, mini);
 	else if (!pwd && !oldpwd)
 		return (go_to_root(size), 0);
 	if (pwd)

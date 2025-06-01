@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 19:46:11 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 20:33:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,18 +58,18 @@ void	ft_pwd(t_minishell *mini, t_commandline *command)
 	{
 		write(2, "pwd: invalid option\n", 21);
 		if (size != 1)
-			safe_exit(2);
+			exit(2);
 		setexit(2, 0);
 		return ;
 	}
 	path = getcwd(NULL, 0);
-	if (!path && mini->pwd)
-		path = ft_strdup(mini->pwd);
+	if (!path)
+		path = ft_strdup(my_getenv(mini, "PWD"));
 	ft_pwdhelp(size, path, mini);
 	if (path)
 		free(path);
 	if (size != 1)
-		safe_exit(0);
+		exit(0);
 	setexit(0, 0);
 }
 
