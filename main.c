@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/24 21:05:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:24:54 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:15:58 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,12 +39,15 @@ int	main(int ac, char **av, char **env)
 {
 	t_minishell	mini;
 
-	(void)ac;
-	(void)av;
+	if (ac > 1)
+	{
+		printf("%s: no such file or directory\n", av[1]);
+		exit(127);
+	}
 	initializemini(&mini);
 	callallsignals();
 	if (!isatty(0))
-		return (0);
+		exit(1);
 	setupenv(env, &mini);
 	readinput(&mini);
 	freelistenv(mini.env);

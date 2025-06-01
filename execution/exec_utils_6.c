@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/28 19:10:04 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 14:52:08 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 17:52:19 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	handleforkmiddle(t_commandline **command, pid_t pid, int size)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		clear_history();
 		handleiomiddle(command);
 		setup_io(command, size);
 		error_check(cmd);
@@ -57,6 +58,7 @@ void	handleforklast(t_commandline **command, pid_t pid, int size)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		clear_history();
 		handleiolast(command);
 		setup_io(command, size);
 		error_check(cmd);

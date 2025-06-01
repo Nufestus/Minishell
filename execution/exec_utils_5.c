@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:46:10 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:23:58 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 13:32:45 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,7 @@ void	handleforksingle(t_commandline **command, pid_t pid, int size)
 	{
 		signal(SIGINT, SIG_DFL);
 		signal(SIGQUIT, SIG_DFL);
+		clear_history();
 		handleiosingle(command);
 		setup_io(command, size);
 		error_check(cmd);
@@ -97,6 +98,12 @@ void	setupchilds(t_minishell *mini, int size)
 				if (child.sig == SIGINT)
 				{
 					setexit(130, 0);
+					if (!child.copy->next)
+						child.skip = 1;
+				}
+				else if (child.sig == SIGQUIT)
+				{
+					setexit(131, 0);
 					if (!child.copy->next)
 						child.skip = 1;
 				}

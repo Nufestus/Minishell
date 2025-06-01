@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/14 12:50:52 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:30:21 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 17:48:12 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,8 @@ int	isnotnum(char *str)
 	int	i;
 
 	i = 0;
+	if (str[i] == '-' || str[i] == '+')
+		i++;
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
@@ -84,6 +86,7 @@ void	ft_exit(t_commandline *command)
 
 	size = ft_commandsize(command->mini->commandline);
 	flag = 0;
+	status = setexit(0, 1);
 	if (size == 1)
 		printf("exit\n");
 	if (!exithelp2(command))
@@ -101,6 +104,5 @@ void	ft_exit(t_commandline *command)
 	}
 	freelistenv(command->mini->env);
 	freelistcommandline(command->mini->commandline);
-	status = setexit(0, 1);
 	exit(status);
 }

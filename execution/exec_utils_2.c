@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_utils_2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:44:19 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/28 11:40:06 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:22:08 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	handlebuiltins(t_commandline **command)
 		if (!ft_strcmp((*command)->cmd, "env"))
 			ft_env((*command)->mini, (*command)->args);
 		else if (!ft_strcmp((*command)->cmd, "pwd"))
-			ft_pwd((*command)->mini);
+			ft_pwd((*command)->mini, *command);
 		else if (!ft_strcmp((*command)->cmd, "cd"))
 			ft_cd((*command));
 		else if (!ft_strcmp((*command)->cmd, "echo"))

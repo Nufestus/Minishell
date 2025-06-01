@@ -6,7 +6,7 @@
 #    By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/02/21 12:25:14 by aammisse          #+#    #+#              #
-#    Updated: 2025/05/29 18:15:11 by rammisse         ###   ########.fr        #
+#    Updated: 2025/05/31 15:40:04 by rammisse         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -15,7 +15,7 @@ NAME = minishell
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 
 SRCS = minishell.c parsing/readinput.c utils/utils.c builtins/export.c \
 		parsing/tokenize.c utils/strjoin.c utils/split.c parsing/parsing.c \

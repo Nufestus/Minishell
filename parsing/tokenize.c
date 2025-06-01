@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:28:56 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 15:18:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 			handlenodes(1, s[reparse->k++], reparse->j++, mini);
 		freedoublearray(s);
 	}
-	if (reparse->flag == 2 || reparse->flag == 3)
+	else if (reparse->flag == 2 || reparse->flag == 3)
 		handlenodes(reparse->flag, reparse->token, reparse->j++, mini);
 	else
 		handlenodes(0, reparse->token, reparse->j++, mini);

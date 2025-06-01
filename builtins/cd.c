@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 22:52:01 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/27 19:52:08 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 17:25:32 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,6 +90,21 @@ void	ft_cd(t_commandline *commandline)
 
 	size = ft_commandsize(commandline->mini->commandline);
 	mini = commandline->mini;
+	if (commandline->args[1] && anoption(commandline->args[1]))
+	{
+		write(2, "cd: invalid option\n", 20);
+		if (size > 1)
+			exit(2);
+		setexit(2, 0);
+		return ;
+	}
+	if (commandline->args[1] && commandline->args[1][0] == '\0'
+		&& commandline->argcount == 1)
+	{
+		if (size > 1)
+			exit(0);
+		return ;
+	}
 	oldcwd = getcwd(0, 0);
 	pwd = NULL;
 	if (!ft_cdhelp(oldcwd, size, commandline, mini))
@@ -106,5 +121,7 @@ void	ft_cd(t_commandline *commandline)
 	pwd = getcwd(0, 0);
 	if (!ft_cdhelper(size, oldcwd, mini, pwd))
 		return ;
+	if (size > 1)
+		exit(0);
 	return ;
 }

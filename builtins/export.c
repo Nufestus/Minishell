@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/28 17:03:09 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/25 18:30:57 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:11:20 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,7 @@ void	export(t_commandline *command)
 	export.i = 1;
 	export.size = ft_commandsize(command->mini->commandline);
 	export.str = command->args;
-	if (!export.str[1])
+	if (!export.str[1] || !export.str[1][0])
 	{
 		exporthelp(command, &export);
 		return ;

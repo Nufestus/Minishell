@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/25 14:48:34 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 12:13:12 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 17:28:40 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,8 +39,6 @@ void	freedoublearray(char **str)
 	int	i;
 
 	i = 0;
-	if (!str)
-		return ;
 	while (str[i])
 	{
 		free(str[i]);

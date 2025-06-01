@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:28:30 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:38:31 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -280,6 +280,7 @@ int				handle_dollar_sign(char *str, int *i, t_minishell *mini);
 int				varlen(char *str, t_minishell *mini);
 int				ft_isdigit(int c);
 int				quoted(char *str);
+int				anoption(char *str);
 int				expandhelp(t_expanding *expand, char *str,
 					int *check, t_minishell *mini);
 int				expandhelp2(t_expanding *expand, char *str, int *check);
@@ -345,7 +346,7 @@ void			initechovars(int *i, int *optioncheck,
 void			ft_echo(t_commandline *command);
 void			ft_putstr_fd(char *s, int fd);
 void			ft_pwdhelp(int size, char *path, t_minishell *mini);
-void			ft_pwd(t_minishell *mini);
+void			ft_pwd(t_minishell *mini, t_commandline *command);
 void			ft_envhelp(int size, t_env *env, t_minishell *mini);
 void			ft_env(t_minishell *mini, char **args);
 void			ft_exit(t_commandline *command);

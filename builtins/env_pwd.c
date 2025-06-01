@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_pwd.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/27 19:02:28 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/27 00:49:01 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/05/31 16:41:49 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,34 @@ void	ft_pwdhelp(int size, char *path, t_minishell *mini)
 	}
 }
 
-void	ft_pwd(t_minishell *mini)
+int anoption(char *str)
+{
+	int i;
+
+	i = 0;
+	if (str[i] == '-')
+	{
+		i++;
+		if (str[i])
+			return (1);
+	}
+	return (0);
+}
+
+void	ft_pwd(t_minishell *mini, t_commandline *command)
 {
 	char	*path;
 	int		size;
 
 	path = NULL;
 	size = ft_commandsize(mini->commandline);
+	if (command->args[1] && anoption(command->args[1]))
+	{
+		write(2, "pwd: invalid option\n", 21);
+		if (size != 1)
+			exit(2);
+		return ;
+	}
 	path = getcwd(NULL, 0);
 	if (!path && mini->pwd)
 		path = ft_strdup(mini->pwd);
