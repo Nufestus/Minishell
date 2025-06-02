@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 20:35:17 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:03:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -390,6 +390,7 @@ void			startpipex(t_minishell *mini);
 void			execute(t_minishell *mini);
 void			handle_dir_error(char *arg, char *oldpwd, t_minishell *mini);
 void			safe_exit(int status);
+void			avoidleak(t_reparse *reparse);
 void			handlesig(t_setupchild *child);
 void			signalhandle(int sig);
 void			callallsignals(void);
@@ -433,10 +434,9 @@ void			getinputhelp1(int delflag, char **line,
 void			getinputhelp2(int *fd, t_minishell **mini, char *line);
 void			handlesuchfile(char *str, t_commandline *command);
 void			readinput(t_minishell *mini);
-void			free_exit(t_minishell *mini, int stat);
 void			ft_reparsehelp2(t_reparse *reparse,
 					char **s, t_minishell *mini);
-void			ft_reparse(int *check, char *str, t_minishell *mini);
+int				ft_reparse(int *check, char *str, t_minishell *mini);
 void			ft_lstadd_back(t_tokenize **lst, t_tokenize *new);
 void			closeheredocs(t_files *files);
 void			closeallheredocs(t_minishell *mini);

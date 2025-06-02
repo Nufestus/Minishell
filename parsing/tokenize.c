@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/05/31 15:18:32 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:04:30 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,7 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 		handlenodes(reparse->flag, reparse->token, reparse->j++, mini);
 	else
 		handlenodes(0, reparse->token, reparse->j++, mini);
-	if (reparse->prev)
-		free(reparse->prev);
+	avoidleak(reparse);
 	if (mini->flag)
 	{
 		last = ft_lstlast(mini->tokens);
@@ -85,7 +84,7 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 	free(reparse->token);
 }
 
-void	ft_reparse(int *check, char *str, t_minishell *mini)
+int	ft_reparse(int *check, char *str, t_minishell *mini)
 {
 	t_reparse	reparse;
 
@@ -102,15 +101,15 @@ void	ft_reparse(int *check, char *str, t_minishell *mini)
 			break ;
 		reparse.token = malloc(reparse.z + 1);
 		if (!reparse.token)
-			return ;
+			return (avoidleak(&reparse), 0);
 		reparse.k = 0;
 		if (!ft_reparsehelp(&reparse, str, check))
-			return ;
+			return (avoidleak(&reparse), 0);
 		if (ft_reparsehelp1(&reparse, mini) == 2)
 			continue ;
 		ft_reparsehelp2(&reparse, reparse.s, mini);
 	}
-	free(reparse.prev);
+	return (avoidleak(&reparse), 0);
 }
 
 int	tokenize(t_minishell *mini)

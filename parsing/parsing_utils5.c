@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:56:50 by rammisse          #+#    #+#             */
-/*   Updated: 2025/05/29 18:28:48 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:04:35 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,4 +78,13 @@ void	initreparse(t_reparse *reparse, char *str)
 	reparse->copy = str;
 	reparse->prev = NULL;
 	reparse->s = NULL;
+}
+
+void	avoidleak(t_reparse *reparse)
+{
+	if (reparse->prev)
+	{
+		free(reparse->prev);
+		reparse->prev = NULL;
+	}
 }

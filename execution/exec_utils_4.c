@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:45:35 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 19:55:49 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:04:04 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,9 @@ void	setup_io(t_commandline **command, int size)
 
 void	error_check(t_commandline *command)
 {
-	if (!ft_strcmp(command->args[0], ".") || !ft_strcmp(command->args[0], ".."))
+	if (!ft_strcmp(command->args[0], ".")
+		|| (!ft_strncmp(command->args[0], "..", 2)
+			&& !ft_strchr(command->args[0], '/')))
 		handlepoint(command);
 	if (!ft_find(command->args[0], "/") && !ft_find(command->args[0], ".")
 		&& !checkcommand(command->cmd))

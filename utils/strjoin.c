@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 18:16:45 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:03:38 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,8 @@ void	handlepoint(t_commandline *command)
 		freelistcommandline(command->mini->commandline);
 		safe_exit(2);
 	}
-	else if (!ft_strcmp(command->args[0], ".."))
+	else if (!ft_strncmp(command->args[0], "..", 2)
+		&& !ft_strchr(command->args[0], '/'))
 	{
 		write(2, "..: command not found\n", 23);
 		freedoubleint(command->mini);
