@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 19:42:18 by rammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 19:46:40 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:21:13 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,12 +22,12 @@ char	*handle(char *str, char *str1)
 		return (NULL);
 }
 
-void	checkset(char *res, int *check)
+void	checkset(char **res, int *check)
 {
 	*check = 0;
-	if (!res)
+	if (!*res)
 	{
-		res = ft_strdup("");
+		*res = ft_strdup("");
 		*check = 1;
 	}
 }

@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/23 17:15:19 by rammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 20:09:14 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:20:18 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ int	isanoption(char *str)
 	if (str[i] == '-')
 	{
 		i++;
-		while (str[i] && ft_isalpha(str[i]))
+		while (str[i] && str[i] == 'n')
 			i++;
 	}
 	if (str[i] == '\0' && i != 1 && i != 0)

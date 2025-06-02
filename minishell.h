@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:41 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/02 11:03:13 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:21:35 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@
 # include <unistd.h>
 # include <stdio.h>
 # include <stdlib.h>
-# include <errno.h>
 # include <sys/ioctl.h>
 # include <fcntl.h>
 # include <limits.h>
@@ -358,7 +357,7 @@ void			exporthelp4(t_commandline *command, t_builtin *export);
 void			exportstatements(t_commandline *command, t_builtin *export);
 void			export(t_commandline *command);
 void			freeunset(t_env *curr);
-void			checkset(char *res, int *check);
+void			checkset(char **res, int *check);
 void			lstremoveif(t_env **env, char *value);
 void			unset(t_commandline *commandline);
 void			directoryerror(char *s);

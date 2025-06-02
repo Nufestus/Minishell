@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/06/01 18:22:22 by rammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 20:35:23 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:26:12 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,13 @@
 
 int	change_dir(char *dir, int size)
 {
+	if (anoption(dir))
+	{
+		write(2, "cd: invalid option\n", 20);
+		if (size > 1)
+			safe_exit(2);
+		return (setexit(2, 0), 1);
+	}
 	if (chdir(dir) == -1)
 	{
 		perror(dir);

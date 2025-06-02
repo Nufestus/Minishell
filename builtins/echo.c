@@ -6,7 +6,7 @@
 /*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/05/01 19:16:02 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/01 19:44:14 by rammisse         ###   ########.fr       */
+/*   Updated: 2025/06/02 11:21:06 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	helpecho(int size, int optioncheck, char *res, t_commandline *command)
 {
 	int	check;
 
-	checkset(res, &check);
+	checkset(&res, &check);
 	if (size > 1)
 	{
 		if (optioncheck)
