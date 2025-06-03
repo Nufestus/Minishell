@@ -6,191 +6,130 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 21:05:02 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/03 13:53:55 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-void    setupnode(int index, int category, int type, char *str, t_tokenize **tokens)
+int	ft_reparsehelp(t_reparse *reparse, char *str, int *check)
 {
-    t_tokenize *newnode;
-
-    newnode = ft_lstnew(ft_lstlast(*tokens), type);
-    newnode->index = index;
-    newnode->str = ft_strdup(str);
-    newnode->category = category;
-    ft_lstadd_back(tokens, newnode);
-}
-
-void syntax(char *flag, t_minishell *mini)
-{
-    (void)mini;
-    if (flag)
-    {
-        flag = ft_strjoin("shell: syntax error near unexpected token ", flag);
-        printf("%s\n", flag);
-        free(flag);
-    }
-    freelisttokens(mini->tokens);
-    exit(0);
-}
-
-int parsepipe(t_tokenize *list)
-{
-    if (list->prev && list->prev->type != WORD)
-        return (0);
-    else if (list->next && list->next->type == PIPE)
-        return (0);
-    return (1);
-}
-
-int parseinput(t_tokenize *list)
-{
-    if (list->next && list->next->type != WORD)
-        return (0);
-    else if (!list->next)
-        return (0);
-    return (1);
-}
-
-int parseoutput(t_tokenize *list)
-{
-    if (list->prev && list->prev->type != WORD && list->prev->type != PIPE)
-        return (0);
-    else if (!list->next)
-        return (0);
-    return (1);
-}
-
-void tokenizewords(t_minishell *mini)
-{
-    t_tokenize *list;
-
-    list = mini->tokens;
-    while (list)
-    {
-        if (list->prev && list->prev->category && list->type == WORD && list->prev->type != HEDOC)
-            list->type = FILE;
-        else if (((!list->prev || list->prev->type == PIPE || list->prev->type == DEL)
-            || (list->prev && list->prev->type == FILE)) && list->type == WORD)
-            list->type = CMD;
-        else if (list->prev && list->prev->type == CMD && list->type == WORD)
-            list->type = ARG;
-        else if (list->prev && list->prev->type == HEDOC && list->type == WORD)
-            list->type = DEL;
-        list = list->next;
-    }
-}
-
-void tokenizesymbols(char **str, t_minishell *mini)
-{
-    int i;
-
-    i = 0;
-    while (str[i])
-    {
-        if (!ft_strcmp(str[i], "|"))
-            setupnode(i, 0, PIPE, str[i], &mini->tokens);
-        else if (!ft_strcmp(str[i], ">>"))
-            setupnode(i, 1, APPEND, str[i], &mini->tokens);
-        else if (!ft_strcmp(str[i], "<<"))
-            setupnode(i, 1, HEDOC, str[i], &mini->tokens);
-        else if (!ft_strcmp(str[i], ">"))
-            setupnode(i, 1, REDOUT, str[i], &mini->tokens);
-        else if (!ft_strcmp(str[i], "<"))
-            setupnode(i, 1, REDIN, str[i], &mini->tokens);
-        else if (!ft_strncmp(str[i], "-n", 2))
-            setupnode(i, 0, OPTION, str[i], &mini->tokens);
-        else
-            setupnode(i, 0, WORD, str[i], &mini->tokens);
-        i++;
-    }
-}
-
-char *handletypes(int i)
-{
-    if (i == WORD)
-        return ("WORD");
-    else if (i == OPTION)
-        return ("OPTION");
-    else if (i == CMD)
-        return ("CMD");
-    else if (i == REDOUT)
-        return ("REDOUT");
-    else if (i == REDIN)
-        return ("REDIN");
-    else if (i == APPEND)
-        return ("APPEND");
-    else if (i == HEDOC)
-        return ("HEDOC");
-    else if (i == PIPE)
-        return ("PIPE");
-    else if (i == FILE)
-        return ("FILE");
-    else if (i == ARG)
-        return ("ARG");
-    else if (i == DEL)
-        return ("DEL");
-    return ("NULL");
-}
-
-bool	is_token(char c)
-{
-	return (c == '<' || c == '>' || c == '|');
-}
-
-char	*fillspace(const char *input)
-{
-	int		i;
-	int		j;
-	char	*out;
-
-    j = 0;
-    i = 0;
-    out = malloc(strlen(input) * 3 + 1);
-	if (!out)
-		return NULL;
-	while (input[i])
-    {
-		if ((input[i] == '<' || input[i] == '>') && input[i + 1] == input[i])
-        {
-			if (j > 0 && out[j - 1] != ' ')
-				out[j++] = ' ';
-			out[j++] = input[i++];
-			out[j++] = input[i++];
-			if (input[i] && input[i] != ' ')
-				out[j++] = ' ';
-		}
-		else if (is_token(input[i]))
-        {
-			if (j > 0 && out[j - 1] != ' ')
-				out[j++] = ' ';
-			out[j++] = input[i++];
-			if (input[i] && input[i] != ' ')
-				out[j++] = ' ';
+	while (str[reparse->i] && !ft_strchr(" \t\n\r\v\f", str[reparse->i]))
+	{
+		if (str[reparse->i] == '"' || str[reparse->i] == '\'')
+		{
+			reparse->q = str[reparse->i];
+			reparse->token[reparse->k++] = str[reparse->i++];
+			while (str[reparse->i] && str[reparse->i] != reparse->q)
+				reparse->token[reparse->k++] = str[reparse->i++];
+			if (str[reparse->i] == reparse->q)
+				reparse->token[reparse->k++] = str[reparse->i++];
+			else if (str[reparse->i] != reparse->q)
+			{
+				*check = 1;
+				free(reparse->token);
+				free(str);
+				return (0);
+			}
 		}
 		else
-			out[j++] = input[i++];
+			reparse->token[reparse->k++] = str[reparse->i++];
 	}
-	out[j] = '\0';
-	return out;
+	reparse->token[reparse->k] = '\0';
+	return (1);
 }
 
-void tokenize(t_minishell *mini)
+int	ft_reparsehelp1(t_reparse *reparse, t_minishell *mini)
 {
-    int i;
-    char **str;
-    char *addspaces;
+	if (reparse->prev && !ft_strcmp(reparse->prev, "<<"))
+	{
+		reparse->string = reparse->token;
+		reparse->token = removequotes(&reparse->flag, reparse->token);
+		free(reparse->string);
+	}
+	else
+	{
+		reparse->string = reparse->token;
+		reparse->token = expand(&reparse->flag, reparse->token, mini);
+		free(reparse->string);
+	}
+	if (reparse->flag == 1 && mini->expanded && reparse->token[0] == '\0')
+		mini->flag = 1;
+	return (0);
+}
 
-    i = 0;
-    mini->tokens = NULL;
-    addspaces = fillspace(mini->input);
-    str = ft_split(addspaces, " \t\n\r\v\f");
-    if (str == NULL)
-        syntax("'quotes'", mini);
-    tokenizesymbols(str, mini);
-    tokenizewords(mini);
-    freedoublearray(str);
-    free(addspaces);
+void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
+{
+	t_tokenize	*last;
+
+	printf("flag %d for '%s'\n", reparse->flag, reparse->token);
+	if (reparse->flag == 1 && !mini->flag)
+	{
+		reparse->k = 0;
+		s = split(reparse->token, " \t\n\r\v\f");
+		while (s[reparse->k])
+			handlenodes(1, s[reparse->k++], reparse->j++, mini);
+		freedoublearray(s);
+	}
+	else if (reparse->flag == 2 || reparse->flag == 3)
+		handlenodes(reparse->flag, reparse->token, reparse->j++, mini);
+	else
+		handlenodes(0, reparse->token, reparse->j++, mini);
+	avoidleak(reparse);
+	if (mini->flag)
+	{
+		last = ft_lstlast(mini->tokens);
+		last->flag = 1;
+	}
+	reparse->prev = ft_strdup(reparse->token);
+	free(reparse->token);
+}
+
+int	ft_reparse(int *check, char *str, t_minishell *mini)
+{
+	t_reparse	reparse;
+
+	initreparse(&reparse, str);
+	while (str[reparse.i])
+	{
+		mini->flag = 0;
+		reparse.flag = 0;
+		mini->expanded = 0;
+		reparse.z = countword(&reparse.copy);
+		while (str[reparse.i] && ft_strchr(" \t\n\r\v\f", str[reparse.i]))
+			reparse.i++;
+		if (!str[reparse.i])
+			break ;
+		reparse.token = malloc(reparse.z + 1);
+		if (!reparse.token)
+			return (avoidleak(&reparse), 0);
+		reparse.k = 0;
+		if (!ft_reparsehelp(&reparse, str, check))
+			return (avoidleak(&reparse), 0);
+		if (ft_reparsehelp1(&reparse, mini) == 2)
+			continue ;
+		ft_reparsehelp2(&reparse, reparse.s, mini);
+	}
+	return (avoidleak(&reparse), 0);
+}
+
+int	tokenize(t_minishell *mini)
+{
+	int		check;
+	char	*addspaces;
+
+	check = 0;
+	mini->tokens = NULL;
+	addspaces = fillspace(mini->input);
+	if (addspaces == NULL)
+		return (-1);
+	ft_reparse(&check, addspaces, mini);
+	if (check == 1)
+	{
+		syntax(NULL, "'quotes'", 1);
+		return (-1);
+	}
+	retokenize(mini);
+	free(addspaces);
+	return (0);
 }

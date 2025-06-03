@@ -6,43 +6,34 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/03 19:18:25 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:31:16 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/03 12:25:34 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-static char	*handle(char *str, char *str1)
+void	handlepoint(t_commandline *command)
 {
-	char	*string;
-
-	if (str1 != NULL && str == NULL)
+	if (!ft_strncmp(command->args[0], ".", 1)
+		|| (!ft_strncmp(command->args[0], "..", 2)
+			&& !ft_strchr(command->args[0], '/')))
 	{
-		string = malloc(ft_strlen(str1) + 1);
-		if (!string)
-			return (NULL);
-		ft_strlcpy(string, str1, ft_strlen(str1) + 1);
-		return (string);
+		write(2, command->args[0], ft_strlen(command->args[0]));
+		write(2, ": command not found\n", 21);
+		freedoubleint(command->mini);
+		freelistcommandline(command->mini->commandline);
+		safe_exit(127);
 	}
-	else if (str != NULL && str1 == NULL)
-	{
-		string = malloc(ft_strlen(str) + 1);
-		if (!string)
-			return (NULL);
-		ft_strlcpy(string, str, ft_strlen(str) + 1);
-		return (string);
-	}
-	else
-		return (NULL);
 }
 
-static void	fillfirst(const char *s1, char *join, int i)
+void	ft_lstadd_back(t_tokenize **lst, t_tokenize *new)
 {
-	while (s1[i] != '\0')
-	{
-		join[i] = s1[i];
-		i++;
-	}
+	if (!lst || !new)
+		return ;
+	if (*lst)
+		ft_lstlast(*lst)->next = new;
+	else
+		*lst = new;
 }
 
 char	*ft_strjoin(const char *s1, const char *s2)

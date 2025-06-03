@@ -3,126 +3,121 @@
 /*                                                        :::      ::::::::   */
 /*   readinput.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
+/*   By: rammisse <rammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/21 16:06:43 by aammisse          #+#    #+#             */
-/*   Updated: 2025/04/19 22:55:53 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/01 18:12:26 by rammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../minishell.h"
 
-int	ft_isspace(char c)
+int	g_sig = 0;
+
+int	getinput(int delflag, char *del, t_minishell *mini)
 {
-	return (c == ' '  || c == '\t' 
-		|| c == '\n' || c == '\v' 
-		|| c == '\f' || c == '\r');
-}
+	int		fd[2];
+	char	*line;
+	char	*copy;
 
-int	countargs(char *args, char *option)
-{
-	int i;
-	int count;
-	int in_word;
-
-	if (!args || !option)
-		return (0);
-	i = 0;
-	count = 0;
-	in_word = 0;
-	while (args[i])
+	if (pipe(fd))
+		return (perror("pipe"), exit(1), 0);
+	signal(SIGINT, heredochandle);
+	while (1)
 	{
-		if (!ft_isspace(args[i]) && in_word == 0)
+		line = readline("> ");
+		if (g_sig == 130)
 		{
-			in_word = 1;
-			count++;
+			getinputhelp2(fd, &mini, line);
+			g_sig = 0;
+			return (-4);
 		}
-		else if (ft_isspace(args[i]))
-			in_word = 0;
-		i++;
-	}
-	i = 0;
-	while (option[i])
-	{
-		if (!ft_isspace(option[i]) && in_word == 0)
-		{
-			in_word = 1;
-			count++;
-		}
-		else if (ft_isspace(option[i]))
-			in_word = 0;
-		i++;
-	}
-	return (count + 1);
-}
-
-void	setupcommandline(t_minishell *mini)
-{
-	char *cmd;
-	int i;
-	char *arg;
-	char *option;
-	t_commandline *command;
-	t_commandline *copy;
-	t_tokenize *token;
-
-	token = mini->tokens;
-	command = NULL;
-	copy = NULL;
-	mini->commandline = NULL;
-	while(token)
-	{
-		cmd = NULL;
-		arg = NULL;
-		option = NULL;
-		if (token->type == PIPE)
-		{
-			token = token->next;
-			while (token && token->type != PIPE)
-			{
-				if (token->type == CMD)
-					cmd = token->str;
-				else if (token->type == ARG)
-					arg = token->str;
-				else if (token->type == OPTION)
-					option = token->str;
-				// add here the outfile / infile linked list handling
-				token = token->next;
-			}
-			command = ft_commandnew(cmd, option, arg, countargs(arg, option));
-			command->numargs = countargs(arg, option) + 1;
-			ft_commandadd_back(mini->commandline, command);
-		}
-		token = token->next;
-	}
-	if (mini->commandline)
-	{
-		copy = *(mini->commandline);
-		while(copy)
-		{
-			i = 0;
-			printf("Cmd: %s\nArgs: ", copy->cmd);
-			while(copy->args[i])
-				printf("%s , ", copy->args[i++]);
-			printf("\n Num of Args: %d\n", copy->numargs);
-			copy = copy->next;
-		}
-	}
-}
-
-void readinput(t_minishell *mini)
-{
-    while(1)
-	{
-		mini->input = readline(INPUT1 INPUT2);
-		if (!mini->input)
-		{
-			free(mini->input);
+		if (getinputhelp3(line, mini, del))
 			break ;
+		copy = line;
+		if (getinputhelp4(line, del))
+			break ;
+		getinputhelp1(delflag, &line, copy, mini);
+		getinputhelp(line, fd[1]);
+	}
+	return (callallsignals(), close(fd[1]), fd[0]);
+}
+
+int	readinputhelp(t_minishell **mini)
+{
+	if (!(*mini)->input)
+	{
+		free((*mini)->input);
+		printf("%s\n", "exit");
+		safe_exit(1);
+	}
+	if ((*mini)->input[0] == '\0')
+	{
+		free((*mini)->input);
+		return (1);
+	}
+	add_history((*mini)->input);
+	if (tokenize(*mini) == -1)
+	{
+		freelisttokens((*mini)->tokens);
+		(*mini)->tokens = NULL;
+		free((*mini)->input);
+		(*mini)->exitstatus = 2;
+		return (1);
+	}
+	return (0);
+}
+
+int	readinputhelp1(t_minishell **mini)
+{
+	if ((*mini)->check != 2)
+		parse(*mini);
+	else
+	{
+		free((*mini)->input);
+		freelisttokens((*mini)->tokens);
+		(*mini)->tokens = NULL;
+		return (closeallfiles(*mini), closeallheredocs(*mini), exit(1), 0);
+	}
+	reparse(*mini);
+	if ((*mini)->check == 1)
+	{
+		(*mini)->check = 0;
+		(*mini)->exitstatus = 2;
+		freelisttokens((*mini)->tokens);
+		return ((*mini)->tokens = NULL, free((*mini)->input), 1);
+	}
+	if (setupcommandline(*mini))
+	{
+		freelistcommandline((*mini)->commandline);
+		freelisttokens((*mini)->tokens);
+		return ((*mini)->tokens = NULL, free((*mini)->input), 1);
+	}
+	freelisttokens((*mini)->tokens);
+	return ((*mini)->tokens = NULL, 0);
+}
+
+void	readinput(t_minishell *mini)
+{
+	while (1)
+	{
+		callallsignals();
+		mini->input = readline(INPUT1);
+		if (g_sig == 130)
+		{
+			setexit(130, 0);
+			g_sig = 0;
 		}
-		add_history(mini->input);
-		tokenize(mini);
-		parse(mini);
-		setupcommandline(mini);
+		mini->linecount++;
+		if (readinputhelp(&mini))
+			continue ;
+		checkheredocs(mini);
+		if (readinputhelp1(&mini))
+			continue ;
+		openallfiles(mini);
+		execute(mini);
+		closeallheredocs(mini);
+		freedoubleint(mini);
+		freelistcommandline(mini->commandline);
 	}
 }
