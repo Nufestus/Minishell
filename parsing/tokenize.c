@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 20:04:21 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/03 13:53:55 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/03 14:19:00 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ void	ft_reparsehelp2(t_reparse *reparse, char **s, t_minishell *mini)
 {
 	t_tokenize	*last;
 
-	printf("flag %d for '%s'\n", reparse->flag, reparse->token);
 	if (reparse->flag == 1 && !mini->flag)
 	{
 		reparse->k = 0;
