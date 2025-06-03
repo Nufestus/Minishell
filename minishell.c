@@ -6,7 +6,7 @@
 /*   By: aammisse <aammisse@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/02/20 19:28:23 by aammisse          #+#    #+#             */
-/*   Updated: 2025/06/03 14:03:26 by aammisse         ###   ########.fr       */
+/*   Updated: 2025/06/03 19:54:38 by aammisse         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,11 @@ void	parse_env_string(char *env_str, t_env_setup *setup)
 	while (env_str[setup->len])
 		setup->len++;
 	setup->value = ft_substr(env_str, setup->start + 1, setup->len);
+	if (setup->value[0] == '\0')
+	{
+		free(setup->value);
+		setup->value = NULL;
+	}
 	setup->string = ft_strdup(env_str);
 }
 
@@ -71,9 +76,17 @@ void	process_env_array(char **env_array, t_minishell *mini)
 	while (env_array[i])
 	{
 		parse_env_string(env_array[i], &setup);
-		add_env_node(mini, &setup, env_array[i]);
-		check_for_essentials(ft_envlast(mini->env)->variable, &setup.pathcheck,
-			&setup.pwdcheck, &setup.shlvlcheck);
+		if (setup.value)
+		{
+			add_env_node(mini, &setup, env_array[i]);
+			check_for_essentials(ft_envlast(mini->env)->variable,
+				&setup.pathcheck, &setup.pwdcheck, &setup.shlvlcheck);
+		}
+		else
+		{
+			free(setup.var);
+			free(setup.string);
+		}
 		i++;
 	}
 	add_essentials(mini, &setup);
