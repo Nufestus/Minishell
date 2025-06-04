@@ -43,6 +43,7 @@ cd minishell
 make
 ./minishell
 ```
+---
 
 ## 🔍 What Makes This Shell Unique
 
