@@ -35,6 +35,15 @@ Welcome to **minishell**, a small but powerful UNIX shell built in C as part of 
 
 ---
 
+## 🧪 Run & Compile
+
+```bash
+git clone https://github.com/yourusername/minishell
+cd minishell
+make
+./minishell
+```
+
 ## 🔍 What Makes This Shell Unique
 
 Implementing a shell from scratch means rebuilding a significant part of what makes Bash work — and it’s not just about calling `execve`. I had to reimplement tokenization, environment variable expansion, signal-safe execution, redirection mechanics, and internal command routing.
@@ -165,11 +174,3 @@ Building this shell gave me a deeper appreciation for how much logic is hidden b
 ![Screenshot from 2025-06-03 14-24-33](https://github.com/user-attachments/assets/12a21a67-f0e1-498f-ae28-b029e7f83d0d)
 
 ---
-
-## 🧪 Run & Compile
-
-```bash
-git clone https://github.com/yourusername/minishell
-cd minishell
-make
-./minishell
